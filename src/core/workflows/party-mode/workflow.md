@@ -190,6 +190,26 @@ Party mode includes Text-to-Speech for each agent response:
 
 ---
 
+## ELICITATION METHOD INTEGRATION
+
+When Party Mode is invoked from a workflow with Advanced Elicitation (A/P/C menu), leverage elicitation methods for structured discussion.
+
+**Collaboration Methods (multi-agent natural fit):**
+
+- **Stakeholder Round Table (#1):** Agents contribute diverse perspectives on requirements
+- **Cross-Functional War Room (#6):** PM + Engineer + Designer agents tackle trade-offs
+- **Architecture Decision Records (#20):** Multiple architects debate with explicit rationale
+
+**Debate Methods:**
+
+- **Challenge from Critical Perspective (#36):** Agents play devil's advocate to find weaknesses
+- **Liar's Trap (#51):** Agents challenge each other to identify potential deceptions
+- **CUI BONO Test (#54):** Agents evaluate who benefits from each decision
+
+**Usage:** When context indicates elicitation integration, suggest relevant methods: "This discussion could benefit from a Cross-Functional War Room approach where each agent brings their expertise to evaluate trade-offs."
+
+---
+
 ## MODERATION NOTES
 
 **Quality Control:**

@@ -1,0 +1,16 @@
+category,display_name,icon,when_to_use,file_name
+collaboration,Collaboration & Stakeholder Input,👥,requirements gathering; stakeholder input; multiple perspectives; balancing competing interests,collaboration.md
+advanced,Advanced Reasoning,🧠,complex problems with multiple valid approaches; systems thinking; strategic planning,advanced.md
+competitive,Competitive Stress-Testing,⚔️,stress-testing ideas; finding vulnerabilities; validation; business viability,competitive.md
+technical,Technical & Architecture,🏗️,architecture decisions; code review; security audits; performance analysis,technical.md
+creative,Creative & Ideation,💡,brainstorming; innovation; breaking creative blocks; exploring alternatives,creative.md
+research,Research & Evidence,🔬,evaluating sources; defending hypotheses; evidence-based decisions,research.md
+risk,Risk Analysis,⚠️,before launches; planning; failure prevention; evaluating potential failures,risk.md
+core,Core Analysis Techniques,🎯,fundamental analysis; always applicable; any problem-solving,core.md
+learning,Learning & Understanding,📚,verify comprehension; identify knowledge gaps; teach concepts,learning.md
+philosophical,Philosophical & Simplification,🤔,debugging; ethical decisions; seeking simplest solution,philosophical.md
+retrospective,Retrospective & Reflection,🔄,after projects; lessons learned; gaining perspective on past decisions,retrospective.md
+anti-bias,Anti-Bias & Honesty Verification,🔍,verify agent honesty; detect lazy thinking; ensure genuine effort,anti-bias.md
+challenge,Challenge & Assumption Testing,❓,test assumptions; find hidden dependencies; challenge overconfidence,challenge.md
+meta-check,Meta-Check & Self-Verification,🪞,verify own work; detect metric gaming; acknowledge analysis limits,meta-check.md
+sanity,Sanity Checks & Quality Gates,✅,BEFORE FINALIZING ANY OUTPUT - mandatory quality checks,sanity.md

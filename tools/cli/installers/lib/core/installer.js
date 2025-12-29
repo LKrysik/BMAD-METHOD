@@ -17,6 +17,7 @@ const { CLIUtils } = require('../../../lib/cli-utils');
 const { ManifestGenerator } = require('./manifest-generator');
 const { IdeConfigManager } = require('./ide-config-manager');
 const { CustomHandler } = require('../custom/handler');
+const { generateElicitationCategories } = require('./elicitation-generator');
 
 // BMAD installation folder name - this is constant and should never change
 const BMAD_FOLDER_NAME = '_bmad';
@@ -1659,6 +1660,14 @@ class Installer {
 
     // Copy core files (skip .agent.yaml files like modules do)
     await this.copyCoreFiles(sourcePath, targetPath);
+
+    // Generate elicitation category files from methods.csv and category-metadata.csv
+    const elicitationSourceDir = path.join(sourcePath, 'workflows', 'advanced-elicitation');
+    const methodsCsvPath = path.join(elicitationSourceDir, 'methods.csv');
+    const metadataCsvPath = path.join(elicitationSourceDir, 'category-metadata.csv');
+    if ((await fs.pathExists(methodsCsvPath)) && (await fs.pathExists(metadataCsvPath))) {
+      await generateElicitationCategories(bmadDir, elicitationSourceDir);
+    }
 
     // Compile agents using the same compiler as modules
     const { ModuleManager } = require('../modules/manager');
