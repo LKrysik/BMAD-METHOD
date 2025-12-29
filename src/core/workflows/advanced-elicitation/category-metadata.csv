@@ -14,3 +14,4 @@ anti-bias,Anti-Bias & Honesty Verification,🔍,verify agent honesty; detect laz
 challenge,Challenge & Assumption Testing,❓,test assumptions; find hidden dependencies; challenge overconfidence,challenge.md
 meta-check,Meta-Check & Self-Verification,🪞,verify own work; detect metric gaming; acknowledge analysis limits,meta-check.md
 sanity,Sanity Checks & Quality Gates,✅,BEFORE FINALIZING ANY OUTPUT - mandatory quality checks,sanity.md
+coherence,Coherence Testing,🧬,verifying system coherence; integration quality; checking if new elements fit existing patterns,coherence.md
