@@ -1,117 +1,296 @@
-<task id="_bmad/core/workflows/advanced-elicitation/workflow.xml" name="Advanced Elicitation" standalone="true"
-  methods="{project-root}/_bmad/core/workflows/advanced-elicitation/methods.csv"
-  agent-party="{project-root}/_bmad/_config/agent-manifest.csv">
+<task id="_bmad/core/workflows/advanced-elicitation/workflow.xml"
+      name="Advanced Elicitation"
+      standalone="true"
+      primary-verify="{project-root}/_bmad/core/workflows/advanced-elicitation/primary_verify.md"
+      primary-discover="{project-root}/_bmad/core/workflows/advanced-elicitation/primary_discover.md"
+      categories-path="{project-root}/_bmad/core/workflows/advanced-elicitation/ae_by_categories/"
+      methods-csv="{project-root}/_bmad/core/workflows/advanced-elicitation/methods.csv"
+      agent-party="{project-root}/_bmad/_config/agent-manifest.csv">
+
   <llm critical="true">
     <i>MANDATORY: Execute ALL steps in the flow section IN EXACT ORDER</i>
     <i>DO NOT skip steps or change the sequence</i>
     <i>HALT immediately when halt-conditions are met</i>
-    <i>Each action xml tag within step xml tag is a REQUIRED action to complete that step</i>
-    <i>Sections outside flow (validation, output, critical-context) provide essential context - review and apply throughout execution</i>
-    <i>YOU MUST ALWAYS SPEAK OUTPUT In your Agent communication style with the `communication_language`</i>
+    <i>Each action within a step is a REQUIRED action</i>
+    <i>YOU MUST ALWAYS SPEAK OUTPUT in your Agent communication style</i>
   </llm>
 
-  <integration description="When called from workflow">
-    <desc>When called during template workflow processing:</desc>
-    <i>1. Receive or review the current section content that was just generated or</i>
-    <i>2. Apply elicitation methods iteratively to enhance that specific content</i>
-    <i>3. Return the enhanced version back when user selects 'x' to proceed and return back</i>
-    <i>4. The enhanced content replaces the original section content in the output document</i>
+  <integration>
+    <desc>This workflow receives parameters from the calling step:</desc>
+    <param name="mode">verify | discover - determines method behavior</param>
+    <param name="methods">[id, id, id] | null - specific method IDs to execute, or null for Smart Select</param>
+    <param name="content">Current section content to analyze</param>
+    <notes>
+      <i>When mode=verify: Find problems, generate findings with severity, propose fixes</i>
+      <i>When mode=discover: Generate questions for user, explore hidden assumptions</i>
+      <i>When methods provided: Load only those specific methods (TIER 0)</i>
+      <i>When methods null: Show Smart Select or Browse options (TIER 1-3)</i>
+    </notes>
   </integration>
 
   <flow>
-    <step n="1" title="Method Registry Loading">
-      <action>Load and read {{methods}} and {{agent-party}}</action>
+    <!-- STEP 0: Parse Input Parameters -->
+    <step n="0" title="Parse Input Parameters">
+      <action>Detect mode from caller context: verify | discover</action>
+      <action>If mode not specified, analyze content context to determine appropriate mode</action>
+      <action>Detect methods list from caller: [id, id, id] or null</action>
+      <action>Store current section content for analysis</action>
+      <action>Log: [AE] Session started - Mode: {mode}, Methods: {methods || 'Smart Select'}</action>
 
-      <csv-structure>
-        <i>category: Method grouping (core, structural, risk, etc.)</i>
-        <i>method_name: Display name for the method</i>
-        <i>description: Rich explanation of what the method does, when to use it, and why it's valuable</i>
-        <i>output_pattern: Flexible flow guide using → arrows (e.g., "analysis → insights → action")</i>
-      </csv-structure>
-
-      <context-analysis>
-        <i>Use conversation history</i>
-        <i>Analyze: content type, complexity, stakeholder needs, risk level, and creative potential</i>
-      </context-analysis>
-
-      <smart-selection>
-        <i>1. Analyze context: Content type, complexity, stakeholder needs, risk level, creative potential</i>
-        <i>2. Parse descriptions: Understand each method's purpose from the rich descriptions in CSV</i>
-        <i>3. Select 5 methods: Choose methods that best match the context based on their descriptions</i>
-        <i>4. Balance approach: Include mix of foundational and specialized techniques as appropriate</i>
-      </smart-selection>
+      <mode-detection>
+        <i>If mode unclear, use these heuristics:</i>
+        <i>- Content just generated → default to verify</i>
+        <i>- Requirements gathering phase → default to discover</i>
+        <i>- User asked to "check" or "validate" → verify</i>
+        <i>- User asked to "explore" or "understand" → discover</i>
+      </mode-detection>
     </step>
 
-    <step n="2" title="Present Options and Handle Responses">
+    <!-- STEP 1: Load Methods Based on Tier -->
+    <step n="1" title="Load Methods (Tiered System)">
 
-      <format>
-        **Advanced Elicitation Options (If you launched Party Mode, they will participate randomly)**
-        Choose a number (1-5), [r] to Reshuffle, [a] List All, or [x] to Proceed:
+      <!-- TIER 0: Specific methods provided -->
+      <case condition="methods provided (not null)">
+        <action>Log: [AE] TIER 0 - Loading specified methods: {methods}</action>
+        <action>Parse method IDs from input array</action>
+        <action>Load method descriptions from {{primary-verify}}, {{primary-discover}}, or {{categories-path}}</action>
+        <action>If any method ID not found, log WARNING and skip that method</action>
+        <action>Proceed directly to Step 2 (Execute Methods)</action>
+      </case>
 
-        1. [Method Name]
-        2. [Method Name]
-        3. [Method Name]
-        4. [Method Name]
-        5. [Method Name]
-        r. Reshuffle the list with 5 new options
-        a. List all methods with descriptions
-        x. Proceed / No Further Actions
-      </format>
+      <!-- No methods specified - show sub-menu -->
+      <case condition="methods NOT provided">
+        <present><![CDATA[
+No specific methods provided. Choose approach:
+
+[S] Smart Select - I'll recommend 5 methods based on your content
+[A] All Methods - Browse by category
+[<] Back - Return to previous menu
+        ]]></present>
+
+        <response-handling>
+          <case n="S">
+            <!-- TIER 1: Smart Select from primary pool -->
+            <action>Log: [AE] TIER 1 - Smart Select activated</action>
+
+            <action>Load appropriate primary file based on mode:</action>
+            <action>- mode=verify → Load {{primary-verify}}</action>
+            <action>- mode=discover → Load {{primary-discover}}</action>
+
+            <action>Analyze content context: type, complexity, stakeholders, risks</action>
+            <action>Select 5 best-fit methods from primary pool</action>
+
+            <!-- Smart Select Audit Trail (MANDATORY) -->
+            <present><![CDATA[
+## Smart Select Results
+
+I selected these 5 methods for your {content_type}:
+
+| # | Method | Why Selected |
+|---|--------|--------------|
+| {id} | {method_name} | {contextual_reason} |
+| {id} | {method_name} | {contextual_reason} |
+| {id} | {method_name} | {contextual_reason} |
+| {id} | {method_name} | {contextual_reason} |
+| {id} | {method_name} | {contextual_reason} |
+
+[OK] Proceed with these methods
+[X] Let me choose different methods
+            ]]></present>
+
+            <i>If user selects OK: Proceed to Step 2 with selected methods</i>
+            <i>If user selects X: Return to sub-menu</i>
+          </case>
+
+          <case n="A">
+            <!-- TIER 2: Category Browse -->
+            <action>Log: [AE] TIER 2 - Category browse activated</action>
+            <action>Scan {{categories-path}} for .md files</action>
+            <action>Build category list dynamically from filenames</action>
+
+            <present><![CDATA[
+Select category:
+
+[1] collaboration - Multi-persona and stakeholder methods
+[2] advanced - Sophisticated reasoning techniques
+[3] competitive - Adversarial and stress-testing methods
+[4] technical - Architecture and code-focused methods
+[5] creative - Innovation and ideation methods
+[6] research - Analysis and evidence review methods
+[7] risk - Risk identification and mitigation methods
+[8] core - Fundamental questioning and analysis methods
+[9] learning - Understanding and knowledge verification methods
+[10] philosophical - Logic and ethics-based methods
+[11] retrospective - Reflection and lessons learned methods
+
+[<] Back to sub-menu
+            ]]></present>
+
+            <action>On category selection, load {{categories-path}}/{category}.md</action>
+            <action>Present all methods from that category</action>
+            <action>Allow user to select specific methods by number</action>
+            <action>Proceed to Step 2 with selected methods</action>
+          </case>
+
+          <case n="<">
+            <action>Return enhanced content to calling step</action>
+            <action>Signal completion</action>
+          </case>
+        </response-handling>
+      </case>
+    </step>
+
+    <!-- STEP 2: Execute Selected Methods -->
+    <step n="2" title="Execute Methods">
+      <action>For each selected method, execute based on mode</action>
+
+      <case condition="mode == verify">
+        <action>Apply method to find PROBLEMS in content</action>
+        <action>Generate findings with severity: CRITICAL | IMPORTANT | MINOR</action>
+
+        <present><![CDATA[
+## Verification Results
+
+Using method: **#{method_id} {method_name}**
+
+### Finding #1 [{severity}]
+**Problem:** {description}
+**Location:** {section/paragraph reference}
+**Suggestion:** {proposed fix}
+
+### Finding #2 [{severity}]
+**Problem:** {description}
+**Location:** {section/paragraph reference}
+**Suggestion:** {proposed fix}
+
+---
+**Summary:** Found {n} issues ({critical} critical, {important} important, {minor} minor)
+
+Apply fixes?
+[Y] Yes, apply all suggestions
+[N] No, keep original
+[S] Select specific fixes to apply
+[E] Edit suggestions before applying
+        ]]></present>
+
+        <response-handling>
+          <case n="Y"><action>Apply all suggested changes to content</action></case>
+          <case n="N"><action>Keep original content unchanged</action></case>
+          <case n="S">
+            <action>Present numbered list of suggestions</action>
+            <action>Apply only user-selected suggestions</action>
+          </case>
+          <case n="E">
+            <action>Allow user to modify suggestions</action>
+            <action>Apply modified versions</action>
+          </case>
+        </response-handling>
+      </case>
+
+      <case condition="mode == discover">
+        <action>Apply method to generate QUESTIONS for user</action>
+        <action>Present questions grouped by theme</action>
+
+        <present><![CDATA[
+## Discovery Questions
+
+Using method: **#{method_id} {method_name}**
+
+I have some questions to help deepen our understanding:
+
+### {question_category_1}
+1. {question}
+2. {question}
+
+### {question_category_2}
+3. {question}
+4. {question}
+
+---
+Please answer these questions. I'll use your responses to refine the content.
+(You can answer all at once or one at a time)
+        ]]></present>
+
+        <action>Wait for user answers</action>
+        <action>Incorporate insights into content understanding</action>
+        <action>Optionally drill deeper based on answers</action>
+      </case>
+    </step>
+
+    <!-- STEP 3: Continue or Complete -->
+    <step n="3" title="Continue or Complete">
+      <present><![CDATA[
+What would you like to do next?
+
+[1-5] Execute another displayed method
+[S] Smart Select - Get new method recommendations
+[A] All Methods - Browse by category
+[x] Done - Return with enhanced content
+      ]]></present>
 
       <response-handling>
         <case n="1-5">
-          <i>Execute the selected method using its description from the CSV</i>
-          <i>Adapt the method's complexity and output format based on the current context</i>
-          <i>Apply the method creatively to the current section content being enhanced</i>
-          <i>Display the enhanced version showing what the method revealed or improved</i>
-          <i>CRITICAL: Ask the user if they would like to apply the changes to the doc (y/n/other) and HALT to await response.</i>
-          <i>CRITICAL: ONLY if Yes, apply the changes. IF No, discard your memory of the proposed changes. If any other reply, try best to
-            follow the instructions given by the user.</i>
-          <i>CRITICAL: Re-present the same 1-5,r,x prompt to allow additional elicitations</i>
+          <action>Execute selected method from current display</action>
+          <action>Return to Step 2</action>
         </case>
-        <case n="r">
-          <i>Select 5 random methods from advanced-elicitation-methods.csv, present new list with same prompt format</i>
-          <i>When selecting, try to think and pick a diverse set of methods covering different categories and approaches, with 1 and 2 being
-            potentially the most useful for the document or section being discovered</i>
+        <case n="S">
+          <action>Return to Step 1 with Smart Select</action>
+        </case>
+        <case n="A">
+          <action>Return to Step 1 with category browse</action>
         </case>
         <case n="x">
-          <i>Complete elicitation and proceed</i>
-          <i>Return the fully enhanced content back to create-doc.md</i>
-          <i>The enhanced content becomes the final version for that section</i>
-          <i>Signal completion back to create-doc.md to continue with next section</i>
-        </case>
-        <case n="a">
-          <i>List all methods with their descriptions from the CSV in a compact table</i>
-          <i>Allow user to select any method by name or number from the full list</i>
-          <i>After selection, execute the method as described in the n="1-5" case above</i>
-        </case>
-        <case n="direct-feedback">
-          <i>Apply changes to current section content and re-present choices</i>
-        </case>
-        <case n="multiple-numbers">
-          <i>Execute methods in sequence on the content, then re-offer choices</i>
+          <action>Log: [AE] Session complete - returning enhanced content</action>
+          <action>Return enhanced content to calling step</action>
+          <action>Signal completion</action>
         </case>
       </response-handling>
     </step>
-
-    <step n="3" title="Execution Guidelines">
-      <i>Method execution: Use the description from CSV to understand and apply each method</i>
-      <i>Output pattern: Use the pattern as a flexible guide (e.g., "paths → evaluation → selection")</i>
-      <i>Dynamic adaptation: Adjust complexity based on content needs (simple to sophisticated)</i>
-      <i>Creative application: Interpret methods flexibly based on context while maintaining pattern consistency</i>
-      <i>Focus on actionable insights</i>
-      <i>Stay relevant: Tie elicitation to specific content being analyzed (the current section from the document being created unless user
-        indicates otherwise)</i>
-      <i>Identify personas: For single or multi-persona methods, clearly identify viewpoints, and use party members if available in memory
-        already</i>
-      <i>Critical loop behavior: Always re-offer the 1-5,r,a,x choices after each method execution</i>
-      <i>Continue until user selects 'x' to proceed with enhanced content, confirm or ask the user what should be accepted from the session</i>
-      <i>Each method application builds upon previous enhancements</i>
-      <i>Content preservation: Track all enhancements made during elicitation</i>
-      <i>Iterative enhancement: Each selected method (1-5) should:</i>
-      <i> 1. Apply to the current enhanced version of the content</i>
-      <i> 2. Show the improvements made</i>
-      <i> 3. Return to the prompt for additional elicitations or completion</i>
-    </step>
   </flow>
+
+  <!-- Error Handling -->
+  <error-handling>
+    <case error="method-id-not-found">
+      <action>Log: [AE] WARNING - Method ID {id} not found, skipping</action>
+      <action>Continue with remaining methods</action>
+    </case>
+    <case error="primary-file-missing">
+      <action>Log: [AE] WARNING - Primary file missing, falling back to category browse</action>
+      <action>Redirect to TIER 2 (category browse)</action>
+    </case>
+    <case error="categories-empty">
+      <action>Log: [AE] ERROR - No category files found in {{categories-path}}</action>
+      <action>Display error message to user</action>
+      <action>Return to calling step with original content</action>
+    </case>
+    <case error="mode-unrecognized">
+      <action>Log: [AE] WARNING - Mode '{mode}' not recognized, defaulting to 'verify'</action>
+      <action>Set mode = 'verify' and continue</action>
+    </case>
+  </error-handling>
+
+  <!-- YOLO Mode Support -->
+  <yolo-mode>
+    <trigger>When user selects [Y] YOLO from calling step menu</trigger>
+    <action>Log: [AE] YOLO mode activated by user - skipping all elicitation</action>
+    <action>Return original content unchanged</action>
+    <action>Signal completion immediately</action>
+    <notes>
+      <i>YOLO is appropriate for: prototyping, technical spikes, familiar territory</i>
+      <i>YOLO is NOT appropriate for: production code, security-sensitive decisions, unfamiliar domains</i>
+    </notes>
+  </yolo-mode>
+
+  <!-- Execution Guidelines -->
+  <execution-guidelines>
+    <i>Method execution: Use the description from loaded file to understand and apply each method</i>
+    <i>Output pattern: Use the pattern as a flexible guide for structuring output</i>
+    <i>Dynamic adaptation: Adjust complexity based on content needs</i>
+    <i>Creative application: Interpret methods flexibly based on context</i>
+    <i>Mode awareness: Verify mode finds problems; Discover mode asks questions</i>
+    <i>Audit trail: Always show reasoning for Smart Select choices</i>
+    <i>Iterative enhancement: Each method application builds upon previous enhancements</i>
+    <i>Content preservation: Track all enhancements made during session</i>
+    <i>Token efficiency: Load only the files needed for current operation</i>
+  </execution-guidelines>
 </task>

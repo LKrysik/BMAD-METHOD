@@ -1657,6 +1657,9 @@ class Installer {
     const sourcePath = getModulePath('core');
     const targetPath = path.join(bmadDir, 'core');
 
+    // Generate Advanced Elicitation method files before copying
+    await this.generateAEMethodFiles();
+
     // Copy core files (skip .agent.yaml files like modules do)
     await this.copyCoreFiles(sourcePath, targetPath);
 
@@ -2613,6 +2616,32 @@ class Installer {
       validCustomModules,
       keptModulesWithoutSources,
     };
+  }
+
+  /**
+   * Generate Advanced Elicitation method files from methods.csv
+   * This ensures the generated files are up-to-date with the CSV source of truth
+   */
+  async generateAEMethodFiles() {
+    try {
+      const { AEMethodsGenerator } = require('../../../lib/ae-methods-generator');
+      const projectRoot = getProjectRoot();
+      const generator = new AEMethodsGenerator(projectRoot);
+
+      const report = await generator.generate();
+
+      // Log generation results (verbose mode)
+      if (process.env.BMAD_DEBUG_MANIFEST) {
+        console.log(
+          chalk.dim(
+            `  AE methods generated: ${report.primaryVerifyCount} verify, ${report.primaryDiscoverCount} discover, ${report.categoryCount} categories`,
+          ),
+        );
+      }
+    } catch (error) {
+      // Log warning but don't fail installation - files may already exist from previous generation
+      console.log(chalk.yellow(`  Warning: Could not regenerate AE method files: ${error.message}`));
+    }
   }
 }
 

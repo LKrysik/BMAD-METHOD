@@ -24,6 +24,7 @@
     "bmad-method": "tools/bmad-npx-wrapper.js"
   },
   "scripts": {
+    "bmad:generate-ae-methods": "node tools/cli/bmad-cli.js generate-ae-methods",
     "bmad:install": "node tools/cli/bmad-cli.js install",
     "bundle": "node tools/cli/bundlers/bundle-web.js all",
     "docs:build": "node tools/build-docs.js",
