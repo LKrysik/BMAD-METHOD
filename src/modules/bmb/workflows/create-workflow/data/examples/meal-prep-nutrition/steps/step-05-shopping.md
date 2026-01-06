@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/nutrition-plan-{project_name}.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'implementation'
 
 # Template References
 shoppingTemplate: '{workflow_path}/templates/shopping-section.md'

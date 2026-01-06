@@ -19,7 +19,7 @@ gameTypesFolder: '{workflow_path}/game-types'
 checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
 
 # AE Configuration
-aeRole: 'discovery'
+aeList: 'general'
 ---
 
 <!-- DEEP_VERIFY -->

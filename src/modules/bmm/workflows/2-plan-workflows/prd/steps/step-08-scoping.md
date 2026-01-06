@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{planning_artifacts}/prd.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'planning'
 ---
 
 # Step 8: Scoping Exercise - MVP & Future Features
@@ -36,25 +38,10 @@ partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
 
 - 🎯 Show your analysis before taking any action
 - 📚 Review the complete PRD document built so far
-- ⚠️ Present A/P/C menu after generating scoping decisions
+- ⚠️ Present {checkpointMenu} menu after generating scoping decisions
 - 💾 ONLY save when user chooses C (Continue)
 - 📖 Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]` before loading next step
 - 🚫 FORBIDDEN to load next step until C is selected
-
-## COLLABORATION MENUS (A/P/C):
-
-This step will generate content and present choices:
-
-- **A (Advanced Elicitation)**: Use discovery protocols to explore innovative scoping approaches
-- **P (Party Mode)**: Bring multiple perspectives to ensure comprehensive scope decisions
-- **C (Continue)**: Save the scoping decisions and proceed to functional requirements
-
-## PROTOCOL INTEGRATION:
-
-- When 'A' selected: Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml
-- When 'P' selected: Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md
-- PROTOCOLS always return to display this step's A/P/C menu after the A or P have completed
-- User accepts/rejects protocol changes before proceeding
 
 ## CONTEXT BOUNDARIES:
 
@@ -235,28 +222,11 @@ Show the scoping decisions and present choices:
 
 [Show the complete markdown content from step 6]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Explore alternative scoping strategies
-[P] Party Mode - Bring different perspectives on MVP and roadmap decisions
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Save scoping decisions and move to Functional Requirements (Step 9 of 11)"
 
 ### 8. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with current scoping analysis
-- Process enhanced scoping insights that come back
-- Ask user: "Accept these improvements to the scoping decisions? (y/n)"
-- If yes: Update content, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with scoping context
-- Process collaborative insights on MVP and roadmap decisions
-- Ask user: "Accept these changes to the scoping decisions? (y/n)"
-- If yes: Update content, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 
@@ -276,7 +246,7 @@ When user selects 'C', append the content directly to the document using the str
 ✅ Phased development roadmap created
 ✅ Key risks identified and mitigation strategies defined
 ✅ User explicitly agrees to scope decisions
-✅ A/P/C menu presented and handled correctly
+✅ {checkpointMenu} menu presented and handled correctly
 ✅ Content properly appended to document when C selected
 
 ## FAILURE MODES:
@@ -286,7 +256,7 @@ When user selects 'C', append the content directly to the document using the str
 ❌ Not getting explicit user agreement on MVP boundaries
 ❌ Missing critical risk analysis
 ❌ Not creating clear phased development approach
-❌ Not presenting A/P/C menu after content generation
+❌ Not presenting {checkpointMenu} menu after content generation
 
 ❌ **CRITICAL**: Reading only partial step file - leads to incomplete understanding and poor decisions
 ❌ **CRITICAL**: Proceeding with 'C' without fully reading and understanding the next step file
@@ -296,4 +266,4 @@ When user selects 'C', append the content directly to the document using the str
 
 After user selects 'C' and content is saved to document, load `./step-09-functional.md`.
 
-Remember: Do NOT proceed to step-09 until user explicitly selects 'C' from the A/P/C menu and content is saved!
+Remember: Do NOT proceed to step-09 until user explicitly selects 'C' from the {checkpointMenu} menu and content is saved!

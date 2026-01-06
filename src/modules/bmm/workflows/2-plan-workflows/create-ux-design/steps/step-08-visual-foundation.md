@@ -1,3 +1,14 @@
+---
+name: 'step-08-visual-foundation'
+description: 'Establish visual design foundation including colors, typography, spacing'
+
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'creative'
+---
+
 # Step 8: Visual Foundation
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -160,28 +171,9 @@ Show the generated visual foundation content and present choices:
 
 [Show the complete markdown content from step 6]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Let's refine our visual foundation
-[P] Party Mode - Bring design perspectives on visual choices
-[C] Continue - Save this to the document and move to design directions
+**Load `{checkpointMenu}` and display options.**
 
 ### 8. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with the current visual foundation content
-- Process the enhanced visual insights that come back
-- Ask user: "Accept these improvements to the visual foundation? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with the current visual foundation
-- Process the collaborative visual insights that come back
-- Ask user: "Accept these changes to the visual foundation? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 

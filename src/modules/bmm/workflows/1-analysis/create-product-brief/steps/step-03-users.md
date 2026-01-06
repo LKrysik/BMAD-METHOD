@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{planning_artifacts}/product-brief-{{project_name}}-{{date}}.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'stakeholder'
 ---
 
 # Step 3: Target Users Discovery
@@ -160,21 +162,14 @@ Prepare the following structure for document append:
 **Here's what I'll add to the document:**
 [Show the complete markdown content from step 5]
 
-**Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue"
+**Load `{checkpointMenu}` to display options.**
+
+[C] Continue - Save this and move to Success Metrics Definition"
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask} with current user content to dive deeper into personas and journeys
-- IF P: Execute {partyModeWorkflow} to bring different perspectives to validate user understanding
 - IF C: Save content to {outputFile}, update frontmatter with stepsCompleted: [1, 2, 3], then only then load, read entire file, then execute {nextStepFile}
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#6-present-menu-options)
-
-#### EXECUTION RULES:
-
-- ALWAYS halt and wait for user input after presenting menu
-- ONLY proceed to next step when user selects 'C'
-- After other menu items execution, return to this menu with updated content
-- User can chat or ask questions - always respond and then end with display again of the menu options
 
 ## CRITICAL STEP COMPLETION NOTE
 
@@ -190,7 +185,7 @@ ONLY WHEN [C continue option] is selected and [user personas finalized and saved
 - Clear distinction between primary and secondary users
 - User journeys that show key interaction points and value creation
 - User segments that align with product vision and problem statement
-- A/P/C menu presented and handled correctly with proper task execution
+- {checkpointMenu} menu presented and handled correctly
 - Content properly appended to document when C selected
 - Frontmatter updated with stepsCompleted: [1, 2, 3]
 
@@ -200,7 +195,7 @@ ONLY WHEN [C continue option] is selected and [user personas finalized and saved
 - Missing key user segments that are important to success
 - User journeys that don't show how the product creates value
 - Not connecting user needs back to the problem statement
-- Not presenting standard A/P/C menu after content generation
+- Not presenting {checkpointMenu} menu after content generation
 - Appending content without user selecting 'C'
 - Not updating frontmatter properly
 

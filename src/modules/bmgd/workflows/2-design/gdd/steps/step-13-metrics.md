@@ -12,8 +12,11 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/gdd.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'quality'
+
 ---
 
 # Step 13: Success Metrics
@@ -55,11 +58,11 @@ Define measurable success metrics for both technical performance and gameplay qu
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]` before loading next step
 - FORBIDDEN to load next step until C is selected
 
-## COLLABORATION MENUS (A/P/C):
+## CHECKPOINT
 
-- **A (Advanced Elicitation)**: Deep dive into metric selection
-- **P (Party Mode)**: Get perspectives on success criteria
-- **C (Continue)**: Save the content to the document and proceed to next step
+**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+
+**[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
 ## CONTEXT BOUNDARIES:
 
@@ -196,26 +199,21 @@ Show the generated content to the user and present:
 - Are targets achievable and measurable?
 - Can you actually collect this data?
 
-**Select an Option:**
-[A] Advanced Elicitation - Refine metric selection
-[P] Party Mode - Get perspectives on success criteria
-[C] Continue - Save this and move to Final Steps (Step 14 of 14)"
+**Load `{checkpointMenu}` to display options.**
+
+**[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`
+
+#### Menu Handling:
+- IF C (Continue): Save content, update frontmatter, load {nextStepFile}
+- IF other input: Respond helpfully, re-display checkpoint menu
+
+#### EXECUTION RULES:
+- ALWAYS halt and wait for user input after presenting menu
+- ONLY proceed to next step when user selects 'C'
+- After Q/V/D/P execution completes, return to checkpoint menu
+- User can chat or ask questions - respond then re-display menu
 
 ### 6. Handle Menu Selection
-
-#### IF A (Advanced Elicitation):
-
-- Execute {advancedElicitationTask} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
-
-#### IF P (Party Mode):
-
-- Execute {partyModeWorkflow} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
 
 #### IF C (Continue):
 
@@ -237,7 +235,7 @@ ONLY WHEN [C continue option] is selected and [metrics content saved with frontm
 - Gameplay metrics tied to pillars and goals
 - Qualitative criteria documented
 - Metrics are actually measurable
-- A/P/C menu presented and handled correctly
+- Checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted
 
 ### SYSTEM FAILURE:
@@ -245,7 +243,7 @@ ONLY WHEN [C continue option] is selected and [metrics content saved with frontm
 - Generating metrics without user input
 - Metrics that can't be measured
 - Missing connection to game pillars/goals
-- Not presenting A/P/C menu after content generation
+- Not presenting checkpoint menu after content generation
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

@@ -1,3 +1,14 @@
+---
+name: 'step-06-design-system'
+description: 'Choose appropriate design system approach'
+
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'architecture'
+---
+
 # Step 6: Design System Choice
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -188,28 +199,9 @@ Show the generated design system content and present choices:
 
 [Show the complete markdown content from step 6]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Let's refine our design system decision
-[P] Party Mode - Bring technical perspectives on design systems
-[C] Continue - Save this to the document and move to defining experience
+**Load `{checkpointMenu}` and display options.**
 
 ### 8. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with the current design system content
-- Process the enhanced design system insights that come back
-- Ask user: "Accept these improvements to the design system decision? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with the current design system choice
-- Process the collaborative design system insights that come back
-- Ask user: "Accept these changes to the design system decision? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 

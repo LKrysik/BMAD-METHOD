@@ -1,3 +1,14 @@
+---
+name: 'step-02-context'
+description: 'Analyze project documents for architectural scope and requirements'
+
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'architecture'
+---
+
 # Step 2: Project Context Analysis
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -161,28 +172,9 @@ Show the generated content and present choices:
 
 [Show the complete markdown content from step 4]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Let's dive deeper into architectural implications
-[P] Party Mode - Bring different perspectives to analyze requirements
-[C] Continue - Save this analysis and begin architectural decisions"
+**Load `{checkpointMenu}` and display options.**
 
 ### 6. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with the current context analysis
-- Process the enhanced architectural insights that come back
-- Ask user: "Accept these enhancements to the project context analysis? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with the current project context
-- Process the collaborative improvements to architectural understanding
-- Ask user: "Accept these changes to the project context analysis? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 

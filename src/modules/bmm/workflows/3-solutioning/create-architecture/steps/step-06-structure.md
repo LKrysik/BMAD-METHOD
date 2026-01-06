@@ -1,3 +1,14 @@
+---
+name: 'step-06-structure'
+description: 'Define project structure and architectural boundaries'
+
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'architecture'
+---
+
 # Step 6: Project Structure & Boundaries
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -316,28 +327,9 @@ Show the generated project structure content and present choices:
 
 [Show the complete markdown content from step 6]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Explore innovative project organization approaches
-[P] Party Mode - Review structure from different development perspectives
-[C] Continue - Save this structure and move to architecture validation"
+**Load `{checkpointMenu}` and display options.**
 
 ### 8. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with current project structure
-- Process enhanced organizational insights that come back
-- Ask user: "Accept these changes to the project structure? (y/n)"
-- If yes: Update content, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with project structure context
-- Process collaborative insights about organization trade-offs
-- Ask user: "Accept these changes to the project structure? (y/n)"
-- If yes: Update content, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 

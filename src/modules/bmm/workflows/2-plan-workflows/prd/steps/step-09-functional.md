@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{planning_artifacts}/prd.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'core-design'
 ---
 
 # Step 9: Functional Requirements Synthesis
@@ -35,25 +37,10 @@ partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
 ## EXECUTION PROTOCOLS:
 
 - 🎯 Show your analysis before taking any action
-- ⚠️ Present A/P/C menu after generating functional requirements
+- ⚠️ Present {checkpointMenu} menu after generating functional requirements
 - 💾 ONLY save when user chooses C (Continue)
 - 📖 Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]` before loading next step
 - 🚫 FORBIDDEN to load next step until C is selected
-
-## COLLABORATION MENUS (A/P/C):
-
-This step will generate content and present choices:
-
-- **A (Advanced Elicitation)**: Use discovery protocols to ensure comprehensive requirement coverage
-- **P (Party Mode)**: Bring multiple perspectives to validate complete requirement set
-- **C (Continue)**: Save the content to the document and proceed to next step
-
-## PROTOCOL INTEGRATION:
-
-- When 'A' selected: Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml
-- When 'P' selected: Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md
-- PROTOCOLS always return to this step's A/P/C menu
-- User accepts/rejects protocol changes before proceeding
 
 ## CONTEXT BOUNDARIES:
 
@@ -201,28 +188,11 @@ Show the generated functional requirements and present choices:
 - UX designers will ONLY design interactions for these capabilities
 - Architects will ONLY build systems to support these capabilities
 
-**What would you like to do?**
-[A] Advanced Elicitation - Let's ensure we haven't missed any capabilities
-[P] Party Mode - Bring different perspectives to validate complete coverage
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Save this and move to Non-Functional Requirements (Step 10 of 11)"
 
 ### 8. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with the current FR list
-- Process the enhanced capability coverage that comes back
-- Ask user: "Accept these additions to the functional requirements? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with the current FR list
-- Process the collaborative capability validation and additions
-- Ask user: "Accept these changes to the functional requirements? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 
@@ -242,7 +212,7 @@ When user selects 'C', append the content directly to the document using the str
 ✅ Comprehensive coverage with 20-50 FRs typical
 ✅ Altitude validation ensures implementation-agnostic requirements
 ✅ Completeness check validates coverage of all discussed capabilities
-✅ A/P/C menu presented and handled correctly
+✅ {checkpointMenu} menu presented and handled correctly
 ✅ Content properly appended to document when C selected
 
 ## FAILURE MODES:
@@ -252,7 +222,7 @@ When user selects 'C', append the content directly to the document using the str
 ❌ Including implementation details or UI specifics in FRs
 ❌ Not achieving comprehensive coverage of discussed capabilities
 ❌ Using vague terms instead of testable capabilities
-❌ Not presenting A/P/C menu after content generation
+❌ Not presenting {checkpointMenu} menu after content generation
 ❌ Appending content without user selecting 'C'
 
 ❌ **CRITICAL**: Reading only partial step file - leads to incomplete understanding and poor decisions
@@ -267,4 +237,4 @@ Emphasize to user: "This FR list is now binding. Any feature not listed here wil
 
 After user selects 'C' and content is saved to document, load `{project-root}/_bmad/bmm/workflows/2-plan-workflows/prd/steps/step-10-nonfunctional.md` to define non-functional requirements.
 
-Remember: Do NOT proceed to step-10 until user explicitly selects 'C' from the A/P/C menu and content is saved!
+Remember: Do NOT proceed to step-10 until user explicitly selects 'C' from the {checkpointMenu} menu and content is saved!

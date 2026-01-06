@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/nutrition-plan-{project_name}.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'planning'
 
 # Template References
 shoppingTemplate: '{workflow_path}/templates/shopping-section.md'
@@ -145,21 +147,8 @@ pantryChecked: [yes/no]
 
 ### 5. Present MENU OPTIONS
 
-Display: **Select an Option:** [A] Budget Optimization Strategies [P] Shopping Perspectives [C] Continue to Prep Schedule
+**Load `{checkpointMenu}` and display options.**
 
-#### EXECUTION RULES:
-
-- ALWAYS halt and wait for user input after presenting menu
-- ONLY proceed to next step when user selects 'C'
-- After other menu items execution, return to this menu
-- User can chat or ask questions - always respond and then end with display again of the menu options
-- Use menu handling logic section below
-
-#### Menu Handling Logic:
-
-- HALT and AWAIT ANSWER
-- IF A: Execute `{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml`
-- IF P: Execute `{project-root}/_bmad/core/workflows/party-mode/workflow.md`
 - IF C: Save content to nutrition-plan.md, update frontmatter `stepsCompleted` to add 5 at the end of the array before loading next step, then load, read entire file, then execute `{workflow_path}/step-06-prep-schedule.md`
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#5-present-menu-options)
 

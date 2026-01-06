@@ -1,3 +1,14 @@
+---
+name: 'step-05-patterns'
+description: 'Define implementation patterns and consistency rules'
+
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'implementation'
+---
+
 # Step 5: Implementation Patterns & Consistency Rules
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -296,28 +307,9 @@ Show the generated patterns content and present choices:
 
 [Show the complete markdown content from step 4]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Explore additional consistency patterns
-[P] Party Mode - Review patterns from different implementation perspectives
-[C] Continue - Save these patterns and move to project structure"
+**Load `{checkpointMenu}` and display options.**
 
 ### 6. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with current patterns
-- Process enhanced consistency rules that come back
-- Ask user: "Accept these additional pattern refinements? (y/n)"
-- If yes: Update content, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with implementation patterns context
-- Process collaborative insights about potential conflicts
-- Ask user: "Accept these changes to the implementation patterns? (y/n)"
-- If yes: Update content, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 

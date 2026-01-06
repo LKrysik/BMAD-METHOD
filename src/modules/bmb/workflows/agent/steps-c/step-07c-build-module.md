@@ -15,8 +15,10 @@ agentCompilation: ../data/agent-compilation.md
 criticalActions: ../data/critical-actions.md
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'implementation'
 ---
 
 # STEP GOAL
@@ -159,12 +161,12 @@ Content: Assembled YAML from step 4
 
 ### 7. Present MENU OPTIONS
 
-Display: "**Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue"
+**Load `{checkpointMenu}` to display options.**
+
+**[C] Continue** - Proceed to validation
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask}, and when finished redisplay the menu
-- IF P: Execute {partyModeWorkflow}, and when finished redisplay the menu
 - IF C: Write agent YAML to {agentBuildOutput}/{agent-name}/{agent-name}.agent.yaml (or appropriate output path), update frontmatter, then only then load, read entire file, then execute {nextStepFile}
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#7-present-menu-options)
 
@@ -172,7 +174,6 @@ Display: "**Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Cont
 
 - ALWAYS halt and wait for user input after presenting menu
 - ONLY proceed to next step when user selects 'C'
-- After other menu items execution, return to this menu
 - User can chat or ask questions - always respond and then end with display again of the menu options
 
 **USER RESPONSE HANDLING:**

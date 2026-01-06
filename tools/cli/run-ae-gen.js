@@ -5,7 +5,7 @@ async function run() {
   const generator = new AEMethodsGenerator(projectRoot);
 
   console.log('Generating Advanced Elicitation method files...');
-  console.log('Source: src/core/workflows/advanced-elicitation/data/methods.csv\n');
+  console.log('Source: methods.csv + ae-custom-lists.yaml\n');
 
   const report = await generator.generate();
 
@@ -14,10 +14,10 @@ async function run() {
   console.log(`  primary_verify.md: ${report.primaryVerifyCount} methods`);
   console.log(`  primary_discover.md: ${report.primaryDiscoverCount} methods`);
   console.log(`  ae_by_categories/: ${report.categoryCount} category files`);
-  console.log(`  ae_by_roles/: ${report.roleCount} role files`);
-  if (report.customListCount > 0) {
-    console.log(`  ae_user_lists.md: ${report.customListCount} custom lists`);
-  }
+  console.log(`  ae-lists/: ${report.listCounts.total} list files`);
+  console.log(`    - verify-only: ${report.listCounts.verify}`);
+  console.log(`    - discover-only: ${report.listCounts.discover}`);
+  console.log(`    - domain (verify+discover): ${report.listCounts.domain}`);
 
   if (report.warnings.length > 0) {
     console.log('\nWarnings:');

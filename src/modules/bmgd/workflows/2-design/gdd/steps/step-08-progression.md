@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/gdd.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'core-design'
 ---
 
 # Step 8: Progression & Balance
@@ -55,11 +57,11 @@ Define how players progress through the game (skill, power, narrative, etc.), th
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]` before loading next step
 - FORBIDDEN to load next step until C is selected
 
-## COLLABORATION MENUS (A/P/C):
+## CHECKPOINT
 
-- **A (Advanced Elicitation)**: Deep dive into progression curves and balance
-- **P (Party Mode)**: Test progression ideas with multiple perspectives
-- **C (Continue)**: Save the content to the document and proceed to next step
+**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+
+**[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
 ## CONTEXT BOUNDARIES:
 
@@ -218,26 +220,11 @@ Show the generated content to the user and present:
 - Is the difficulty curve appropriate for your audience?
 - Does the economy (if any) feel fair?
 
-**Select an Option:**
-[A] Advanced Elicitation - Deep dive into balance and pacing
-[P] Party Mode - Test these systems with other perspectives
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Save this and move to Level Design (Step 9 of 14)"
 
 ### 6. Handle Menu Selection
-
-#### IF A (Advanced Elicitation):
-
-- Execute {advancedElicitationTask} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
-
-#### IF P (Party Mode):
-
-- Execute {partyModeWorkflow} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
 
 #### IF C (Continue):
 
@@ -259,7 +246,7 @@ ONLY WHEN [C continue option] is selected and [progression content saved with fr
 - Difficulty curve appropriate for game type and audience
 - Economy handled correctly (defined or explicitly skipped)
 - Balance considerations documented
-- A/P/C menu presented and handled correctly
+- Checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]
 
 ### SYSTEM FAILURE:
@@ -267,7 +254,7 @@ ONLY WHEN [C continue option] is selected and [progression content saved with fr
 - Generating progression without user input
 - Assuming economy exists without asking
 - Difficulty curve mismatched with audience
-- Not presenting A/P/C menu after content generation
+- Not presenting checkpoint menu after content generation
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

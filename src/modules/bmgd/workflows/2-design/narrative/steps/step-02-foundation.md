@@ -15,7 +15,7 @@ outputFile: '{output_folder}/narrative-design.md'
 checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
 
 # AE Configuration
-aeRole: 'narrative'
+aeList: 'narrative'
 ---
 
 <!-- DEEP_VERIFY -->

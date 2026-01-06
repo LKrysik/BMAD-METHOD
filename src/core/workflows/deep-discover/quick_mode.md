@@ -1,8 +1,8 @@
-# Quick Discover Mode v6.0
+# Quick Discover Mode v7.0
 
-Lightweight discovery session using inline methods from current step file.
+Fast discovery session using methods from ae-list files.
 
-**Token Cost:** ~500-800 tokens (target, not guarantee — deep exploration may require more)
+**Token Cost:** ~500-800 tokens (target)
 
 ---
 
@@ -18,123 +18,181 @@ Lightweight discovery session using inline methods from current step file.
 
 | Parameter | Source | Required |
 |-----------|--------|----------|
-| `methods` | Parsed from `<!-- DEEP_DISCOVER -->` | Yes |
-| `content` | Current step content being reviewed | Yes |
+| `aeList` | Step frontmatter (via checkpoint-exec) | Yes |
+| `content` | Current step content being explored | Yes |
+| `stepPath` | Path to current step file | Yes |
 
 ---
 
-## Behavior
+## Method Loading Protocol
 
-- Use methods to generate PROBING QUESTIONS
-- Listen for: unstated assumptions, borrowed thinking, inherited constraints
-- DO NOT answer for the user
-- DO NOT generate content
-- **HALT** and wait for user responses
-- Dig deeper based on user's responses
-- Help user reach their own conclusions
-- Tag insights with source method for traceability
+### Step 1: Resolve aeList to File(s)
 
----
-
-## Method Format in Step File
-
-```markdown
-<!-- DEEP_DISCOVER -->
-39,core,First Principles Analysis,Strip away assumptions to rebuild from fundamental truths - breakthrough technique for innovation and solving impossible problems,assumptions → truths → new approach
-41,core,Socratic Questioning,Use targeted questions to reveal hidden assumptions and guide discovery - excellent for teaching and self-discovery,questions → revelations → understanding
-40,core,5 Whys Deep Dive,Repeatedly ask why to drill down to root causes - simple but powerful for understanding failures,why chain → root cause → solution
+```
+1. Parse aeList parameter (may be comma-separated)
+2. For each list name:
+   path = {project-root}/_bmad/core/methods/ae-lists/{name}.md
+3. Load file content
+4. If file not found → WARN and try next, fallback to 'general'
 ```
 
-**Columns:** `num,category,method_name,description,output_pattern`
+### Step 2: Extract Discover Methods
+
+```
+1. Find "## Discover Methods" section in ae-list file
+2. Parse each method entry:
+   - ### #{num} {method_name}
+   - Description paragraph
+   - **Pattern:** line
+3. Store methods array for execution
+```
+
+### Step 3: Handle Multiple Lists
+
+```
+If multiple ae-lists specified:
+1. Load all files
+2. Extract Discover Methods from each
+3. Combine into single methods array
+4. Remove duplicates (by method number)
+```
 
 ---
 
 ## Execution Protocol
 
-1. Parse `<!-- DEEP_DISCOVER -->` methods from step
-2. For each method:
-   - Create brief EXPLORATION PLAN (what assumptions to surface, where)
-   - Generate 2-3 PROBING QUESTIONS based on method
-   - Present questions to user
-   - **HALT** - Wait for user response (DO NOT proceed, DO NOT answer for them)
-   - Dig deeper based on response
-   - Tag insights: `[insight] — from #__ {method_name}`
-3. After exploring all methods, summarize:
-   - What user realized (with method attribution)
-   - Assumptions questioned
-   - Open questions remaining
-4. Ask: **"Incorporate insights? [Y] All / [S] Select / [N] Skip"**
-5. If Y/S: User guides update, agent assists
-6. Ask: **"Want deeper exploration? [F] Full / [N] Done"**
-7. If F: Load `workflow.md` (full discovery)
-8. Return to checkpoint menu
-
----
-
-## Output Format
+### 1. Announce Session
 
 ```markdown
-## Quick Discover Session
+## Quick Discover
 
-**Methods Applied:** {method_names}
+**Using aeList:** {aeList}
+**Methods loaded:** {count} discover methods
+
+| # | Method | Focus |
+|---|--------|-------|
+| {num} | {name} | {pattern} |
+...
+
+Let's explore your thinking...
+```
+
+### 2. Execute Each Method
+
+For each method from ae-list:
+
+```markdown
+### #{num} {method_name}
+
+**Exploration Plan:** [what assumptions/insights to surface based on method]
+
+**Questions for you:**
+
+1. {probing question based on method pattern}
+2. {probing question based on method pattern}
+3. {probing question based on method pattern}
 
 ---
 
-### Exploration
-
-#### #{num} {method_name}
-
-**Exploration Plan:** [what assumptions to surface, in what area]
-
-**Questions:**
-1. [probing question based on method]
-2. [probing question based on method]
-3. [probing question based on method]
-
----
 Please answer these questions. Take your time.
+
 ---
 
 **HALT** - Waiting for your response...
+```
 
----
+**CRITICAL: DO NOT proceed until user answers. DO NOT answer for them.**
 
-### After User Response
+### 3. Process User Response
 
-**Insights from your response:**
-- [what you revealed] — from #__ {method_name}
-- [assumption surfaced] — from #__ {method_name}
+After user answers:
+
+```markdown
+### Insights from #{num} {method_name}
+
+**What you revealed:**
+- {insight from their answer} — from #{num}
+- {assumption surfaced} — from #{num}
 
 **Worth exploring deeper:**
-- [follow-up based on their answer]
+- {follow-up based on their answer}
+
+**Certainty level:** HIGH / MODERATE / LOW
+```
+
+### 4. Session Summary
+
+After all methods explored:
+
+```markdown
+## Quick Discover Results
+
+**aeList used:** {aeList}
+**Methods applied:** {method_names}
 
 ---
 
-### Session Summary
+### Insights Surfaced
 
-**Insights Surfaced:**
 | # | Insight | Source | Significance |
 |---|---------|--------|--------------|
-| 1 | [what user realized] | #__ {method} | [why it matters] |
-| 2 | [assumption uncovered] | #__ {method} | [why it matters] |
+| 1 | {what user realized} | #{num} {method} | {why it matters} |
+| 2 | {assumption uncovered} | #{num} {method} | {why it matters} |
 
-**Assumptions Questioned:**
-- [assumption] — challenged by #__ {method}
+### Assumptions Questioned
 
-**Open Questions:**
-- [question that emerged but wasn't fully answered]
+- {assumption} — challenged by #{num} {method}
+- {assumption} — challenged by #{num} {method}
+
+### Open Questions
+
+- {question that emerged but wasn't fully answered}
+- {area that needs more exploration}
+
+### Agent Proposals
+
+Based on discovery, consider:
+1. {something user didn't say but emerges from context}
+2. {alternative they may have overlooked}
 
 ---
 
-**Incorporate insights?**
-[Y] Apply all to content
-[S] Select specific insights
-[N] Skip — proceed without changes
+**What would you like to do?**
+
+[Y] Apply insights — incorporate into content
+[S] Select insights — choose which to apply
+[N] No changes — keep exploring mentally
 
 **Want deeper exploration?**
-[F] Full discover — comprehensive method selection
-[N] Done — return to checkpoint
+
+[D] Full discover — comprehensive discovery workflow
+[X] Done — return to step menu
 ```
+
+### 5. Handle User Response
+
+**If [Y] Apply all:**
+1. User guides how to incorporate insights
+2. Agent assists with updates
+3. Return to step menu
+
+**If [S] Select:**
+1. List each insight
+2. User selects which to incorporate
+3. Incorporate selected insights
+4. Return to step menu
+
+**If [N] No changes:**
+1. Keep content as-is (insights are mental)
+2. Return to step menu
+
+**If [D] Full discover:**
+1. Load deep-discover/workflow.md
+2. Pass same parameters
+3. Execute full discovery
+
+**If [X] Done:**
+1. Return to calling step's menu
 
 ---
 
@@ -156,14 +214,13 @@ Please answer these questions. Take your time.
 - Dismiss their intuitions
 - Assume you know better than them
 - Proceed without user response
+- Put words in their mouth
 
 ---
 
 ## Return Protocol
 
-After presenting results:
-1. Ask for user response (incorporate insights)
-2. User guides update, agent assists
-3. Offer tiered escalation:
-   - **[F] Full** → Load `workflow.md`
-   - **[N] Done** → Return to checkpoint menu
+After presenting results and handling user choice:
+1. Incorporate any accepted insights (user guides, agent assists)
+2. Return to calling step's A/P/C menu
+3. Do NOT stay in quick mode

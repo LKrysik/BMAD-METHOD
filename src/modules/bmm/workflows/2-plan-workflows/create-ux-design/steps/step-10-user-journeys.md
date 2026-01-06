@@ -1,3 +1,14 @@
+---
+name: 'step-10-user-journeys'
+description: 'Design detailed user journey flows'
+
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'stakeholder'
+---
+
 # Step 10: User Journey Flows
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -178,28 +189,9 @@ Show the generated user journey content and present choices:
 
 [Show the complete markdown content from step 6]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Let's refine our user journey designs
-[P] Party Mode - Bring different perspectives on user flows
-[C] Continue - Save this to the document and move to component strategy
+**Load `{checkpointMenu}` and display options.**
 
 ### 8. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with the current user journey content
-- Process the enhanced journey insights that come back
-- Ask user: "Accept these improvements to the user journeys? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with the current user journeys
-- Process the collaborative journey insights that come back
-- Ask user: "Accept these changes to the user journeys? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 

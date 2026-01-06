@@ -4,8 +4,11 @@ description: 'Celebrate successful agent edit completion'
 
 editPlan: '{bmb_creations_output_folder}/edit-plan-{agent-name}.md'
 
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'general'
 ---
 
 # Edit Step 10: Celebration
@@ -110,12 +113,12 @@ Append to editPlan:
 
 ### 6. Present MENU OPTIONS
 
-Display: "**Select an Option:** [A] Advanced Elicitation [P] Party Mode [X] Exit Workflow"
+**Load `{checkpointMenu}` to display options.**
+
+**[X] Exit Workflow** - Complete and save
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask}, and when finished redisplay the menu
-- IF P: Execute {partyModeWorkflow}, and when finished redisplay the menu
 - IF X: Save completion status to {editPlan} and end workflow gracefully
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#6-present-menu-options)
 
@@ -123,7 +126,6 @@ Display: "**Select an Option:** [A] Advanced Elicitation [P] Party Mode [X] Exit
 
 - ALWAYS halt and wait for user input after presenting menu
 - ONLY complete workflow when user selects 'X'
-- After other menu items execution, return to this menu
 
 ## CRITICAL STEP COMPLETION NOTE
 

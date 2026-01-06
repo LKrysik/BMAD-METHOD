@@ -4,8 +4,11 @@ nextStepFile: '{installed_path}/steps/step-07-workflows.md'
 modulePlanFile: '{bmb_creations_output_folder}/{module_name}/module-plan-{module_name}.md'
 agentTemplate: '{installed_path}/templates/agent.template.md'
 agent_examples_path: '{project-root}/bmb/reference/agents/module-examples'
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'creative'
 ---
 
 # Step 6: Create Module Agents
@@ -255,12 +258,12 @@ Update module-plan.md with agents section:
 
 ### 6. Present MENU OPTIONS
 
-Display: **Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue
+**Load `{checkpointMenu}` to display options.**
+
+[C] Continue to next step
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask} to refine agent designs
-- IF P: Execute {partyModeWorkflow} to get creative input on agent personas
 - IF C: Save agent creation status to module-plan.md, add step-06-agents to the end of the stepsCompleted array in frontmatter, then load nextStepFile
 - IF Any other comments or queries: help user respond then redisplay menu
 

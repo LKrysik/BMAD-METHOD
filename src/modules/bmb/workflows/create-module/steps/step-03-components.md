@@ -3,8 +3,11 @@ installed_path: '{project-root}/_bmad/bmb/workflows/create-module'
 nextStepFile: '{installed_path}/steps/step-04-structure.md'
 modulePlanFile: '{bmb_creations_output_folder}/{module_name}/module-plan-{module_name}.md'
 agent_examples_path: '{project-root}/bmb/reference/agents/module-examples'
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'architecture'
 ---
 
 # Step 3: Plan Module Components
@@ -225,12 +228,12 @@ Update module-plan.md with component section:
 
 ### 8. Present MENU OPTIONS
 
-Display: **Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue
+**Load `{checkpointMenu}` to display options.**
+
+[C] Continue to next step
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask} to explore alternative component architectures
-- IF P: Execute {partyModeWorkflow} to get creative input on component design
 - IF C: Save component plan to module-plan.md, add step-03-components to the end of the stepsCompleted array in frontmatter, then load nextStepFile
 - IF Any other comments or queries: help user respond then redisplay menu
 

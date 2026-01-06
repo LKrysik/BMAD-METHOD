@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/gdd.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'creative'
 ---
 
 # Step 10: Art & Audio
@@ -50,16 +52,10 @@ Define the visual art style and audio/music direction for the game, establishing
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after generating content
+- Present checkpoint menu after generating content
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]` before loading next step
 - FORBIDDEN to load next step until C is selected
-
-## COLLABORATION MENUS (A/P/C):
-
-- **A (Advanced Elicitation)**: Deep dive into aesthetic choices
-- **P (Party Mode)**: Get artistic perspectives
-- **C (Continue)**: Save the content to the document and proceed to next step
 
 ## CONTEXT BOUNDARIES:
 
@@ -185,7 +181,7 @@ Based on the conversation, prepare the content:
 {{how_art_and_audio_support_game_pillars}}
 ```
 
-### 5. Present Content and Menu
+### 5. Present Checkpoint Menu
 
 Show the generated content to the user and present:
 
@@ -201,32 +197,21 @@ Show the generated content to the user and present:
 - Is the audio direction achievable for your scope?
 - Do art and audio work together cohesively?
 
-**Select an Option:**
-[A] Advanced Elicitation - Deep dive into aesthetic details
-[P] Party Mode - Get artistic perspectives
-[C] Continue - Save this and move to Technical Specs (Step 11 of 14)"
+**Load `{checkpointMenu}` to display options.**
 
-### 6. Handle Menu Selection
+**[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`
 
-#### IF A (Advanced Elicitation):
+#### Menu Handling:
 
-- Execute {advancedElicitationTask} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
+- IF C (Continue): Append content to `{outputFile}`, update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]`, load `{nextStepFile}`
+- IF other input: Respond helpfully, re-display checkpoint menu
 
-#### IF P (Party Mode):
+#### EXECUTION RULES:
 
-- Execute {partyModeWorkflow} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
-
-#### IF C (Continue):
-
-- Append the final content to `{outputFile}`
-- Update frontmatter: `stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]`
-- Load `{nextStepFile}`
+- ALWAYS halt and wait for user input after presenting menu
+- ONLY proceed to next step when user selects 'C'
+- After Q/V/D/P execution completes, return to checkpoint menu
+- User can chat or ask questions - respond then re-display menu
 
 ## CRITICAL STEP COMPLETION NOTE
 
@@ -242,7 +227,7 @@ ONLY WHEN [C continue option] is selected and [art/audio content saved with fron
 - Audio direction documented
 - Aesthetic supports game pillars and tone
 - Platform constraints considered
-- A/P/C menu presented and handled correctly
+- Checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 ### SYSTEM FAILURE:
@@ -250,7 +235,7 @@ ONLY WHEN [C continue option] is selected and [art/audio content saved with fron
 - Generating art/audio direction without user input
 - Art style inappropriate for target platform
 - Missing references that help communicate vision
-- Not presenting A/P/C menu after content generation
+- Not presenting checkpoint menu after content generation
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

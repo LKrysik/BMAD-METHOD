@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/gdd.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'core-design'
 ---
 
 # Step 9: Level Design
@@ -55,11 +57,11 @@ Define the level design framework including level types, structure, and how leve
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9]` before loading next step
 - FORBIDDEN to load next step until C is selected
 
-## COLLABORATION MENUS (A/P/C):
+## CHECKPOINT
 
-- **A (Advanced Elicitation)**: Deep dive into level design principles
-- **P (Party Mode)**: Get perspectives on level structure
-- **C (Continue)**: Save the content to the document and proceed to next step
+**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+
+**[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
 ## CONTEXT BOUNDARIES:
 
@@ -210,26 +212,11 @@ Show the generated content to the user and present:
 - Does progression feel rewarding?
 - Are level types varied enough to maintain interest?
 
-**Select an Option:**
-[A] Advanced Elicitation - Deep dive into level design specifics
-[P] Party Mode - Get other perspectives on level structure
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Save this and move to Art & Audio (Step 10 of 14)"
 
 ### 7. Handle Menu Selection
-
-#### IF A (Advanced Elicitation):
-
-- Execute {advancedElicitationTask} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
-
-#### IF P (Party Mode):
-
-- Execute {partyModeWorkflow} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
 
 #### IF C (Continue):
 
@@ -251,7 +238,7 @@ ONLY WHEN [C continue option] is selected and [level design content saved with f
 - Level types defined with variety
 - Progression model documented
 - Tutorial integration addressed
-- A/P/C menu presented and handled correctly
+- Checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 ### SYSTEM FAILURE:
@@ -259,7 +246,7 @@ ONLY WHEN [C continue option] is selected and [level design content saved with f
 - Generating level designs without user input
 - Using wrong terminology for game type
 - Structure doesn't support core loop
-- Not presenting A/P/C menu after content generation
+- Not presenting checkpoint menu after content generation
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

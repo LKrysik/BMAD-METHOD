@@ -8,9 +8,11 @@ workflowFile: ../workflow.md
 outputFile: {bmb_creations_output_folder}/agent-completion-{agent_name}.md
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
 installationDocs: 'https://github.com/bmad-code-org/BMAD-METHOD/blob/main/docs/modules/bmb-bmad-builder/custom-content-installation.md#standalone-content-agents-workflows-tasks-tools-templates-prompts'
+
+# Advanced Elicitation Configuration
+aeList: 'general'
 ---
 
 # Step 9: Celebration and Installation Guidance
@@ -196,12 +198,12 @@ Save this content to `{outputFile}` for reference.
 
 ### 7. Present MENU OPTIONS
 
-Display: "**Select an Option:** [A] Advanced Elicitation [P] Party Mode [X] Exit Workflow"
+**Load `{checkpointMenu}` to display options.**
+
+**[X] Exit Workflow** - Complete and save
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask}, and when finished redisplay the menu
-- IF P: Execute {partyModeWorkflow}, and when finished redisplay the menu
 - IF X: Save content to {outputFile}, update frontmatter with workflow completion, then end workflow gracefully
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#7-present-menu-options)
 
@@ -209,7 +211,6 @@ Display: "**Select an Option:** [A] Advanced Elicitation [P] Party Mode [X] Exit
 
 - ALWAYS halt and wait for user input after presenting menu
 - ONLY complete workflow when user selects 'X'
-- After other menu items execution, return to this menu
 - User can chat or ask questions - always respond and then end with display again of the menu options
 
 ## CRITICAL STEP COMPLETION NOTE

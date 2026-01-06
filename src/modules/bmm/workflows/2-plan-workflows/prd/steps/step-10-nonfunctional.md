@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{planning_artifacts}/prd.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'quality'
 ---
 
 # Step 10: Non-Functional Requirements
@@ -35,25 +37,10 @@ partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
 ## EXECUTION PROTOCOLS:
 
 - 🎯 Show your analysis before taking any action
-- ⚠️ Present A/P/C menu after generating NFR content
+- ⚠️ Present {checkpointMenu} menu after generating NFR content
 - 💾 ONLY save when user chooses C (Continue)
 - 📖 Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9]` before loading next step
 - 🚫 FORBIDDEN to load next step until C is selected
-
-## COLLABORATION MENUS (A/P/C):
-
-This step will generate content and present choices:
-
-- **A (Advanced Elicitation)**: Use discovery protocols to ensure comprehensive quality attributes
-- **P (Party Mode)**: Bring technical perspectives to validate NFR completeness
-- **C (Continue)**: Save the content to the document and proceed to final step
-
-## PROTOCOL INTEGRATION:
-
-- When 'A' selected: Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml
-- When 'P' selected: Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md
-- PROTOCOLS always return to this step's A/P/C menu
-- User accepts/rejects protocol changes before proceeding
 
 ## CONTEXT BOUNDARIES:
 
@@ -201,28 +188,11 @@ Show the generated NFR content and present choices:
 
 **Note:** We've skipped categories that don't apply to avoid unnecessary requirements.
 
-**What would you like to do?**
-[A] Advanced Elicitation - Let's ensure we haven't missed critical quality attributes
-[P] Party Mode - Bring technical perspectives to validate NFR specifications
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Save this and move to Complete PRD (Step 11 of 11)"
 
 ### 7. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with the current NFR content
-- Process the enhanced quality attribute insights that come back
-- Ask user: "Accept these improvements to the non-functional requirements? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with the current NFR list
-- Process the collaborative technical validation and additions
-- Ask user: "Accept these changes to the non-functional requirements? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 
@@ -241,7 +211,7 @@ When user selects 'C', append the content directly to the document using the str
 ✅ NFRs connected to actual user needs and business context
 ✅ Vague requirements converted to testable criteria
 ✅ Domain-specific compliance requirements included if relevant
-✅ A/P/C menu presented and handled correctly
+✅ {checkpointMenu} menu presented and handled correctly
 ✅ Content properly appended to document when C selected
 
 ## FAILURE MODES:
@@ -251,7 +221,7 @@ When user selects 'C', append the content directly to the document using the str
 ❌ Not connecting NFRs to actual user or business needs
 ❌ Missing domain-specific compliance requirements
 ❌ Creating overly prescriptive technical requirements
-❌ Not presenting A/P/C menu after content generation
+❌ Not presenting {checkpointMenu} menu after content generation
 ❌ Appending content without user selecting 'C'
 
 ❌ **CRITICAL**: Reading only partial step file - leads to incomplete understanding and poor decisions
@@ -291,4 +261,4 @@ When user selects 'C', append the content directly to the document using the str
 
 After user selects 'C' and content is saved to document, load `{project-root}/_bmad/bmm/workflows/2-plan-workflows/prd/steps/step-11-complete.md` to finalize the PRD and complete the workflow.
 
-Remember: Do NOT proceed to step-11 until user explicitly selects 'C' from the A/P/C menu and content is saved!
+Remember: Do NOT proceed to step-11 until user explicitly selects 'C' from the {checkpointMenu} menu and content is saved!

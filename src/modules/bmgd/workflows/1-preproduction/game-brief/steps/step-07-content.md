@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/game-brief.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'creative'
 ---
 
 # Step 7: Content & Production
@@ -55,11 +57,11 @@ Define the content framework (world, narrative approach, volume), art and audio 
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7]` before loading next step
 
-## COLLABORATION MENUS (A/P/C):
+## CHECKPOINT
 
-- **A (Advanced Elicitation)**: Deep dive into risks
-- **P (Party Mode)**: Get perspectives on feasibility
-- **C (Continue)**: Save the content and proceed
+**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+
+**[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
 ## Sequence of Instructions (Do not deviate, skip, or optimize)
 
@@ -228,26 +230,11 @@ Show the generated content to the user and present:
 - Have we identified the biggest risks?
 - Are mitigations actionable?
 
-**Select an Option:**
-[A] Advanced Elicitation - Deep dive into risks
-[P] Party Mode - Get perspectives on feasibility
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Save this and move to Final Review (Step 8 of 8)"
 
 ### 7. Handle Menu Selection
-
-#### IF A (Advanced Elicitation):
-
-- Execute {advancedElicitationTask} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
-
-#### IF P (Party Mode):
-
-- Execute {partyModeWorkflow} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
 
 #### IF C (Continue):
 

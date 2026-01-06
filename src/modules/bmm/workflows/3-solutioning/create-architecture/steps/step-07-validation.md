@@ -1,3 +1,14 @@
+---
+name: 'step-07-validation'
+description: 'Validate architecture coherence and completeness'
+
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'sanity'
+---
+
 # Step 7: Architecture Validation & Completion
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -296,28 +307,9 @@ Show the validation results and present choices:
 
 [Show the complete markdown content from step 6]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Address any complex architectural concerns
-[P] Party Mode - Review validation from different implementation perspectives
-[C] Continue - Complete the architecture and finish workflow"
+**Load `{checkpointMenu}` and display options.**
 
 ### 8. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with validation issues
-- Process enhanced solutions for complex concerns
-- Ask user: "Accept these architectural improvements? (y/n)"
-- If yes: Update content, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with validation context
-- Process collaborative insights on implementation readiness
-- Ask user: "Accept these changes to the validation results? (y/n)"
-- If yes: Update content, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 

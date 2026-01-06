@@ -139,33 +139,25 @@ Check for proper references:
 
 ```yaml
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: '[appropriate-list-name]'
 ```
 
 **Violations to document:**
 
 - Missing Task References section (Major)
+- Missing checkpointMenu reference (Major)
+- Missing aeList configuration (Major)
 - Incorrect paths in task references (Major)
-- Missing standard task references (Minor)
 
 **D. Menu Pattern Validation:**
-Check menu structure:
-
-```markdown
-Display: "**Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue"
-
-#### Menu Handling Logic:
-
-- IF A: Execute {advancedElicitationTask}
-- IF P: Execute {partyModeWorkflow}
-- IF C: Save content to {outputFile}, update frontmatter, then only then load, read entire file, then execute {nextStepFile}
-```
+Check that steps use the standard checkpoint menu via `{checkpointMenu}` reference.
 
 **Violations to document:**
 
-- Non-standard menu format (Major)
-- Missing Menu Handling Logic section (Major)
+- Missing checkpointMenu reference in frontmatter (Major)
 - Incorrect "load, read entire file, then execute" pattern (Major)
 - Improper continuation logic (Critical)
 

@@ -1,11 +1,13 @@
 /**
- * Advanced Elicitation Methods Generator v4.0
+ * Advanced Elicitation Methods Generator v5.1
  *
- * Generates from methods.csv + ae_mapping.yaml:
- * - data/primary_verify.md
- * - data/primary_discover.md
- * - data/ae_by_categories/*.md
- * - data/ae_by_roles/*.md
+ * Generates from methods.csv + ae-custom-lists.yaml:
+ * - primary_verify.md
+ * - primary_discover.md
+ * - ae_by_categories/*.md
+ * - ae-lists/*.md (one file per list from ae-custom-lists.yaml)
+ *
+ * Output location: src/core/methods/
  *
  * @module ae-methods-generator
  */
@@ -16,10 +18,9 @@ const { parse } = require('csv-parse/sync');
 const crypto = require('node:crypto');
 const yaml = require('js-yaml');
 
-const DATA_DIR = 'src/core/workflows/advanced-elicitation/data';
+const DATA_DIR = 'src/core/methods';
 const SOURCE_CSV = 'methods.csv';
-const MAPPING_FILE = 'ae-mapping.yaml';
-const CUSTOM_LISTS_FILE = 'custom-lists.yaml';
+const CUSTOM_LISTS_FILE = 'ae-custom-lists.yaml';
 
 class AEMethodsGenerator {
   /**
@@ -29,7 +30,6 @@ class AEMethodsGenerator {
   constructor(projectRoot) {
     this.projectRoot = projectRoot;
     this.methods = [];
-    this.mapping = null;
     this.customLists = null;
     this.errors = [];
     this.warnings = [];
@@ -44,46 +44,35 @@ class AEMethodsGenerator {
     // 1. Load and parse CSV
     await this.loadMethods();
 
-    // 2. Load and parse YAML mapping
-    await this.loadMapping();
-
-    // 3. Load custom lists (optional)
+    // 2. Load custom lists (required - source of truth)
     await this.loadCustomLists();
 
-    // 4. Validate CSV
+    // 3. Validate CSV
     this.validateMethods();
 
-    // 5. Validate mapping
-    this.validateMapping();
-
-    // 6. Validate custom lists
+    // 4. Validate custom lists
     this.validateCustomLists();
 
     if (this.errors.length > 0) {
       throw new Error(`Validation failed:\n${this.errors.join('\n')}`);
     }
 
-    // 7. Calculate source hash for header
+    // 5. Calculate source hash for header
     this.sourceHash = await this.calculateSourceHash();
 
-    // 8. Generate primary_verify.md
+    // 6. Generate primary_verify.md
     await this.generatePrimaryVerify(this.sourceHash);
 
-    // 9. Generate primary_discover.md
+    // 7. Generate primary_discover.md
     await this.generatePrimaryDiscover(this.sourceHash);
 
-    // 10. Generate ae_by_categories/*.md
+    // 8. Generate ae_by_categories/*.md
     await this.generateCategoryFiles(this.sourceHash);
 
-    // 11. Generate ae_by_roles/*.md
-    await this.generateRoleFiles(this.sourceHash);
+    // 9. Generate ae-lists/*.md (from ae-custom-lists.yaml)
+    await this.generateListFiles(this.sourceHash);
 
-    // 12. Generate ae_user_lists.md (if custom lists exist)
-    await this.generateUserListsFile(this.sourceHash);
-
-    // 13. (Removed - scenarios dir no longer exists, quick_mode.md is in deep-verify/ and deep-discover/)
-
-    // 14. Report results
+    // 10. Report results
     return this.buildReport();
   }
 
@@ -126,70 +115,31 @@ class AEMethodsGenerator {
   }
 
   /**
-   * Load mapping from YAML file
+   * Load custom lists from YAML file (required - source of truth)
    * @throws {Error} If YAML file cannot be read or parsed
-   */
-  async loadMapping() {
-    const yamlPath = path.join(this.projectRoot, DATA_DIR, MAPPING_FILE);
-
-    let content;
-    try {
-      content = await fs.readFile(yamlPath, 'utf8');
-    } catch (error) {
-      throw new Error(`Cannot read mapping file: ${yamlPath}\n  ${error.message}`);
-    }
-
-    try {
-      this.mapping = yaml.load(content);
-    } catch (error) {
-      throw new Error(
-        `Invalid YAML syntax in ${MAPPING_FILE}:\n` +
-          `  Line ${error.mark?.line || '?'}: ${error.reason || error.message}\n` +
-          `  Check indentation and structure.`,
-      );
-    }
-
-    if (!this.mapping || typeof this.mapping !== 'object') {
-      throw new Error(`${MAPPING_FILE} must contain a valid YAML object`);
-    }
-  }
-
-  /**
-   * Load custom lists from YAML file (optional - no error if missing)
    */
   async loadCustomLists() {
     const yamlPath = path.join(this.projectRoot, DATA_DIR, CUSTOM_LISTS_FILE);
 
-    // Check if file exists - it's optional
-    if (!(await fs.pathExists(yamlPath))) {
-      this.customLists = null;
-      return;
-    }
-
     let content;
     try {
       content = await fs.readFile(yamlPath, 'utf8');
     } catch (error) {
-      this.warnings.push(`Cannot read custom lists file: ${error.message}`);
-      this.customLists = null;
-      return;
+      throw new Error(`Cannot read custom lists file: ${yamlPath}\n  ${error.message}`);
     }
 
     try {
       this.customLists = yaml.load(content);
     } catch (error) {
-      this.errors.push(
+      throw new Error(
         `Invalid YAML syntax in ${CUSTOM_LISTS_FILE}:\n` +
           `  Line ${error.mark?.line || '?'}: ${error.reason || error.message}\n` +
           `  Check indentation and structure.`,
       );
-      this.customLists = null;
-      return;
     }
 
-    if (this.customLists && typeof this.customLists !== 'object') {
-      this.errors.push(`${CUSTOM_LISTS_FILE} must contain a valid YAML object`);
-      this.customLists = null;
+    if (!this.customLists || typeof this.customLists !== 'object') {
+      throw new Error(`${CUSTOM_LISTS_FILE} must contain a valid YAML object`);
     }
   }
 
@@ -217,56 +167,79 @@ class AEMethodsGenerator {
   }
 
   /**
-   * Validate the mapping references exist in methods.csv
+   * Validate custom lists references exist in methods.csv
+   * Validates: verify-lists, discover-lists, domain-lists, primary
    */
-  validateMapping() {
+  validateCustomLists() {
     const allMethodNums = new Set(this.methods.map((m) => parseInt(m.num, 10)));
+    const validNamePattern = /^[a-z0-9-]+$/;
 
-    // Validate roles
-    if (this.mapping.roles) {
-      for (const [role, config] of Object.entries(this.mapping.roles)) {
-        if (!config.methods || !Array.isArray(config.methods)) {
-          this.errors.push(`Role '${role}' missing methods array`);
-          continue;
+    // Helper to validate method array
+    const validateMethods = (context, methods) => {
+      if (!Array.isArray(methods)) {
+        this.errors.push(`${context} methods must be an array`);
+        return;
+      }
+      for (const num of methods) {
+        if (!allMethodNums.has(num)) {
+          this.errors.push(`${context} references non-existent method: ${num}`);
         }
-        for (const num of config.methods) {
-          if (!allMethodNums.has(num)) {
-            this.errors.push(`Role '${role}' references non-existent method: ${num}`);
-          }
+      }
+    };
+
+    // Validate verify-lists
+    if (this.customLists['verify-lists']) {
+      for (const [listId, config] of Object.entries(this.customLists['verify-lists'])) {
+        if (!validNamePattern.test(listId)) {
+          this.errors.push(`verify-lists.${listId} has invalid ID format`);
+        }
+        validateMethods(`verify-lists.${listId}`, config.methods);
+      }
+    }
+
+    // Validate discover-lists
+    if (this.customLists['discover-lists']) {
+      for (const [listId, config] of Object.entries(this.customLists['discover-lists'])) {
+        if (!validNamePattern.test(listId)) {
+          this.errors.push(`discover-lists.${listId} has invalid ID format`);
+        }
+        validateMethods(`discover-lists.${listId}`, config.methods);
+      }
+    }
+
+    // Validate domain-lists (have both verify and discover)
+    if (this.customLists['domain-lists']) {
+      for (const [listId, config] of Object.entries(this.customLists['domain-lists'])) {
+        if (!validNamePattern.test(listId)) {
+          this.errors.push(`domain-lists.${listId} has invalid ID format`);
+        }
+        if (config.verify) {
+          validateMethods(`domain-lists.${listId}.verify`, config.verify);
+        }
+        if (config.discover) {
+          validateMethods(`domain-lists.${listId}.discover`, config.discover);
+        }
+        if (!config.verify && !config.discover) {
+          this.errors.push(`domain-lists.${listId} must have 'verify' or 'discover' array`);
         }
       }
     }
 
-    // Validate primary
-    if (this.mapping.primary) {
-      for (const [mode, config] of Object.entries(this.mapping.primary)) {
-        if (!config.methods || !Array.isArray(config.methods)) {
-          this.errors.push(`Primary '${mode}' missing methods array`);
-          continue;
-        }
-        for (const num of config.methods) {
-          if (!allMethodNums.has(num)) {
-            this.errors.push(`Primary '${mode}' references non-existent method: ${num}`);
-          }
-        }
+    // Validate primary pools
+    if (this.customLists.primary) {
+      if (this.customLists.primary.verify) {
+        validateMethods('primary.verify', this.customLists.primary.verify.methods);
       }
-    }
-
-    // Validate quick
-    if (this.mapping.quick) {
-      for (const [mode, config] of Object.entries(this.mapping.quick)) {
-        const allQuick = [...(config.recommended || []), ...(config.additional || [])];
-        for (const num of allQuick) {
-          if (!allMethodNums.has(num)) {
-            this.errors.push(`Quick '${mode}' references non-existent method: ${num}`);
-          }
-        }
+      if (this.customLists.primary.discover) {
+        validateMethods('primary.discover', this.customLists.primary.discover.methods);
       }
+    } else {
+      this.errors.push('Missing required "primary" section with verify and discover pools');
     }
 
     // Check primary counts
-    const verifyCount = this.mapping.primary?.verify?.methods?.length || 0;
-    const discoverCount = this.mapping.primary?.discover?.methods?.length || 0;
+    const verifyCount = this.customLists.primary?.verify?.methods?.length || 0;
+    const discoverCount = this.customLists.primary?.discover?.methods?.length || 0;
 
     if (verifyCount < 10 || verifyCount > 25) {
       this.warnings.push(`primary.verify count is ${verifyCount}, recommended: 10-25`);
@@ -277,82 +250,17 @@ class AEMethodsGenerator {
   }
 
   /**
-   * Validate custom lists references exist in methods.csv
-   */
-  validateCustomLists() {
-    if (!this.customLists?.lists) {
-      return;
-    }
-
-    const allMethodNums = new Set(this.methods.map((m) => parseInt(m.num, 10)));
-    const listNames = new Set();
-    const validNamePattern = /^[a-z0-9-]+$/;
-
-    for (const [listId, config] of Object.entries(this.customLists.lists)) {
-      // Validate list ID format
-      if (!validNamePattern.test(listId)) {
-        this.errors.push(`Custom list '${listId}' has invalid ID format. ` + `Use lowercase letters, numbers, and hyphens only.`);
-      }
-
-      // Check duplicate names
-      const name = config.name || listId;
-      if (listNames.has(name.toLowerCase())) {
-        this.errors.push(`Duplicate custom list name: '${name}'`);
-      }
-      listNames.add(name.toLowerCase());
-
-      // Validate required fields
-      if (!config.name) {
-        this.warnings.push(`Custom list '${listId}' missing 'name' field`);
-      }
-      if (!config.description) {
-        this.warnings.push(`Custom list '${listId}' missing 'description' field`);
-      }
-
-      // Validate methods array
-      if (!config.methods || !Array.isArray(config.methods)) {
-        this.errors.push(`Custom list '${listId}' missing 'methods' array`);
-        continue;
-      }
-
-      if (config.methods.length === 0) {
-        this.errors.push(`Custom list '${listId}' has empty 'methods' array`);
-        continue;
-      }
-
-      // Validate each method reference
-      for (const num of config.methods) {
-        if (!allMethodNums.has(num)) {
-          this.errors.push(`Custom list '${listId}' references non-existent method: ${num}`);
-        }
-      }
-
-      // Warn about list size
-      if (config.methods.length > 10) {
-        this.warnings.push(`Custom list '${listId}' has ${config.methods.length} methods. ` + `Recommended: 3-10 for focused sessions.`);
-      }
-    }
-  }
-
-  /**
-   * Calculate SHA256 hash of all source files (CSV + YAML mapping + custom lists)
+   * Calculate SHA256 hash of source files (CSV + ae-custom-lists.yaml)
    * @returns {Promise<string>} First 8 characters of hash
    */
   async calculateSourceHash() {
     const csvPath = path.join(this.projectRoot, DATA_DIR, SOURCE_CSV);
-    const yamlPath = path.join(this.projectRoot, DATA_DIR, MAPPING_FILE);
     const customListsPath = path.join(this.projectRoot, DATA_DIR, CUSTOM_LISTS_FILE);
 
     const csvContent = await fs.readFile(csvPath);
-    const yamlContent = await fs.readFile(yamlPath);
+    const customListsContent = await fs.readFile(customListsPath);
 
-    // Include custom-lists.yaml if it exists
-    let customListsContent = Buffer.alloc(0);
-    if (await fs.pathExists(customListsPath)) {
-      customListsContent = await fs.readFile(customListsPath);
-    }
-
-    const combined = Buffer.concat([csvContent, yamlContent, customListsContent]);
+    const combined = Buffer.concat([csvContent, customListsContent]);
     return crypto.createHash('sha256').update(combined).digest('hex').slice(0, 8);
   }
 
@@ -364,7 +272,7 @@ class AEMethodsGenerator {
   generateHeader(sourceHash) {
     const timestamp = new Date().toISOString();
     return `<!-- GENERATED: ${timestamp} -->
-<!-- SOURCE: methods.csv + ae-mapping.yaml + custom-lists.yaml (hash: ${sourceHash}) -->
+<!-- SOURCE: methods.csv + ae-custom-lists.yaml (hash: ${sourceHash}) -->
 <!-- DO NOT EDIT MANUALLY - regenerate with: npm run bmad:generate-ae-methods -->
 
 `;
@@ -375,7 +283,7 @@ class AEMethodsGenerator {
    * @param {string} sourceHash - Hash of source files
    */
   async generatePrimaryVerify(sourceHash) {
-    const methodNums = this.mapping.primary?.verify?.methods || [];
+    const methodNums = this.customLists.primary?.verify?.methods || [];
     const verifyMethods = methodNums.map((num) => this.methodsById.get(num)).filter(Boolean);
 
     let content = this.generateHeader(sourceHash);
@@ -410,7 +318,7 @@ ${method.description}
    * @param {string} sourceHash - Hash of source files
    */
   async generatePrimaryDiscover(sourceHash) {
-    const methodNums = this.mapping.primary?.discover?.methods || [];
+    const methodNums = this.customLists.primary?.discover?.methods || [];
     const discoverMethods = methodNums.map((num) => this.methodsById.get(num)).filter(Boolean);
 
     let content = this.generateHeader(sourceHash);
@@ -493,43 +401,81 @@ ${method.description}
   }
 
   /**
-   * Generate role files in ae_by_roles/
+   * Generate list files in ae-lists/ from ae-custom-lists.yaml
+   * Creates one file per list (verify-lists, discover-lists, domain-lists)
    * @param {string} sourceHash - Hash of source files
-   * @returns {Promise<number>} Number of roles generated
+   * @returns {Promise<Object>} Counts of generated lists by type
    */
-  async generateRoleFiles(sourceHash) {
-    const rolesDir = path.join(this.projectRoot, DATA_DIR, 'ae_by_roles');
-    await fs.ensureDir(rolesDir);
+  async generateListFiles(sourceHash) {
+    const listsDir = path.join(this.projectRoot, DATA_DIR, 'ae-lists');
+    await fs.ensureDir(listsDir);
 
-    // Clean old role files
-    const existingFiles = await fs.readdir(rolesDir);
+    // Clean old list files
+    const existingFiles = await fs.readdir(listsDir);
     for (const file of existingFiles) {
       if (file.endsWith('.md')) {
-        await fs.remove(path.join(rolesDir, file));
+        await fs.remove(path.join(listsDir, file));
       }
     }
 
-    const roles = Object.entries(this.mapping.roles || {});
+    const counts = { verify: 0, discover: 0, domain: 0 };
 
-    for (const [role, config] of roles) {
-      const methodNums = config.methods || [];
-      const roleMethods = methodNums.map((num) => this.methodsById.get(num)).filter(Boolean);
+    // Generate verify-only lists
+    if (this.customLists['verify-lists']) {
+      for (const [listId, config] of Object.entries(this.customLists['verify-lists'])) {
+        await this.generateSingleListFile(listsDir, listId, config, 'verify', sourceHash);
+        counts.verify++;
+      }
+    }
 
-      let content = this.generateHeader(sourceHash);
-      content += `# ${this.capitalize(role)} Role Methods
+    // Generate discover-only lists
+    if (this.customLists['discover-lists']) {
+      for (const [listId, config] of Object.entries(this.customLists['discover-lists'])) {
+        await this.generateSingleListFile(listsDir, listId, config, 'discover', sourceHash);
+        counts.discover++;
+      }
+    }
 
-**Focus:** ${config.description || 'No description'}
+    // Generate domain lists (combined verify + discover)
+    if (this.customLists['domain-lists']) {
+      for (const [listId, config] of Object.entries(this.customLists['domain-lists'])) {
+        await this.generateDomainListFile(listsDir, listId, config, sourceHash);
+        counts.domain++;
+      }
+    }
 
-${roleMethods.length} default methods for the ${role} aeRole.
+    return counts;
+  }
 
-Use \`aeRole: '${role}'\` in step frontmatter to use these methods with [P]redefined option.
+  /**
+   * Generate a single verify or discover list file
+   * @param {string} dir - Output directory
+   * @param {string} listId - List identifier
+   * @param {Object} config - List configuration
+   * @param {string} type - 'verify' or 'discover'
+   * @param {string} sourceHash - Source hash
+   */
+  async generateSingleListFile(dir, listId, config, type, sourceHash) {
+    const methodNums = config.methods || [];
+    const listMethods = methodNums.map((num) => this.methodsById.get(num)).filter(Boolean);
+    const name = config.name || this.capitalize(listId);
+    const typeLabel = type === 'verify' ? 'Verify' : 'Discover';
+
+    let content = this.generateHeader(sourceHash);
+    content += `# ${name}
+
+**Type:** ${typeLabel}-only list
+**Description:** ${config.description || 'No description'}
+**Methods:** ${listMethods.length}
+
+Use \`aeList: '${listId}'\` in step frontmatter.
 
 ---
 
 `;
 
-      for (const method of roleMethods) {
-        content += `## #${method.num} ${method.method_name}
+    for (const method of listMethods) {
+      content += `## #${method.num} ${method.method_name}
 
 ${method.description}
 
@@ -538,70 +484,41 @@ ${method.description}
 ---
 
 `;
-      }
-
-      const outputPath = path.join(rolesDir, `${role}.md`);
-      await fs.writeFile(outputPath, content, 'utf8');
     }
 
-    return roles.length;
+    const outputPath = path.join(dir, `${listId}.md`);
+    await fs.writeFile(outputPath, content, 'utf8');
   }
 
   /**
-   * Generate ae_user_lists.md file with all custom lists
-   * @param {string} sourceHash - Hash of source files
-   * @returns {Promise<number>} Number of lists generated
+   * Generate a domain list file (combined verify + discover)
+   * @param {string} dir - Output directory
+   * @param {string} listId - List identifier
+   * @param {Object} config - List configuration
+   * @param {string} sourceHash - Source hash
    */
-  async generateUserListsFile(sourceHash) {
-    if (!this.customLists?.lists) {
-      return 0;
-    }
-
-    const lists = Object.entries(this.customLists.lists);
-    if (lists.length === 0) {
-      return 0;
-    }
+  async generateDomainListFile(dir, listId, config, sourceHash) {
+    const name = config.name || this.capitalize(listId);
 
     let content = this.generateHeader(sourceHash);
-    content += `# User-Defined Method Lists
+    content += `# ${name}
 
-${lists.length} custom list(s) available via **[U] User Lists** menu option.
-
----
-
-## Quick Reference
-
-| List | Methods | Description |
-|------|---------|-------------|
-`;
-
-    for (const [listId, config] of lists) {
-      const methodCount = config.methods?.length || 0;
-      const name = config.name || listId;
-      const desc = config.description || 'No description';
-      content += `| **${name}** | ${methodCount} | ${desc} |\n`;
-    }
-
-    content += `
----
-
-`;
-
-    // Generate detailed section for each list
-    for (const [listId, config] of lists) {
-      const methodNums = config.methods || [];
-      const listMethods = methodNums.map((num) => this.methodsById.get(num)).filter(Boolean);
-      const name = config.name || listId;
-
-      content += `## ${name}
-
-**ID:** \`${listId}\`
+**Type:** Domain list (verify + discover)
 **Description:** ${config.description || 'No description'}
-**Methods:** ${listMethods.length}
+
+Use \`aeList: '${listId}'\` in step frontmatter.
+
+---
 
 `;
 
-      for (const method of listMethods) {
+    // Verify methods section
+    if (config.verify && config.verify.length > 0) {
+      const verifyMethods = config.verify.map((num) => this.methodsById.get(num)).filter(Boolean);
+      content += `## Verify Methods (${verifyMethods.length})
+
+`;
+      for (const method of verifyMethods) {
         content += `### #${method.num} ${method.method_name}
 
 ${method.description}
@@ -610,22 +527,34 @@ ${method.description}
 
 `;
       }
-
       content += `---
 
 `;
     }
 
-    const outputPath = path.join(this.projectRoot, DATA_DIR, 'ae_user_lists.md');
-    await fs.writeFile(outputPath, content, 'utf8');
+    // Discover methods section
+    if (config.discover && config.discover.length > 0) {
+      const discoverMethods = config.discover.map((num) => this.methodsById.get(num)).filter(Boolean);
+      content += `## Discover Methods (${discoverMethods.length})
 
-    return lists.length;
+`;
+      for (const method of discoverMethods) {
+        content += `### #${method.num} ${method.method_name}
+
+${method.description}
+
+**Pattern:** ${method.output_pattern}
+
+`;
+      }
+    }
+
+    const outputPath = path.join(dir, `${listId}.md`);
+    await fs.writeFile(outputPath, content, 'utf8');
   }
 
-  // ensureScenariosDir removed - quick_mode.md is now in deep-verify/ and deep-discover/
-
   /**
-   * Get badge string for method based on mapping
+   * Get badge string for method based on primary pools
    * @param {Object} method - Method object
    * @returns {string} Badge string like " [V]", " [D]", " [V][D]", or ""
    */
@@ -634,20 +563,12 @@ ${method.description}
     const num = parseInt(method.num, 10);
 
     // Check if in primary verify
-    if (this.mapping.primary?.verify?.methods?.includes(num)) {
+    if (this.customLists.primary?.verify?.methods?.includes(num)) {
       badges.push('V');
     }
     // Check if in primary discover
-    if (this.mapping.primary?.discover?.methods?.includes(num)) {
+    if (this.customLists.primary?.discover?.methods?.includes(num)) {
       badges.push('D');
-    }
-    // Check if in quick verify (recommended)
-    if (this.mapping.quick?.verify?.recommended?.includes(num)) {
-      badges.push('Q');
-    }
-    // Check if in quick discover (recommended)
-    if (this.mapping.quick?.discover?.recommended?.includes(num)) {
-      badges.push('T');
     }
 
     return badges.length > 0 ? ` [${badges.join('][')}]` : '';
@@ -667,22 +588,22 @@ ${method.description}
    * @returns {Object} Report object
    */
   buildReport() {
-    const verifyMethods = this.mapping.primary?.verify?.methods || [];
-    const discoverMethods = this.mapping.primary?.discover?.methods || [];
+    const verifyMethods = this.customLists.primary?.verify?.methods || [];
+    const discoverMethods = this.customLists.primary?.discover?.methods || [];
     const categories = [...new Set(this.methods.map((m) => m.category))];
-    const roles = Object.keys(this.mapping.roles || {});
-    const customLists = this.customLists?.lists ? Object.keys(this.customLists.lists) : [];
+
+    // Count lists by type
+    const verifyLists = Object.keys(this.customLists['verify-lists'] || {});
+    const discoverLists = Object.keys(this.customLists['discover-lists'] || {});
+    const domainLists = Object.keys(this.customLists['domain-lists'] || {});
+    const totalLists = verifyLists.length + discoverLists.length + domainLists.length;
 
     const generatedFiles = [
       'data/primary_verify.md',
       'data/primary_discover.md',
       `data/ae_by_categories/ (${categories.length} files)`,
-      `data/ae_by_roles/ (${roles.length} files)`,
+      `data/ae-lists/ (${totalLists} files)`,
     ];
-
-    if (customLists.length > 0) {
-      generatedFiles.push('data/ae_user_lists.md');
-    }
 
     return {
       totalMethods: this.methods.length,
@@ -690,14 +611,20 @@ ${method.description}
       primaryDiscoverCount: discoverMethods.length,
       categoryCount: categories.length,
       categories: categories,
-      roleCount: roles.length,
-      roles: roles,
-      customListCount: customLists.length,
-      customLists: customLists,
+      listCounts: {
+        verify: verifyLists.length,
+        discover: discoverLists.length,
+        domain: domainLists.length,
+        total: totalLists,
+      },
+      lists: {
+        verify: verifyLists,
+        discover: discoverLists,
+        domain: domainLists,
+      },
       sourceHash: this.sourceHash,
       warnings: this.warnings,
       generatedFiles: generatedFiles,
-      note: 'scenarios/ae_quick_mode.md is manually maintained (not generated)',
     };
   }
 
@@ -708,23 +635,16 @@ ${method.description}
    */
   static async checkFreshness(projectRoot) {
     const csvPath = path.join(projectRoot, DATA_DIR, SOURCE_CSV);
-    const yamlPath = path.join(projectRoot, DATA_DIR, MAPPING_FILE);
     const customListsPath = path.join(projectRoot, DATA_DIR, CUSTOM_LISTS_FILE);
     const verifyPath = path.join(projectRoot, DATA_DIR, 'primary_verify.md');
 
-    // Calculate current source hash (includes custom-lists.yaml if exists)
+    // Calculate current source hash
     let currentHash;
     try {
       const csvContent = await fs.readFile(csvPath);
-      const yamlContent = await fs.readFile(yamlPath);
+      const customListsContent = await fs.readFile(customListsPath);
 
-      // Include custom-lists.yaml if it exists
-      let customListsContent = Buffer.alloc(0);
-      if (await fs.pathExists(customListsPath)) {
-        customListsContent = await fs.readFile(customListsPath);
-      }
-
-      const combined = Buffer.concat([csvContent, yamlContent, customListsContent]);
+      const combined = Buffer.concat([csvContent, customListsContent]);
       currentHash = crypto.createHash('sha256').update(combined).digest('hex').slice(0, 8);
     } catch {
       return { fresh: false, reason: 'Cannot read source files', currentHash: null, generatedHash: null };

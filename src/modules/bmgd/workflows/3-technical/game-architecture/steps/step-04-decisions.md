@@ -19,7 +19,7 @@ architecturePatterns: '{workflow_path}/architecture-patterns.yaml'
 checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
 
 # AE Configuration
-aeRole: 'architecture'
+aeList: 'architecture'
 ---
 
 <!-- DEEP_VERIFY -->

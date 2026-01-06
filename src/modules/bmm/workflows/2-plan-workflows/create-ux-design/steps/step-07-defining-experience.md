@@ -1,3 +1,14 @@
+---
+name: 'step-07-defining-experience'
+description: 'Define the core interaction that defines the product'
+
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'creative'
+---
+
 # Step 7: Defining Core Experience
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -190,28 +201,9 @@ Show the generated defining experience content and present choices:
 
 [Show the complete markdown content from step 6]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Let's refine the core experience definition
-[P] Party Mode - Bring different perspectives on the defining interaction
-[C] Continue - Save this to the document and move to visual foundation
+**Load `{checkpointMenu}` and display options.**
 
 ### 8. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with the current defining experience content
-- Process the enhanced experience insights that come back
-- Ask user: "Accept these improvements to the defining experience? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with the current defining experience
-- Process the collaborative experience insights that come back
-- Ask user: "Accept these changes to the defining experience? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 

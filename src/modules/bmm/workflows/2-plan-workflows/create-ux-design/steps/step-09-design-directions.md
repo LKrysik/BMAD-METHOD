@@ -1,3 +1,14 @@
+---
+name: 'step-09-design-directions'
+description: 'Generate and evaluate design direction variations'
+
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'creative'
+---
+
 # Step 9: Design Direction Mockups
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -160,28 +171,9 @@ Show the generated design direction content and present choices:
 
 [Show the complete markdown content from step 6]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Let's refine our design direction
-[P] Party Mode - Bring different perspectives on visual choices
-[C] Continue - Save this to the document and move to user journey flows
+**Load `{checkpointMenu}` and display options.**
 
 ### 8. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with the current design direction content
-- Process the enhanced design insights that come back
-- Ask user: "Accept these improvements to the design direction? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with the current design direction
-- Process the collaborative design insights that come back
-- Ask user: "Accept these changes to the design direction? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 

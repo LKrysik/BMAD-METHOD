@@ -84,11 +84,11 @@ Located in `src/modules/bmb/workflows/agent/data/`:
 - **document-sharding-guide.md** (133 lines) - Sharded workflow format guide
 - **global-core-config.md** - Global core configuration reference
 
-**Advanced Elicitation Moved:**
+**Advanced Elicitation Methods Location:**
 
-- **From**: `docs/` root
-- **To**: `src/core/workflows/advanced-elicitation/`
-- **Status**: Now a proper core workflow with methods.csv
+- **Location**: `src/core/methods/`
+- **Contents**: methods.csv, ae-custom-lists.yaml, generated files
+- **Status**: Core methods catalog for Deep Verify/Discover workflows
 
 ### 📚 BMAD Core Concepts Documentation
 

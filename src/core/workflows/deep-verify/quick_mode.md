@@ -1,14 +1,14 @@
-# Quick Verify Mode v6.0
+# Quick Verify Mode v7.0
 
-Lightweight verification using inline methods from current step file.
+Fast verification using methods from ae-list files.
 
-**Token Cost:** ~500-800 tokens (target, not guarantee — complex content may require more)
+**Token Cost:** ~500-800 tokens (target)
 
 ---
 
 ## Purpose
 
-**Subject:** The CONTENT that agent generated
+**Subject:** The CONTENT that agent generated in current step
 **Agent Role:** Critic / Auditor
 **Goal:** Find problems, gaps, inconsistencies in the output
 
@@ -18,96 +18,127 @@ Lightweight verification using inline methods from current step file.
 
 | Parameter | Source | Required |
 |-----------|--------|----------|
-| `methods` | Parsed from `<!-- DEEP_VERIFY -->` | Yes |
-| `content` | Current step content being reviewed | Yes |
+| `aeList` | Step frontmatter (via checkpoint-exec) | Yes |
+| `content` | Current step content being verified | Yes |
+| `stepPath` | Path to current step file | Yes |
 
 ---
 
-## Behavior
+## Method Loading Protocol
 
-- Analyze the generated content against each method
-- Look for: scope drift, missing elements, contradictions, weak assumptions
-- Generate FINDINGS with severity ratings and EVIDENCE (quote + location)
-- Propose specific FIXES
-- Be adversarial toward the content, not the user
-- "No findings" requires PROOF OF SEARCH (inverted cost)
+### Step 1: Resolve aeList to File(s)
 
----
-
-## Method Format in Step File
-
-```markdown
-<!-- DEEP_VERIFY -->
-70,sanity,Scope Integrity Check,Verify artifact addresses FULL scope...,original task → classification → drift
-74,sanity,Grounding Check,List ALL assumptions (explicit AND hidden)...,assumptions → hidden → critical
-73,sanity,Coherence Check,Check definitions stability and contradictions...,definitions → contradictions
+```
+1. Parse aeList parameter (may be comma-separated)
+2. For each list name:
+   path = {project-root}/_bmad/core/methods/ae-lists/{name}.md
+3. Load file content
+4. If file not found → WARN and try next, fallback to 'general'
 ```
 
-**Columns:** `num,category,method_name,description,output_pattern`
+### Step 2: Extract Verify Methods
+
+```
+1. Find "## Verify Methods" section in ae-list file
+2. Parse each method entry:
+   - ### #{num} {method_name}
+   - Description paragraph
+   - **Pattern:** line
+3. Store methods array for execution
+```
+
+### Step 3: Handle Multiple Lists
+
+```
+If multiple ae-lists specified:
+1. Load all files
+2. Extract Verify Methods from each
+3. Combine into single methods array
+4. Remove duplicates (by method number)
+```
 
 ---
 
 ## Execution Protocol
 
-1. Parse `<!-- DEEP_VERIFY -->` methods from step
-2. For each method:
-   - Create brief SEARCH PLAN (what to look for, where)
-   - Apply method as AUDIT CRITERIA against content
-   - Search for violations, gaps, weaknesses
-   - Document with EVIDENCE: quote + location
-   - Classify as PASS / WARN / FAIL
-3. For methods with NO FINDINGS:
-   - Provide PROOF OF SEARCH (quotes showing you read the content)
-   - State closest-to-issue found and why dismissed
-4. **Quick Anti-Gaming Check (REQUIRED):**
-   - List 2 things you COULD HAVE checked but DIDN'T
-   - For each: classify as IRRELEVANT / CONSCIOUS-SKIP / UNCONSCIOUS-SKIP
-   - If UNCONSCIOUS-SKIP found: flag it in summary
-5. Present consolidated findings report
-6. Ask: **"Address findings? [Y] All / [S] Select / [N] Skip"**
-7. If Y/S: Apply fixes to content
-8. Ask: **"Want deeper analysis? [F] Full / [N] Done"**
-9. If F: Load `workflow.md` (full verification)
-10. Return to checkpoint menu
+### 1. Announce Methods
 
----
+```markdown
+## Quick Verify
 
-## Output Format
+**Using aeList:** {aeList}
+**Methods loaded:** {count} verify methods
+
+| # | Method | Focus |
+|---|--------|-------|
+| {num} | {name} | {pattern} |
+...
+
+Beginning verification...
+```
+
+### 2. Execute Each Method
+
+For each method from ae-list:
+
+```markdown
+### #{num} {method_name}
+
+**Search Plan:** [what I'm looking for based on method description]
+
+**Applying to content...**
+```
+
+Then search content and report:
+
+**If issue found:**
+```markdown
+**FINDING [F-001]** — {SEVERITY} — Confidence: {LEVEL}
+
+**Problem:** {what's wrong}
+**Evidence:** "{quote}" — line {N}
+**Impact:** {consequence}
+**Fix:** {specific action}
+```
+
+**If something missing:**
+```markdown
+**OMISSION [O-001]** — {SEVERITY} — Confidence: {LEVEL}
+
+**Missing:** {what should exist}
+**Expected because:** {method says / context shows}
+**Impact:** {consequence}
+**Add:** {what and where}
+```
+
+**If element passes:**
+```markdown
+**CLEAR:** #{num} {method_name} — no issues found
+**Proof of search:** "{quote from content}" — line {N}
+```
+
+### 3. Quick Anti-Gaming Check (REQUIRED)
+
+```markdown
+### Anti-Gaming Check
+
+**Things I COULD HAVE checked but DIDN'T:**
+
+| Potential Check | Classification | Reason |
+|-----------------|----------------|--------|
+| {thing 1} | IRRELEVANT / CONSCIOUS-SKIP / UNCONSCIOUS-SKIP | {why} |
+| {thing 2} | IRRELEVANT / CONSCIOUS-SKIP / UNCONSCIOUS-SKIP | {why} |
+
+**Flagged UNCONSCIOUS-SKIPs:** {list or "none"}
+```
+
+### 4. Present Results Summary
 
 ```markdown
 ## Quick Verify Results
 
-**Methods Applied:** {method_names}
-
----
-
-### Findings
-
-#### #{num} {method_name}: [PASS|WARN|FAIL]
-
-**Search Plan:** [what I looked for, where]
-
-**IF FINDINGS:**
-| Severity | Problem | Evidence | Fix |
-|----------|---------|----------|-----|
-| CRITICAL | [issue] | "[quote]" — line __ | [fix] |
-| IMPORTANT | [issue] | "[quote]" — line __ | [fix] |
-
-**IF NO FINDINGS:**
-Proof of search: "[quote from section A]" — line __
-Closest-to-issue: "[quote]" — dismissed because [reason]
-
----
-
-### Quick Anti-Gaming Check
-
-**Things I COULD HAVE checked but DIDN'T:**
-| Potential Check | Classification | Reason |
-|-----------------|----------------|--------|
-| [thing 1] | IRRELEVANT / CONSCIOUS-SKIP / UNCONSCIOUS-SKIP | [why] |
-| [thing 2] | IRRELEVANT / CONSCIOUS-SKIP / UNCONSCIOUS-SKIP | [why] |
-
-**Flagged UNCONSCIOUS-SKIPs:** [list or "none"]
+**aeList used:** {aeList}
+**Methods applied:** {method_names}
 
 ---
 
@@ -116,30 +147,67 @@ Closest-to-issue: "[quote]" — dismissed because [reason]
 **Overall Status:** [PASS | NEEDS ATTENTION | REQUIRES FIXES]
 **Issues Found:** {critical} critical, {important} important, {minor} minor
 **Anti-Gaming:** {unconscious_skips} flagged
-**Recommendations:**
-- {specific action items}
+
+### Issues Table
+
+| ID | Type | Severity | Problem | Fix |
+|----|------|----------|---------|-----|
+| F-001 | FINDING | {level} | {issue} | {fix} |
+| O-001 | OMISSION | {level} | {missing} | {add} |
+
+### Recommendations
+
+- {specific action item 1}
+- {specific action item 2}
 
 ---
 
-**Address findings?**
-[Y] Apply all fixes
-[S] Select specific fixes
-[N] Skip — content is acceptable
+**What would you like to do?**
+
+[F] Fix issues — apply all suggested fixes
+[S] Select fixes — choose which to apply
+[N] No changes — content is acceptable
 
 **Want deeper analysis?**
-[F] Full verify — comprehensive method selection
-[N] Done — return to checkpoint
+
+[V] Full verify — comprehensive verification workflow
+[D] Done — return to step menu
 ```
+
+### 5. Handle User Response
+
+**If [F] Fix all:**
+1. Apply all suggested fixes to content
+2. Show changes made
+3. Return to step menu
+
+**If [S] Select:**
+1. List each fix with checkbox
+2. User selects which to apply
+3. Apply selected fixes
+4. Return to step menu
+
+**If [N] No changes:**
+1. Keep content as-is
+2. Return to step menu
+
+**If [V] Full verify:**
+1. Load deep-verify/workflow.md
+2. Pass same parameters
+3. Execute full verification
+
+**If [D] Done:**
+1. Return to calling step's menu
 
 ---
 
 ## Guidelines
 
 **DO:**
-- Be adversarial toward the CONTENT
+- Be adversarial toward the CONTENT (not the user)
 - Find real problems, not trivial ones
-- Provide specific evidence with quotes + locations
-- Suggest concrete fixes
+- Provide specific evidence with quotes + line numbers
+- Suggest concrete, actionable fixes
 - Require proof when claiming "no issues"
 
 **DON'T:**
@@ -147,14 +215,13 @@ Closest-to-issue: "[quote]" — dismissed because [reason]
 - Generate vague or generic feedback
 - Claim "no issues" without proof of search
 - Skip methods that might find problems
+- Answer for the user
 
 ---
 
 ## Return Protocol
 
-After presenting results:
-1. Ask for user response (address findings)
-2. Apply changes if accepted
-3. Offer tiered escalation:
-   - **[F] Full** → Load `workflow.md`
-   - **[N] Done** → Return to checkpoint menu
+After presenting results and handling user choice:
+1. Apply any accepted changes
+2. Return to calling step's A/P/C menu
+3. Do NOT stay in quick mode

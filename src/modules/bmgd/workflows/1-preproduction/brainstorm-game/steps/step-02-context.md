@@ -11,6 +11,12 @@ nextStepFile: '{workflow_path}/steps/step-03-ideation.md'
 workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/brainstorming-session-{date}.md'
 
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'creative'
+
 # Context Files
 gameContext: '{workflow_path}/game-context.md'
 gameBrainMethods: '{workflow_path}/game-brain-methods.csv'
@@ -157,26 +163,9 @@ Show the loaded context and present:
 
 **Ready to start ideation?**
 
-**Select an Option:**
-[A] Advanced Elicitation - Explore technique combinations
-[P] Party Mode - Get perspectives on approaches
-[C] Continue - Save this and move to Ideation Session (Step 3 of 4)"
+**Load `{checkpointMenu}` and display options.**
 
 ### 7. Handle Menu Selection
-
-#### IF A (Advanced Elicitation):
-
-- Explore technique combinations and synergies
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
-
-#### IF P (Party Mode):
-
-- Get multiple perspectives on brainstorming approaches
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
 
 #### IF C (Continue):
 

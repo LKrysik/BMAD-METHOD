@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/game-brief.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'vision'
 ---
 
 # Step 2: Game Vision
@@ -56,11 +58,11 @@ Capture the core game vision including the working title, one-sentence concept, 
 - Update frontmatter `stepsCompleted: [1, 2]` before loading next step
 - FORBIDDEN to load next step until C is selected
 
-## COLLABORATION MENUS (A/P/C):
+## CHECKPOINT
 
-- **A (Advanced Elicitation)**: Dig deeper into the vision
-- **P (Party Mode)**: Get multiple perspectives on the vision
-- **C (Continue)**: Save the content to the document and proceed to next step
+**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+
+**[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
 ## Sequence of Instructions (Do not deviate, skip, or optimize)
 
@@ -164,26 +166,11 @@ Show the generated content to the user and present:
 - Does the pitch hook attention?
 - Does the vision inspire?
 
-**Select an Option:**
-[A] Advanced Elicitation - Refine and strengthen the vision
-[P] Party Mode - Get other perspectives on the vision
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Save this and move to Target Market (Step 3 of 8)"
 
 ### 8. Handle Menu Selection
-
-#### IF A (Advanced Elicitation):
-
-- Execute {advancedElicitationTask} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
-
-#### IF P (Party Mode):
-
-- Execute {partyModeWorkflow} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
 
 #### IF C (Continue):
 

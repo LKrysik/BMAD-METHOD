@@ -9,8 +9,6 @@ expertValidation: ../data/expert-agent-validation.md
 agentCompilation: ../data/agent-compilation.md
 builtYaml: '{bmb_creations_output_folder}/{agent-name}/{agent-name}.agent.yaml'
 
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
 ---
 
 # Edit Step 9d: Validate Structure (After Edit)

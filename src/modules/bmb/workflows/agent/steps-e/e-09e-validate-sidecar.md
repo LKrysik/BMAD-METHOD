@@ -9,8 +9,6 @@ criticalActions: ../data/critical-actions.md
 builtYaml: '{bmb_creations_output_folder}/{agent-name}/{agent-name}.agent.yaml'
 sidecarFolder: '{bmb_creations_output_folder}/{agent-name}/{agent-name}-sidecar/'
 
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
 ---
 
 # Edit Step 9e: Validate Sidecar (After Edit)

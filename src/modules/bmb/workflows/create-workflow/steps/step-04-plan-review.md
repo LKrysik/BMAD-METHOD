@@ -14,8 +14,11 @@ targetWorkflowPath: '{bmb_creations_output_folder}/workflows/{new_workflow_name}
 workflowPlanFile: '{targetWorkflowPath}/workflow-plan-{new_workflow_name}.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'architecture'
+
 # Template References
 # No template needed - will append review summary directly to workflow plan
 ---
@@ -172,7 +175,9 @@ Based on your requirements:
 
 ### 7. Present MENU OPTIONS
 
-Display: **Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue to Design
+**Load `{checkpointMenu}` to display options.**
+
+[C] Continue to Design
 
 #### EXECUTION RULES:
 
@@ -184,8 +189,6 @@ Display: **Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Conti
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask}
-- IF P: Execute {partyModeWorkflow}
 - IF C: Check if workflow produces documents:
   - If YES: Update frontmatter, then load nextStepFormDesign
   - If NO: Update frontmatter, then load nextStepDesign

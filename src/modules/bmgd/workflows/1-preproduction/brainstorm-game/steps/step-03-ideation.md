@@ -14,9 +14,6 @@ outputFile: '{output_folder}/brainstorming-session-{date}.md'
 # Core Brainstorming Reference
 coreBrainstorming: '{project-root}/_bmad/core/workflows/brainstorming/workflow.yaml'
 
-# Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
 ---
 
 # Step 3: Ideation Session

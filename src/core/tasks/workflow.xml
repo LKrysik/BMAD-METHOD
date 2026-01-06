@@ -72,16 +72,17 @@
           <mandate>Generate content for this section</mandate>
           <mandate>Save to file (Write first time, Edit subsequent)</mandate>
           <action>Display generated content</action>
-          <ask> [a] Advanced Elicitation, [c] Continue, [p] Party-Mode, [y] YOLO the rest of this document only. WAIT for response. <if
-              response="a">
-              <action>Start the advanced elicitation workflow {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml</action>
+          <ask> [v] Verify, [d] Discover, [c] Continue, [y] YOLO the rest of this document only. WAIT for response. <if
+              response="v">
+              <action>Load checkpoint menu and execute Verify: {project-root}/_bmad/core/menus/step-checkpoint/checkpoint-exec.md</action>
+            </if>
+            <if
+              response="d">
+              <action>Load checkpoint menu and execute Discover: {project-root}/_bmad/core/menus/step-checkpoint/checkpoint-exec.md</action>
             </if>
             <if
               response="c">
               <action>Continue to next step</action>
-            </if>
-            <if response="p">
-              <action>Start the party-mode workflow {project-root}/_bmad/core/workflows/party-mode/workflow.yaml</action>
             </if>
             <if
               response="y">

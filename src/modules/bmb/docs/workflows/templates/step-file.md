@@ -16,8 +16,7 @@ outputFile: "{output_folder}/{{outputFileName}}-{project_name}.md"
 {{/hasOutput}}
 
 # Task References (list only if used in THIS step file instance and only the ones used, there might be others)
-advancedElicitationTask: "{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml"
-partyModeWorkflow: "{project-root}/_bmad/core/workflows/party-mode/workflow.md"
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
 
 {{#hasTemplates}}
 # Template References
@@ -95,7 +94,7 @@ partyModeWorkflow: "{project-root}/_bmad/core/workflows/party-mode/workflow.md"
 
 ### {{menuNumber}}. Present MENU OPTIONS
 
-Display: **{{menuDisplay}}**
+Display: **{{checkpointMenu}}**
 
 #### EXECUTION RULES:
 

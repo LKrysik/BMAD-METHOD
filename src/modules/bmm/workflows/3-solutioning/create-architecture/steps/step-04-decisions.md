@@ -1,3 +1,14 @@
+---
+name: 'step-04-decisions'
+description: 'Make core architectural decisions collaboratively'
+
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'architecture'
+---
+
 # Step 4: Core Architectural Decisions
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -255,28 +266,9 @@ Show the generated decisions content and present choices:
 
 [Show the complete markdown content from step 5]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Explore innovative approaches to any specific decisions
-[P] Party Mode - Review decisions from multiple perspectives
-[C] Continue - Save these decisions and move to implementation patterns"
+**Load `{checkpointMenu}` and display options.**
 
 ### 7. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with specific decision categories
-- Process enhanced insights about particular decisions
-- Ask user: "Accept these enhancements to the architectural decisions? (y/n)"
-- If yes: Update content, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with architectural decisions context
-- Process collaborative insights about decision trade-offs
-- Ask user: "Accept these changes to the architectural decisions? (y/n)"
-- If yes: Update content, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 

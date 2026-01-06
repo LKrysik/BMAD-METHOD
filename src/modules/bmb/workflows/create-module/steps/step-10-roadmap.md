@@ -3,8 +3,11 @@ installed_path: '{project-root}/_bmad/bmb/workflows/create-module'
 nextStepFile: '{installed_path}/steps/step-11-validate.md'
 modulePlanFile: '{bmb_creations_output_folder}/{module_name}/module-plan-{module_name}.md'
 moduleTodoFile: '{bmb_creations_output_folder}/{module_name}/TODO.md'
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'planning'
 ---
 
 # Step 10: Generate Development Roadmap
@@ -296,12 +299,12 @@ Update module-plan.md with roadmap section:
 
 ### 7. Present MENU OPTIONS
 
-Display: **Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue
+**Load `{checkpointMenu}` to display options.**
+
+[C] Continue to next step
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask} to explore development approaches
-- IF P: Execute {partyModeWorkflow} to get creative input on implementation
 - IF C: Save roadmap info to module-plan.md, add step-10-roadmap to the end of the stepsCompleted array in frontmatter, then load nextStepFile
 - IF Any other comments or queries: help user respond then redisplay menu
 

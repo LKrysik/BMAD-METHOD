@@ -12,8 +12,10 @@ outputFile: '{output_folder}/workflow-edit-{target_workflow_name}.md'
 nextStepFile: '{workflow_path}/steps/step-05-compliance-check.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'sanity'
 
 # Template References
 validationTemplate: '{workflow_path}/templates/validation-results.md'
@@ -151,20 +153,10 @@ Then load and append content from {completionTemplate}
 
 ## FINAL MENU OPTIONS
 
-Display: **Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue
-
-### EXECUTION RULES:
-
-- ALWAYS halt and wait for user input after presenting menu
-- ONLY proceed to next step when user selects 'C'
-- After other menu items execution, return to this menu
-- User can chat or ask questions - always respond and then end with display again of the menu options
-- Use menu handling logic section below
+**Load `{checkpointMenu}` to display options.**
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask}
-- IF P: Execute {partyModeWorkflow}
 - IF C: Save content to {outputFile}, update frontmatter, then only then load, read entire file, then execute {nextStepFile}
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#final-menu-options)
 

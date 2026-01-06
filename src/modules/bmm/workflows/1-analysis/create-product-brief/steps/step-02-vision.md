@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{planning_artifacts}/product-brief-{{project_name}}-{{date}}.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'vision'
 ---
 
 # Step 2: Product Vision Discovery
@@ -157,21 +159,14 @@ Prepare the following structure for document append:
 **Here's what I'll add to the document:**
 [Show the complete markdown content from step 6]
 
-**Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue"
+**Load `{checkpointMenu}` to display options.**
+
+[C] Continue - Save this and move to Target Users Discovery"
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask} with current vision content to dive deeper and refine
-- IF P: Execute {partyModeWorkflow} to bring different perspectives to positioning and differentiation
 - IF C: Save content to {outputFile}, update frontmatter with stepsCompleted: [1, 2], then only then load, read entire file, then execute {nextStepFile}
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#7-present-menu-options)
-
-#### EXECUTION RULES:
-
-- ALWAYS halt and wait for user input after presenting menu
-- ONLY proceed to next step when user selects 'C'
-- After other menu items execution, return to this menu with updated content
-- User can chat or ask questions - always respond and then end with display again of the menu options
 
 ## CRITICAL STEP COMPLETION NOTE
 
@@ -187,7 +182,7 @@ ONLY WHEN [C continue option] is selected and [vision content finalized and save
 - Compelling solution vision that addresses the core problem
 - Unique differentiators that provide competitive advantage
 - Executive summary that captures the product essence
-- A/P/C menu presented and handled correctly with proper task execution
+- {checkpointMenu} menu presented and handled correctly
 - Content properly appended to document when C selected
 - Frontmatter updated with stepsCompleted: [1, 2]
 
@@ -197,7 +192,7 @@ ONLY WHEN [C continue option] is selected and [vision content finalized and save
 - Creating solution vision without fully understanding the problem
 - Missing unique differentiators or competitive insights
 - Generating vision without real user input and collaboration
-- Not presenting standard A/P/C menu after content generation
+- Not presenting {checkpointMenu} menu after content generation
 - Appending content without user selecting 'C'
 - Not updating frontmatter properly
 

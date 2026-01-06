@@ -1,3 +1,14 @@
+---
+name: 'step-13-responsive-accessibility'
+description: 'Define responsive design and accessibility strategy'
+
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'quality'
+---
+
 # Step 13: Responsive Design & Accessibility
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -200,28 +211,9 @@ Show the generated responsive and accessibility content and present choices:
 
 [Show the complete markdown content from step 6]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Let's refine our responsive/accessibility strategy
-[P] Party Mode - Bring different perspectives on inclusive design
-[C] Continue - Save this to the document and complete the workflow
+**Load `{checkpointMenu}` and display options.**
 
 ### 8. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with the current responsive/accessibility content
-- Process the enhanced insights that come back
-- Ask user: "Accept these improvements to the responsive/accessibility strategy? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with the current responsive/accessibility strategy
-- Process the collaborative insights that come back
-- Ask user: "Accept these changes to the responsive/accessibility strategy? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 

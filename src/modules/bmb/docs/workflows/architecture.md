@@ -111,13 +111,17 @@ step-[appropriate-next].md
 ### Standard Menu Pattern
 
 ```
-Display: **Select an Option:** [A] [Action] [P] Party Mode [C] Continue
+**Load `{checkpointMenu}` to display options.**
 
-#### Menu Handling Logic:
-- IF A: Execute {advancedElicitationTask}
-- IF P: Execute {partyModeWorkflow}
-- IF C: Save content, update frontmatter, load next step
+**[C] Continue:** Save to `{outputFile}` and load `{nextStepFile}`
+
+#### Menu Handling:
+- IF C (Continue): Save content, update frontmatter, load next step
+- IF other input: Respond helpfully, re-display checkpoint menu
 ```
+
+The checkpoint menu (`checkpoint-menu.md`) displays Q/V/D/P options and handles routing via `checkpoint-exec.md`.
+Each step defines its own [C] Continue action since it's step-specific.
 
 ### Menu Rules
 

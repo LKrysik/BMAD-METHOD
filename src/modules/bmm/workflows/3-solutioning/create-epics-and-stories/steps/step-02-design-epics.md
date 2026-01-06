@@ -11,12 +11,14 @@ nextStepFile: '{workflow_path}/steps/step-03-create-stories.md'
 workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{planning_artifacts}/epics.md'
 
-# Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
-
 # Template References
 epicsTemplate: '{workflow_path}/templates/epics-template.md'
+
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'planning'
 ---
 
 # Step 2: Design Epic List
@@ -188,23 +190,13 @@ After approval, update {outputFile}:
 2. Replace {{requirements_coverage_map}} with the coverage map
 3. Ensure all FRs are mapped to epics
 
-### 8. Present MENU OPTIONS
+### 8. Present Menu and Handle Selection
 
-Display: "**Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue"
+**Load `{checkpointMenu}` and display options.**
 
-#### Menu Handling Logic:
+#### IF C (Continue):
 
-- IF A: Execute {advancedElicitationTask}
-- IF P: Execute {partyModeWorkflow}
-- IF C: Save approved epics_list to {outputFile}, update frontmatter, then only then load, read entire file, then execute {nextStepFile}
-- IF Any other comments or queries: help user respond then [Redisplay Menu Options](#8-present-menu-options)
-
-#### EXECUTION RULES:
-
-- ALWAYS halt and wait for user input after presenting menu
-- ONLY proceed to next step when user selects 'C'
-- After other menu items execution completes, redisplay the menu
-- User can chat or ask questions - always respond when conversation ends, redisplay the menu options
+Save approved epics_list to {outputFile}, update frontmatter `stepsCompleted: [1, 2]`, then load and execute {nextStepFile}
 
 ## CRITICAL STEP COMPLETION NOTE
 

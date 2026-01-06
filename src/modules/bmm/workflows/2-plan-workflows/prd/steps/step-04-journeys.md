@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{planning_artifacts}/prd.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'stakeholder'
 ---
 
 # Step 4: User Journey Mapping
@@ -35,25 +37,10 @@ partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
 ## EXECUTION PROTOCOLS:
 
 - 🎯 Show your analysis before taking any action
-- ⚠️ Present A/P/C menu after generating journey content
+- ⚠️ Present A/C menu after generating journey content
 - 💾 ONLY save when user chooses C (Continue)
 - 📖 Update frontmatter `stepsCompleted: [1, 2, 3, 4]` before loading next step
 - 🚫 FORBIDDEN to load next step until C is selected
-
-## COLLABORATION MENUS (A/P/C):
-
-This step will generate content and present choices:
-
-- **A (Advanced Elicitation)**: Use discovery protocols to develop deeper journey insights
-- **P (Party Mode)**: Bring multiple perspectives to map comprehensive user journeys
-- **C (Continue)**: Save the content to the document and proceed to next step
-
-## PROTOCOL INTEGRATION:
-
-- When 'A' selected: Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml
-- When 'P' selected: Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md
-- PROTOCOLS always return to this step's A/P/C menu
-- User accepts/rejects protocol changes before proceeding
 
 ## CONTEXT BOUNDARIES:
 
@@ -214,28 +201,11 @@ Show the generated journey content and present choices:
 
 [Show the complete markdown content from step 6]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Let's dive deeper into these user journeys
-[P] Party Mode - Bring different perspectives to ensure we have all journeys
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Save this and move to Domain Requirements (Step 5 of 11)"
 
 ### 8. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with the current journey content
-- Process the enhanced journey insights that come back
-- Ask user: "Accept these improvements to the user journeys? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with the current journeys
-- Process the collaborative journey improvements and additions
-- Ask user: "Accept these changes to the user journeys? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 
@@ -255,7 +225,7 @@ When user selects 'C', append the content directly to the document using the str
 ✅ Complete story-based journey mapping with emotional arc
 ✅ Journey requirements clearly connected to capabilities needed
 ✅ Minimum 3-4 compelling narrative journeys covering different user types
-✅ A/P/C menu presented and handled correctly
+✅ {checkpointMenu} menu presented and handled correctly
 ✅ Content properly appended to document when C selected
 
 ## FAILURE MODES:
@@ -267,7 +237,7 @@ When user selects 'C', append the content directly to the document using the str
 ❌ Missing critical decision points and failure scenarios
 ❌ Not connecting journeys to required capabilities
 ❌ Not having enough journey diversity (admin, support, API, etc.)
-❌ Not presenting A/P/C menu after content generation
+❌ Not presenting {checkpointMenu} menu after content generation
 ❌ Appending content without user selecting 'C'
 
 ❌ **CRITICAL**: Reading only partial step file - leads to incomplete understanding and poor decisions
@@ -288,4 +258,4 @@ When user selects 'C', append the content directly to the document using the str
 
 After user selects 'C' and content is saved to document, load `./step-05-domain.md`.
 
-Remember: Do NOT proceed to step-05 until user explicitly selects 'C' from the A/P/C menu and content is saved!
+Remember: Do NOT proceed to step-05 until user explicitly selects 'C' from the A/C menu and content is saved!

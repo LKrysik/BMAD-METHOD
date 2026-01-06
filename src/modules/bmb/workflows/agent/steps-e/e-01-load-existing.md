@@ -10,8 +10,11 @@ editPlan: '{bmb_creations_output_folder}/edit-plan-{agent-name}.md'
 agentMetadata: ../data/agent-metadata.md
 agentMenuPatterns: ../data/agent-menu-patterns.md
 
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'research'
 ---
 
 # Edit Step 1: Load Existing Agent

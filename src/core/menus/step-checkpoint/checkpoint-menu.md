@@ -1,18 +1,19 @@
 # Checkpoint Menu
 
-Display at workflow checkpoints. Simple gate to dedicated workflows.
+Display at workflow step checkpoints. Gateway to verification and discovery workflows.
 
 ---
 
 ## Menu
 
-**[V] Verify** | **[D] Discover** | **[C] Continue**
+**[Q] Quick** | **[V] Verify** | **[D] Discover** | **[P] Party Mode**
 
 | Key | Action | Purpose |
 |-----|--------|---------|
-| **V** | Verify | Check agent's work: completeness, consistency, quality, alignment |
-| **D** | Discover | Explore with user: assumptions, alternatives, deeper needs, other perspectives |
-| **C** | Continue | Content is good, proceed to next step |
+| **Q** | Quick verify | Fast verification using aeList methods from current step |
+| **V** | Verify | Full deep verification - check completeness, consistency, quality |
+| **D** | Discover | Full deep discovery - explore assumptions, alternatives, deeper needs |
+| **P** | Party Mode | Multi-agent collaborative discussion |
 
 ---
 
@@ -28,15 +29,30 @@ Agent verification cannot check these - they require YOUR judgment:
 
 ## Execution
 
-### V (Verify) or D (Discover):
+### Q (Quick Verify):
 
 **LOAD:** `{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-exec.md`
 
-Pass selected mode (verify/discover) to router.
+Pass mode='quick' and current step context to router.
+Router will extract aeList from step frontmatter and execute quick_mode.md.
 
-### C (Continue):
+### V (Verify):
 
-Execute Continue action from step file (save to outputFile, load nextStepFile).
+**LOAD:** `{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-exec.md`
+
+Pass mode='verify' to router. Router will load deep-verify/workflow.md.
+
+### D (Discover):
+
+**LOAD:** `{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-exec.md`
+
+Pass mode='discover' to router. Router will load deep-discover/workflow.md.
+
+### P (Party Mode):
+
+**EXECUTE:** `{project-root}/_bmad/core/workflows/party-mode/workflow.md`
+
+When finished, return to this menu.
 
 ### Other input:
 
@@ -44,6 +60,19 @@ Treat as question or comment. Respond, then re-display menu.
 
 ---
 
-## Party Mode
+## Context Preservation
 
-Multi-agent discussions are available separately via `/party` command, not in checkpoint menu.
+When this menu is called from a step:
+- The calling step's content is the SUBJECT of verification/discovery
+- The calling step's aeList determines which methods to use
+- After any option completes, return to the calling step's menu
+
+---
+
+## Return Protocol
+
+After any verification, discovery, or party mode completes:
+1. Present results/insights to user
+2. Ask: "Apply changes? / Continue exploring? / Return to step?"
+3. Handle response
+4. Return to calling step's menu (NOT this checkpoint menu)

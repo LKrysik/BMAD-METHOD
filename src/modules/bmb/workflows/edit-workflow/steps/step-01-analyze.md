@@ -11,6 +11,12 @@ nextStepFile: '{workflow_path}/steps/step-02-discover.md'
 workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/workflow-edit-{target_workflow_name}.md'
 
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'research'
+
 # Template References
 analysisTemplate: '{workflow_path}/templates/workflow-analysis.md'
 ---
@@ -174,7 +180,7 @@ Load and append the content from {analysisTemplate}
 
 ### 8. Present MENU OPTIONS
 
-Display: **Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue
+**Load `{checkpointMenu}` and display options.**
 
 #### EXECUTION RULES:
 
@@ -182,14 +188,11 @@ Display: **Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Conti
 - ONLY proceed to next step when user selects 'C'
 - After other menu items execution, return to this menu
 - User can chat or ask questions - always respond and then end with display again of the menu options
-- Use menu handling logic section below
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask}
-- IF P: Execute {partyModeWorkflow}
 - IF C: Save analysis to {outputFile}, update frontmatter, then only then load, read entire file, then execute {nextStepFile}
-- IF Any other comments or queries: help user respond then [Redisplay Menu Options](#7-present-menu-options)
+- IF Any other comments or queries: help user respond then [Redisplay Menu Options](#8-present-menu-options)
 
 ## CRITICAL STEP COMPLETION NOTE
 

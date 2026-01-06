@@ -24,8 +24,9 @@ outputFile: '{output_folder}/[output-file-name]-{project_name}.md'
 # Checkpoint Reference
 checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
 
-# AE Configuration
-aeRole: '[role-name]'  # e.g., 'discovery', 'architecture', 'narrative', 'core-design'
+# AE Configuration - which method list to use for Deep Verify/Discover
+  Available lists (from ae-custom-lists.yaml): Domain: narrative, architecture, core-design, platform-audience, planning, implementation, vision, research, general
+  aeList: '[list-name]'  # e.g., 'narrative', 'architecture', 'core-design'
 
 # Template References (if this step uses a specific templates)
 
@@ -36,26 +37,6 @@ strategyTemplate: '{workflow_path}/templates/strategy-section.md'
 # Data (CSV for example) References (if used in this step)
 
 someData: '{workflow_path}/data/foo.csv'
-
-# Add more as needed - but ONLY what is used in this specific step file!
-
----
-
-<!-- DEEP_VERIFY: Targeted verification methods for this step's content -->
-<!-- Format: id,category,method_name,description,output_pattern -->
-<!-- Choose 2-4 methods that check THIS STEP's specific output -->
-<!-- Example methods for verification: -->
-<!-- 70,sanity,Scope Integrity Check,Verify all requirements addressed,scope → gaps -->
-<!-- 73,sanity,Coherence Check,Check for internal contradictions,contradictions → resolution -->
-<!-- 74,sanity,Grounding Check,List hidden assumptions,assumptions → risks -->
-
-<!-- DEEP_DISCOVER: Targeted discover methods for exploring with user -->
-<!-- Format: id,category,method_name,description,output_pattern -->
-<!-- Choose 2-3 methods that help user explore alternatives -->
-<!-- Example methods for discover: -->
-<!-- 39,core,First Principles Analysis,Why this approach?,fundamentals → alternatives -->
-<!-- 41,core,Socratic Questioning,What hidden assumptions?,questions → insights -->
-<!-- 62,challenge,Theseus Paradox,Is this solving the core problem?,core alignment -->
 
 # Step [N]: [Step Name]
 
@@ -124,12 +105,11 @@ Example: "To analyze user requirements and document functional specifications th
 
 **Load `{checkpointMenu}` to display options.**
 
-**[→] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`
+**[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`
 
 #### Menu Handling:
 
-- IF V (Verify) or D (Discover): Checkpoint-exec.md handles routing
-- IF → (Continue): Save content to {outputFile}, update frontmatter, load {nextStepFile}
+- IF C (Continue): Save content to {outputFile}, update frontmatter, load {nextStepFile}
 - IF other input: Respond helpfully, re-display checkpoint menu
 
 #### EXECUTION RULES:
@@ -173,22 +153,20 @@ ONLY WHEN [C continue option] is selected and [completion requirements], will yo
 
 Use when user and agent collaborate on content that may need verification or exploration.
 
-- **V (Verify):** Check agent's work for completeness, consistency, quality
-- **D (Discover):** Explore with user - assumptions, alternatives, deeper needs
+**Load `{checkpointMenu}` to display options.**
 - **C (Continue):** Content is good, proceed to next step
-- **Party Mode:** Available separately via `/party` command
 
 ```markdown
 ### N. Present Checkpoint Menu
 
 **Load `{checkpointMenu}` to display options.**
 
-**[→] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`
+**[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`
 
 #### Menu Handling:
 
 - IF V (Verify) or D (Discover): Checkpoint-exec.md handles routing
-- IF → (Continue): Save content to {outputFile}, update frontmatter, load {nextStepFile}
+- IF C (Continue): Save content to {outputFile}, update frontmatter, load {nextStepFile}
 - IF other input: Respond helpfully, re-display checkpoint menu
 ```
 

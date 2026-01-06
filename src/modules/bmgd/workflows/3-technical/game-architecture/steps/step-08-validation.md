@@ -13,8 +13,10 @@ outputFile: '{output_folder}/game-architecture.md'
 checklistFile: '{workflow_path}/checklist.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'sanity'
 ---
 
 # Step 8: Validation
@@ -55,11 +57,11 @@ Validate that the architecture is coherent, complete, and ready to guide AI agen
 - ONLY proceed when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]` before loading next step
 
-## COLLABORATION MENUS (A/P/C):
+## CHECKPOINT
 
-- **A (Advanced Elicitation)**: Deep dive into gaps
-- **P (Party Mode)**: Get perspectives on completeness
-- **C (Continue)**: Confirm validation and proceed
+**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+
+**[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
 ## Sequence of Instructions (Do not deviate, skip, or optimize)
 
@@ -238,26 +240,11 @@ Your architecture document is complete and ready to guide implementation.
 Some issues need resolution before the architecture is ready.
 {{/if_needs_work}}
 
-**Select an Option:**
-[A] Advanced Elicitation - Deep dive into any gaps
-[P] Party Mode - Get perspectives on completeness
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Save validation and move to Completion (Step 9 of 9)"
 
 ### 10. Handle Menu Selection
-
-#### IF A (Advanced Elicitation):
-
-- Execute {advancedElicitationTask} with validation results
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, re-run validation
-- If no: Keep original, return to A/P/C menu
-
-#### IF P (Party Mode):
-
-- Execute {partyModeWorkflow} with validation results
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, re-run validation
-- If no: Keep original, return to A/P/C menu
 
 #### IF C (Continue):
 

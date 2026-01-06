@@ -1,3 +1,14 @@
+---
+name: 'step-03-starter'
+description: 'Evaluate starter template options for project foundation'
+
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'architecture'
+---
+
 # Step 3: Starter Template Evaluation
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -268,28 +279,9 @@ Show the generated content and present choices:
 
 [Show the complete markdown content from step 8]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Explore custom approaches or unconventional starters
-[P] Party Mode - Evaluate trade-offs from different perspectives
-[C] Continue - Save this decision and move to architectural decisions"
+**Load `{checkpointMenu}` and display options.**
 
 ### 10. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with current starter analysis
-- Process enhanced insights about starter options or custom approaches
-- Ask user: "Accept these changes to the starter template evaluation? (y/n)"
-- If yes: Update content, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with starter evaluation context
-- Process collaborative insights about starter trade-offs
-- Ask user: "Accept these changes to the starter template evaluation? (y/n)"
-- If yes: Update content, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 

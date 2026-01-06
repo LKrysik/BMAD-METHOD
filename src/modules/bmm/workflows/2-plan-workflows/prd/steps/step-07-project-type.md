@@ -15,8 +15,10 @@ outputFile: '{planning_artifacts}/prd.md'
 projectTypesCSV: '{workflow_path}/project-types.csv'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'architecture'
 ---
 
 # Step 7: Project-Type Deep Dive
@@ -38,25 +40,10 @@ partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
 ## EXECUTION PROTOCOLS:
 
 - 🎯 Show your analysis before taking any action
-- ⚠️ Present A/P/C menu after generating project-type content
+- ⚠️ Present {checkpointMenu} menu after generating project-type content
 - 💾 ONLY save when user chooses C (Continue)
 - 📖 Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7]` before loading next step
 - 🚫 FORBIDDEN to load next step until C is selected
-
-## COLLABORATION MENUS (A/P/C):
-
-This step will generate content and present choices:
-
-- **A (Advanced Elicitation)**: Use discovery protocols to develop deeper project-type insights
-- **P (Party Mode)**: Bring technical perspectives to explore project-specific requirements
-- **C (Continue)**: Save the content to the document and proceed to next step
-
-## PROTOCOL INTEGRATION:
-
-- When 'A' selected: Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml
-- When 'P' selected: Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md
-- PROTOCOLS always return to this step's A/P/C menu
-- User accepts/rejects protocol changes before proceeding
 
 ## CONTEXT BOUNDARIES:
 
@@ -174,28 +161,11 @@ Show the generated project-type content and present choices:
 
 [Show the complete markdown content from step 5]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Let's dive deeper into these technical requirements
-[P] Party Mode - Bring technical expertise perspectives to validate requirements
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Save this and move to Scoping (Step 8 of 11)"
 
 ### 7. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with the current project-type content
-- Process the enhanced technical insights that come back
-- Ask user: "Accept these improvements to the technical requirements? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with the current project-type requirements
-- Process the collaborative technical expertise and validation
-- Ask user: "Accept these changes to the technical requirements? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 
@@ -214,7 +184,7 @@ When user selects 'C', append the content directly to the document using the str
 ✅ Required sections generated per CSV configuration
 ✅ Skip sections properly avoided to save time
 ✅ Technical requirements connected to product value
-✅ A/P/C menu presented and handled correctly
+✅ {checkpointMenu} menu presented and handled correctly
 ✅ Content properly appended to document when C selected
 
 ## FAILURE MODES:
@@ -224,7 +194,7 @@ When user selects 'C', append the content directly to the document using the str
 ❌ Not generating required sections per CSV configuration
 ❌ Documenting sections that should be skipped per CSV
 ❌ Creating generic content without project-type specificity
-❌ Not presenting A/P/C menu after content generation
+❌ Not presenting {checkpointMenu} menu after content generation
 ❌ Appending content without user selecting 'C'
 
 ❌ **CRITICAL**: Reading only partial step file - leads to incomplete understanding and poor decisions
@@ -255,4 +225,4 @@ When user selects 'C', append the content directly to the document using the str
 
 After user selects 'C' and content is saved to document, load `{project-root}/_bmad/bmm/workflows/2-plan-workflows/prd/steps/step-08-scoping.md` to define project scope.
 
-Remember: Do NOT proceed to step-08 (Scoping) until user explicitly selects 'C' from the A/P/C menu and content is saved!
+Remember: Do NOT proceed to step-08 (Scoping) until user explicitly selects 'C' from the {checkpointMenu} menu and content is saved!

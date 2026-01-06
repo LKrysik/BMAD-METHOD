@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/game-architecture.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'architecture'
 ---
 
 # Step 5: Cross-cutting Concerns
@@ -54,11 +56,11 @@ Define patterns for concerns that affect EVERY system in the game: error handlin
 - ONLY proceed when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5]` before loading next step
 
-## COLLABORATION MENUS (A/P/C):
+## CHECKPOINT
 
-- **A (Advanced Elicitation)**: Deep dive into specific concerns
-- **P (Party Mode)**: Get perspectives on patterns
-- **C (Continue)**: Confirm patterns and proceed
+**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+
+**[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
 ## Sequence of Instructions (Do not deviate, skip, or optimize)
 
@@ -266,24 +268,11 @@ Show the generated content to the user and present:
 - Are the examples clear enough for AI agents?
 - Any edge cases we missed?
 
-**Select an Option:**
-[A] Advanced Elicitation - Deep dive into specific concerns
-[P] Party Mode - Get perspectives on patterns
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Save this and move to Project Structure (Step 6 of 9)"
 
 ### 9. Handle Menu Selection
-
-#### IF A (Advanced Elicitation):
-- Execute {advancedElicitationTask} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
-
-#### IF P (Party Mode):
-- Execute {partyModeWorkflow} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
 
 #### IF C (Continue):
 - Append the final content to `{outputFile}`

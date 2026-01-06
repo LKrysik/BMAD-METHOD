@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/narrative-design.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'creative'
 ---
 
 # Step 4: Characters
@@ -54,11 +56,11 @@ Develop all characters: protagonists, antagonists, and supporting cast. Define t
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4]` before loading next step
 
-## COLLABORATION MENUS (A/P/C):
+## CHECKPOINT
 
-- **A (Advanced Elicitation)**: Deep dive into characters
-- **P (Party Mode)**: Get perspectives on character design
-- **C (Continue)**: Save the content and proceed
+**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+
+**[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
 ## Sequence of Instructions (Do not deviate, skip, or optimize)
 
@@ -243,26 +245,11 @@ Show the generated content to the user and present:
 - Are arcs meaningful and complete?
 - Do relationships create conflict?
 
-**Select an Option:**
-[A] Advanced Elicitation - Deep dive into characters
-[P] Party Mode - Get perspectives on character design
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Save this and move to World Building (Step 5 of 11)"
 
 ### 7. Handle Menu Selection
-
-#### IF A (Advanced Elicitation):
-
-- Execute {advancedElicitationTask} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
-
-#### IF P (Party Mode):
-
-- Execute {partyModeWorkflow} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
 
 #### IF C (Continue):
 

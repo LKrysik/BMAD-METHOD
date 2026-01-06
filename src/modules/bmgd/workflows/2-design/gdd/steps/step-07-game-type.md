@@ -15,8 +15,10 @@ outputFile: '{output_folder}/gdd.md'
 gameTypesFolder: '{workflow_path}/game-types'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'core-design'
 ---
 
 # Step 7: Game Type Specifics
@@ -58,11 +60,11 @@ Process the game-type specific sections from the loaded game type guide ({game_t
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7]` before loading next step
 
-## COLLABORATION MENUS (A/P/C):
+## CHECKPOINT
 
-- **A (Advanced Elicitation)**: Deep dive into genre-specific elements
-- **P (Party Mode)**: Get genre expert perspectives
-- **C (Continue)**: Save the content to the document and proceed to next step
+**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+
+**[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
 ## CONTEXT BOUNDARIES:
 
@@ -209,26 +211,11 @@ Show the generated content to the user and present:
 - Have we covered all required elements for {{game_type}}?
 - Any genre conventions you want to subvert?
 
-**Select an Option:**
-[A] Advanced Elicitation - Deep dive into genre specifics
-[P] Party Mode - Get genre expert perspectives
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Save this and move to Progression & Balance (Step 8 of 14)"
 
 ### 7. Handle Menu Selection
-
-#### IF A (Advanced Elicitation):
-
-- Execute {advancedElicitationTask} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
-
-#### IF P (Party Mode):
-
-- Execute {partyModeWorkflow} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
 
 #### IF C (Continue):
 

@@ -2,8 +2,11 @@
 workflowFile: '{installed_path}/workflow.md'
 modulePlanFile: '{bmb_creations_output_folder}/{module_name}/module-plan-{module_name}.md'
 validationChecklist: '{installed_path}/validation.md'
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'sanity'
 ---
 
 # Step 11: Validate and Finalize Module
@@ -294,12 +297,12 @@ Would you like me to help you with anything else?"
 
 ### 13. Final MENU OPTIONS
 
-Display: **Module Creation Complete!** [A] Advanced Elicitation [P] Party Mode [C] Exit
+**Load `{checkpointMenu}` to display options.**
+
+[C] Exit - Mark as complete and exit gracefully
 
 #### Menu Handling Logic:
 
-- IF A: Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml for reflection on process
-- IF P: Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md to celebrate completion
 - IF C: Mark as complete and exit gracefully
 - IF Any other comments or queries: help user respond then redisplay menu
 

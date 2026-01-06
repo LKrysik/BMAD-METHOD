@@ -24,7 +24,7 @@ Find what's wrong, what's missing, what doesn't fit, what's unclear.
 ## Method Source
 
 ```
-{project-root}/_bmad/core/workflows/advanced-elicitation/data/methods.csv
+{project-root}/_bmad/core/methods/methods.csv
 ```
 
 ---

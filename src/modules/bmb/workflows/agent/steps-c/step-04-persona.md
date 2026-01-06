@@ -14,8 +14,10 @@ simpleExample: ../data/reference/simple-examples/commit-poet.agent.yaml
 expertExample: ../data/reference/expert-examples/journal-keeper/journal-keeper.agent.yaml
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'creative'
 ---
 
 # STEP GOAL
@@ -170,12 +172,12 @@ principles:
 
 ## 9. Present MENU OPTIONS
 
-Display: "**Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue"
+**Load `{checkpointMenu}` to display options.**
+
+**[C] Continue** - Proceed to command structure design
 
 ### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask}, and when finished redisplay the menu
-- IF P: Execute {partyModeWorkflow}, and when finished redisplay the menu
 - IF C: Save content to {agentPlan}, update frontmatter, then only then load, read entire file, then execute {nextStepFile}
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#9-present-menu-options)
 
@@ -183,7 +185,6 @@ Display: "**Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Cont
 
 - ALWAYS halt and wait for user input after presenting menu
 - ONLY proceed to next step when user selects 'C'
-- After other menu items execution, return to this menu
 - User can chat or ask questions - always respond and then end with display again of the menu options
 
 ## CRITICAL STEP COMPLETION NOTE

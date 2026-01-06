@@ -5,8 +5,11 @@ description: 'Display all validation findings after edit'
 nextStepFile: './e-10-celebrate.md'
 editPlan: '{bmb_creations_output_folder}/edit-plan-{agent-name}.md'
 
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'general'
 ---
 
 # Edit Step 9f: Validation Summary (After Edit)
@@ -73,12 +76,13 @@ Read `{editPlan}` frontmatter to collect validationBefore and validationAfter fi
 
 ### 4. Present MENU OPTIONS
 
-Display: "**Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue to Celebration"
+**Load `{checkpointMenu}` to display options.**
+
+**[R] Review** - Show detailed before/after comparison
+**[C] Continue** - Proceed to celebration
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask}, and when finished redisplay the menu
-- IF P: Execute {partyModeWorkflow}, and when finished redisplay the menu
 - IF R: Show detailed before/after comparison, then redisplay menu
 - IF C: Save validation summary to {editPlan}, then only then load, read entire file, then execute {nextStepFile}
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#4-present-menu-options)
@@ -87,7 +91,6 @@ Display: "**Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Cont
 
 - ALWAYS halt and wait for user input after presenting menu
 - ONLY proceed to next step when user selects 'C'
-- After other menu items execution, return to this menu
 
 ## CRITICAL STEP COMPLETION NOTE
 

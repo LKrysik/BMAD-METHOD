@@ -36,21 +36,23 @@ description: 'Brief description of what this step accomplishes'
 outputFile: {bmb_creations_output_folder}/output-file-name.md
 nextStepFile: './step-3-bar.md'
 
-# Task References (as needed)
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
-# ... other task-specific references
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: '[list-name]'  # e.g., 'research', 'architecture', 'creative', 'sanity', 'general'
 ---
 ```
 
 ### Frontmatter Field Descriptions
 
-| Field           | Required  | Description                       |
-| --------------- | --------- | --------------------------------- |
-| `name`          | Yes       | Step identifier (kebab-case)      |
-| `description`   | Yes       | One-line summary of step purpose  |
-| `outputFile`    | Yes       | Where results are documented      |
-| Task references | As needed | Paths to external workflows/tasks |
+| Field            | Required  | Description                                              |
+| ---------------- | --------- | -------------------------------------------------------- |
+| `name`           | Yes       | Step identifier (kebab-case)                             |
+| `description`    | Yes       | One-line summary of step purpose                         |
+| `outputFile`     | Yes       | Where results are documented                             |
+| `checkpointMenu` | Yes       | Path to checkpoint-menu.md                               |
+| `aeList`         | Yes       | Domain-specific AE method list for Quick Verify/Discover |
 
 ---
 
@@ -138,28 +140,30 @@ You MUST respond in **{language}** throughout this step.
 ...
 ```
 
-### 9. MENU OPTIONS
+### 9. CHECKPOINT MENU
 
 ```markdown
-### X. Present MENU OPTIONS
+### X. Present Checkpoint Menu
 
-Display: "**Select:** [A] [menu item A] [P] [menu item P] [C] [menu item C]"
+**Load `{checkpointMenu}` to display options.**
 
-#### Menu Handling Logic:
-- IF A: Execute {advancedElicitationTask}, and when finished redisplay the menu
-- IF P: Execute {partyModeWorkflow}, and when finished redisplay the menu
-- IF C: Save content to {outputFile}, update frontmatter, then load, read entire file, then execute {nextStepFile}
-- IF Any other comments or queries: help user respond then [Redisplay Menu Options](#x-present-menu-options)
+**[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`
+
+#### Menu Handling:
+- IF C (Continue): Save content to {outputFile}, update frontmatter, load {nextStepFile}
+- IF other input: Respond helpfully, re-display checkpoint menu
 
 #### EXECUTION RULES:
 - ALWAYS halt and wait for user input after presenting menu
 - ONLY proceed to next step when user selects 'C'
-- After other menu items execution, return to this menu
-- User can chat or ask questions - always respond and then end with display again of the menu options
+- After V/D execution completes, return to checkpoint menu
+- User can chat or ask questions - respond then re-display menu
 
 ## CRITICAL STEP COMPLETION NOTE
 ONLY WHEN [C continue option] is selected and [completion conditions], will you then load and read fully `{nextStepFile}`...
 ```
+
+**Note:** The checkpoint-menu.md displays Q/V/D/P options. The [C] Continue action is defined separately in each step file since it varies per step.
 
 ### 10. SYSTEM SUCCESS/FAILURE METRICS
 
@@ -181,23 +185,24 @@ ONLY WHEN [C continue option] is selected and [completion conditions], will you 
 
 ---
 
-## A/P/C Menu Convention
+## Checkpoint Menu Convention
 
-BMAD workflows use a fixed menu structure:
+BMAD workflows use the checkpoint menu system (`checkpoint-menu.md`):
 
-| Option | Meaning              | Behavior                                             |
-| ------ | -------------------- | ---------------------------------------------------- |
-| **A**  | Advanced Elicitation | Execute advancedElicitationTask, then redisplay menu |
-| **P**  | Party Mode           | Execute partyModeWorkflow, then redisplay menu       |
-| **C**  | Continue/Accept      | Save output, update frontmatter, load nextStepFile   |
-| Other  | Custom               | Defined per step (e.g., F = Fix, X = Exit)           |
+| Option | Meaning        | Behavior                                                    |
+| ------ | -------------- | ----------------------------------------------------------- |
+| **Q**  | Quick          | Fast verification using aeList from step frontmatter        |
+| **V**  | Verify         | Deep verification using aeList from step frontmatter        |
+| **D**  | Discover       | Deep discovery exploration using aeList from step frontmatter |
+| **P**  | Party Mode     | Execute party-mode workflow, then redisplay menu            |
+| **C**  | Continue       | Save output, update frontmatter, load nextStepFile          |
 
 **Rules:**
-- A and P MUST always be present
-- C MUST be present except in final step (use X or similar for exit)
-- After A/P → redisplay menu
+- Q/V/D/P options are displayed by loading `{checkpointMenu}`
+- [C] Continue is defined separately in each step file (step-specific action)
+- After Q/V/D/P → return to checkpoint menu
 - After C → proceed to next step
-- Custom letters can be used for step-specific options
+- The `aeList` frontmatter property determines which method list is used for Q/V/D
 
 ---
 
@@ -380,8 +385,10 @@ workflowFile: ../workflow.md
 outputFile: {bmb_creations_output_folder}/output.md
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: '[list-name]'  # e.g., 'research', 'architecture', 'creative', 'sanity', 'general'
 ---
 
 # Step X: [Step Name]
@@ -434,21 +441,21 @@ You MUST respond in **{language}** throughout this step.
 
 ...
 
-### X. Present MENU OPTIONS
+### X. Present Checkpoint Menu
 
-Display: "**Select:** [A] Advanced Elicitation [P] Party Mode [C] Continue"
+**Load `{checkpointMenu}` to display options.**
 
-#### Menu Handling Logic:
-- IF A: Execute {advancedElicitationTask}, and when finished redisplay the menu
-- IF P: Execute {partyModeWorkflow}, and when finished redisplay the menu
-- IF C: Save content to {outputFile}, update frontmatter, then load, read entire file, then execute {nextStepFile}
-- IF Any other comments or queries: help user respond then [Redisplay Menu Options](#x-present-menu-options)
+**[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`
+
+#### Menu Handling:
+- IF C (Continue): Save content to {outputFile}, update frontmatter, load {nextStepFile}
+- IF other input: Respond helpfully, re-display checkpoint menu
 
 #### EXECUTION RULES:
 - ALWAYS halt and wait for user input after presenting menu
 - ONLY proceed to next step when user selects 'C'
-- After other menu items execution, return to this menu
-- User can chat or ask questions - always respond and then end with display again of the menu options
+- After V/D execution completes, return to checkpoint menu
+- User can chat or ask questions - respond then re-display menu
 
 ## CRITICAL STEP COMPLETION NOTE
 ONLY WHEN [C continue option] is selected and [conditions], will you then load and read fully `{nextStepFile}`...

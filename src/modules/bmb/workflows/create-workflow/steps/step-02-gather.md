@@ -13,8 +13,11 @@ targetWorkflowPath: '{bmb_creations_output_folder}/workflows/{new_workflow_name}
 workflowPlanFile: '{targetWorkflowPath}/workflow-plan-{new_workflow_name}.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'vision'
+
 # Template References
 # No template needed - will append requirements directly to workflow plan
 ---
@@ -170,7 +173,9 @@ After collecting all requirements, append them to {workflowPlanFile} in a format
 
 ### 9. Present MENU OPTIONS
 
-Display: **Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue
+**Load `{checkpointMenu}` to display options.**
+
+[C] Continue to next step
 
 #### EXECUTION RULES:
 
@@ -182,8 +187,6 @@ Display: **Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Conti
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask}
-- IF P: Execute {partyModeWorkflow}
 - IF C: Append requirements to {workflowPlanFile}, update frontmatter, then load, read entire file, then execute {nextStepFile}
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#8-present-menu-options)
 

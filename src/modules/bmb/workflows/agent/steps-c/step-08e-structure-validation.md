@@ -12,8 +12,10 @@ agentCompilation: ../data/agent-compilation.md
 builtYaml: '{bmb_creations_output_folder}/{agent-name}/{agent-name}.agent.yaml'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'sanity'
 ---
 
 # STEP GOAL
@@ -196,13 +198,14 @@ All required fields present and correctly formatted.
 
 ## 4. Present MENU OPTIONS
 
-Display: "**Select an Option:** [A] Advanced Elicitation [F] Fix Findings [P] Party Mode [C] Continue"
+**Load `{checkpointMenu}` to display options.**
+
+**[F] Fix Findings** - Apply auto-fixes to identified issues
+**[C] Continue** - Proceed to sidecar validation (Expert) or celebration (Simple)
 
 ### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask}, and when finished redisplay the menu
 - IF F: Apply auto-fixes to {builtYaml} for identified issues, then redisplay the menu
-- IF P: Execute {partyModeWorkflow}, and when finished redisplay the menu
 - IF C: Proceed to next validation step, update frontmatter, then only then load, read entire file, then execute {nextStepFileExpert} or {nextStepFileSimple}
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#4-present-menu-options)
 
@@ -210,7 +213,6 @@ Display: "**Select an Option:** [A] Advanced Elicitation [F] Fix Findings [P] Pa
 
 - ALWAYS halt and wait for user input after presenting menu
 - ONLY proceed to next step when user selects 'C'
-- After other menu items execution, return to this menu
 - User can chat or ask questions - always respond and then end with display again of the menu options
 
 If [F] selected: Work through issues systematically

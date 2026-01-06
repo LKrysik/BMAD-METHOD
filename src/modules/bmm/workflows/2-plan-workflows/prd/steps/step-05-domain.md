@@ -15,8 +15,10 @@ outputFile: '{planning_artifacts}/prd.md'
 domainComplexityCSV: '{workflow_path}/domain-complexity.csv'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'core-design'
 ---
 
 # Step 5: Domain-Specific Exploration
@@ -38,25 +40,10 @@ partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
 ## EXECUTION PROTOCOLS:
 
 - 🎯 Show your analysis before taking any action
-- ⚠️ Present A/P/C menu after generating domain content
+- ⚠️ Present A/C menu after generating domain content
 - 💾 ONLY save when user chooses C (Continue)
 - 📖 Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5]` before loading next step
 - 🚫 FORBIDDEN to load next step until C is selected
-
-## COLLABORATION MENUS (A/P/C):
-
-This step will generate content and present choices:
-
-- **A (Advanced Elicitation)**: Use discovery protocols to develop deeper domain insights
-- **P (Party Mode)**: Bring domain expertise perspectives to explore requirements
-- **C (Continue)**: Save the content to the document and proceed to next step
-
-## PROTOCOL INTEGRATION:
-
-- When 'A' selected: Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml
-- When 'P' selected: Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md
-- PROTOCOLS always return to this step's A/P/C menu
-- User accepts/rejects protocol changes before proceeding
 
 ## CONTEXT BOUNDARIES:
 
@@ -200,29 +187,12 @@ Show the generated domain content and present choices:
 [Show the complete markdown content from step 6]
 
 **What would you like to do?**
-[A] Advanced Elicitation - Let's dive deeper into these domain requirements
-[P] Party Mode - Bring domain expertise perspectives to validate requirements
+
+**Load `{checkpointMenu}` and display options.**
+
 [C] Continue - Save this and move to Innovation Focus (Step 6 of 11)"
 
-### 8. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with the current domain content
-- Process the enhanced domain insights that come back
-- Ask user: "Accept these domain requirement improvements? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with the current domain requirements
-- Process the collaborative domain expertise and validation
-- Ask user: "Accept these changes to domain requirements? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'C' (Continue):
+If 'C' (Continue):
 
 - Append the content to `{outputFile}`
 - Update frontmatter: add this step name to the end of the steps completed array
@@ -239,7 +209,7 @@ When user selects 'C', append the content directly to the document using the str
 ✅ Compliance requirements clearly documented
 ✅ Domain expertise needs identified and documented
 ✅ Special sections generated per CSV configuration
-✅ A/P/C menu presented and handled correctly
+✅ {checkpointMenu} menu presented and handled correctly
 ✅ Content properly appended to document when C selected
 
 ## FAILURE MODES:
@@ -249,7 +219,7 @@ When user selects 'C', append the content directly to the document using the str
 ❌ Missing critical domain concerns from the key_concerns list
 ❌ Not connecting domain requirements to product implications
 ❌ Generating generic content without domain-specific details
-❌ Not presenting A/P/C menu after content generation
+❌ Not presenting A/C menu after content generation
 ❌ Appending content without user selecting 'C'
 
 ❌ **CRITICAL**: Reading only partial step file - leads to incomplete understanding and poor decisions
@@ -268,4 +238,4 @@ Skip this step and load `{project-root}/_bmad/bmm/workflows/2-plan-workflows/prd
 
 After user selects 'C' and content is saved to document, load `{project-root}/_bmad/bmm/workflows/2-plan-workflows/prd/steps/step-06-innovation.md`.
 
-Remember: Do NOT proceed to step-06 until user explicitly selects 'C' from the A/P/C menu and content is saved!
+Remember: Do NOT proceed to step-06 until user explicitly selects 'C' from the {checkpointMenu} menu and content is saved!

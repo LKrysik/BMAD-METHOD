@@ -15,7 +15,7 @@ outputFile: '{output_folder}/gdd.md'
 checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
 
 # AE Configuration
-aeRole: 'platform-audience'
+aeList: 'platform-audience'
 ---
 
 <!-- DEEP_VERIFY -->

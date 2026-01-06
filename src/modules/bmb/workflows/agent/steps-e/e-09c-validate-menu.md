@@ -7,8 +7,6 @@ editPlan: '{bmb_creations_output_folder}/edit-plan-{agent-name}.md'
 agentMenuPatterns: ../data/agent-menu-patterns.md
 builtYaml: '{bmb_creations_output_folder}/{agent-name}/{agent-name}.agent.yaml'
 
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
 ---
 
 # Edit Step 9c: Validate Menu (After Edit)

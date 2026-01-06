@@ -4,8 +4,11 @@ description: 'Display complete validation report and offer next steps'
 
 validationReport: '{bmb_creations_output_folder}/validation-report-{agent-name}.md'
 
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'general'
 ---
 
 # Validate Step 3: Validation Summary
@@ -63,14 +66,17 @@ Read `{validationReport}` to collect all validation findings.
 
 ### 4. Present MENU OPTIONS
 
-Display: "**Select an Option:** [A] Advanced Elicitation [P] Party Mode [E] Edit Agent [S] Save & Exit [R] Retry Validation"
+**Load `{checkpointMenu}` to display options.**
+
+**[E] Edit Agent** - Launch edit workflow
+**[F] Fix in Place** - Make quick fixes without full edit workflow
+**[S] Save & Exit** - Save report and complete
+**[R] Retry Validation** - Run validation again
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask}, and when finished redisplay the menu
-- IF P: Execute {partyModeWorkflow}, and when finished redisplay the menu
 - IF E: Inform user they can launch edit workflow with the same agent file, then redisplay menu
-- IF F; Attempt to make users desired fixes without loading the full edit workflow
+- IF F: Attempt to make users desired fixes without loading the full edit workflow
 - IF S: Save final report to {validationReport} and end workflow
 - IF R: Restart validation from step v-01
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#4-present-menu-options)

@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/nutrition-plan-{project_name}.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'stakeholder'
 
 # Template References
 profileTemplate: '{workflow_path}/templates/profile-section.md'
@@ -118,24 +120,13 @@ After collecting all profile information, append to {outputFile}:
 
 Load and append the content from {profileTemplate}
 
-### 6. Present MENU OPTIONS
+### 6. Present Menu and Handle Selection
 
-Display: **Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue
+**Load `{checkpointMenu}` and display options.**
 
-#### EXECUTION RULES:
+#### IF C (Continue):
 
-- ALWAYS halt and wait for user input after presenting menu
-- ONLY proceed to next step when user selects 'C'
-- After other menu items execution, return to this menu
-- User can chat or ask questions - always respond and then end with display again of the menu options
-- Use menu handling logic section below
-
-#### Menu Handling Logic:
-
-- IF A: Execute {advancedElicitationTask}
-- IF P: Execute {partyModeWorkflow}
-- IF C: Save content to {outputFile}, update frontmatter, then only then load, read entire file, then execute {nextStepFile}
-- IF Any other comments or queries: help user respond then [Redisplay Menu Options](#6-present-menu-options)
+Save content to {outputFile}, update frontmatter `stepsCompleted: [1, 2]`, then load and execute {nextStepFile}
 
 ## CRITICAL STEP COMPLETION NOTE
 

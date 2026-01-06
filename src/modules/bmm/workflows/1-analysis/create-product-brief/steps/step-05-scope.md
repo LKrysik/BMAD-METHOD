@@ -12,8 +12,10 @@ workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{planning_artifacts}/product-brief-{{project_name}}-{{date}}.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'planning'
 ---
 
 # Step 5: MVP Scope Definition
@@ -177,21 +179,14 @@ Prepare the following structure for document append:
 **Here's what I'll add to the document:**
 [Show the complete markdown content from step 6]
 
-**Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue"
+**Load `{checkpointMenu}` to display options.**
+
+[C] Continue - Save this and move to Product Brief Completion"
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask} with current scope content to optimize scope definition
-- IF P: Execute {partyModeWorkflow} to bring different perspectives to validate MVP scope
 - IF C: Save content to {outputFile}, update frontmatter with stepsCompleted: [1, 2, 3, 4, 5], then only then load, read entire file, then execute {nextStepFile}
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#7-present-menu-options)
-
-#### EXECUTION RULES:
-
-- ALWAYS halt and wait for user input after presenting menu
-- ONLY proceed to next step when user selects 'C'
-- After other menu items execution, return to this menu with updated content
-- User can chat or ask questions - always respond and then end with display again of the menu options
 
 ## CRITICAL STEP COMPLETION NOTE
 
@@ -207,7 +202,7 @@ ONLY WHEN [C continue option] is selected and [MVP scope finalized and saved to 
 - Clear out-of-scope boundaries that prevent scope creep
 - Success criteria that validate MVP approach and inform go/no-go decisions
 - Future vision that inspires while maintaining focus on MVP
-- A/P/C menu presented and handled correctly with proper task execution
+- {checkpointMenu} menu presented and handled correctly
 - Content properly appended to document when C selected
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4, 5]
 
@@ -217,7 +212,7 @@ ONLY WHEN [C continue option] is selected and [MVP scope finalized and saved to 
 - Missing clear boundaries leading to scope creep
 - No success criteria to validate MVP approach
 - Future vision disconnected from MVP foundation
-- Not presenting standard A/P/C menu after content generation
+- Not presenting {checkpointMenu} menu after content generation
 - Appending content without user selecting 'C'
 - Not updating frontmatter properly
 

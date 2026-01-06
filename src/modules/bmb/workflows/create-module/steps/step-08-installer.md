@@ -4,8 +4,11 @@ nextStepFile: '{installed_path}/steps/step-09-documentation.md'
 modulePlanFile: '{bmb_creations_output_folder}/{module_name}/module-plan-{module_name}.md'
 installerTemplate: '{installed_path}/templates/installer.template.js'
 installConfigTemplate: '{installed_path}/templates/install-config.template.yaml'
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'implementation'
 ---
 
 # Step 8: Setup Module Installer
@@ -145,12 +148,12 @@ Update module-plan.md with installer section:
 
 ### 7. Present MENU OPTIONS
 
-Display: **Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue
+**Load `{checkpointMenu}` to display options.**
+
+[C] Continue to next step
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask} to review installer configuration
-- IF P: Execute {partyModeWorkflow} to get input on user experience
 - IF C: Save installer info to module-plan.md, add step-08-installer to the end of the stepsCompleted array in frontmatter, then load nextStepFile
 - IF Any other comments or queries: help user respond then redisplay menu
 

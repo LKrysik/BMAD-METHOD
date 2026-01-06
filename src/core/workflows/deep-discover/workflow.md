@@ -16,7 +16,7 @@ Build KNOWLEDGE about what user truly needs. Challenge assumptions, discover rea
 ## Method Source
 
 ```
-{project-root}/_bmad/core/workflows/advanced-elicitation/data/methods.csv
+{project-root}/_bmad/core/methods/methods.csv
 ```
 
 ---

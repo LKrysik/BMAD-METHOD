@@ -14,8 +14,10 @@ targetWorkflowPath: '{bmb_creations_output_folder}/workflows/{new_workflow_name}
 workflowPlanFile: '{targetWorkflowPath}/workflow-plan-{new_workflow_name}.md'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'quality'
 
 # Template References
 # No review template needed - will append review summary directly to workflow plan

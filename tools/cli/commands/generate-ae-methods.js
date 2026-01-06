@@ -1,7 +1,7 @@
 /**
  * CLI Command: generate-ae-methods
  *
- * Generates Advanced Elicitation method files from methods.csv + ae_mapping.yaml
+ * Generates Advanced Elicitation method files from methods.csv + ae-custom-lists.yaml
  */
 
 const chalk = require('chalk');
@@ -10,7 +10,7 @@ const { getProjectRoot } = require('../lib/project-root');
 
 module.exports = {
   command: 'generate-ae-methods',
-  description: 'Generate Advanced Elicitation method files from methods.csv + ae_mapping.yaml',
+  description: 'Generate Advanced Elicitation method files from methods.csv + ae-custom-lists.yaml',
   options: [
     ['-v, --verbose', 'Show detailed output'],
     ['-c, --check', 'Check if generated files are up-to-date (no generation)'],
@@ -45,8 +45,7 @@ module.exports = {
       const generator = new AEMethodsGenerator(projectRoot);
 
       console.log(chalk.cyan('Generating Advanced Elicitation method files...'));
-      console.log(chalk.dim(`Source: src/core/workflows/advanced-elicitation/data/methods.csv`));
-      console.log(chalk.dim(`Mapping: src/core/workflows/advanced-elicitation/data/ae-mapping.yaml\n`));
+      console.log(chalk.dim(`Source: src/core/methods/methods.csv + ae-custom-lists.yaml\n`));
 
       const report = await generator.generate();
 
@@ -55,10 +54,10 @@ module.exports = {
       console.log(chalk.dim(`  primary_verify.md: ${report.primaryVerifyCount} methods`));
       console.log(chalk.dim(`  primary_discover.md: ${report.primaryDiscoverCount} methods`));
       console.log(chalk.dim(`  ae_by_categories/: ${report.categoryCount} category files`));
-      console.log(chalk.dim(`  ae_by_roles/: ${report.roleCount} role files`));
-      if (report.customListCount > 0) {
-        console.log(chalk.dim(`  ae_user_lists.md: ${report.customListCount} custom list(s)`));
-      }
+      console.log(chalk.dim(`  ae-lists/: ${report.listCounts.total} list files`));
+      console.log(chalk.dim(`    - verify-only: ${report.listCounts.verify}`));
+      console.log(chalk.dim(`    - discover-only: ${report.listCounts.discover}`));
+      console.log(chalk.dim(`    - domain: ${report.listCounts.domain}`));
       console.log(chalk.dim(`  Source hash: ${report.sourceHash}`));
 
       if (report.warnings.length > 0) {
@@ -73,14 +72,14 @@ module.exports = {
         for (const category of report.categories) {
           console.log(chalk.dim(`  - ${category}.md`));
         }
-        console.log(chalk.dim('\nRoles generated:'));
-        for (const role of report.roles) {
-          console.log(chalk.dim(`  - ${role}.md`));
+        console.log(chalk.dim('\nLists generated:'));
+        for (const list of [...report.lists.verify, ...report.lists.discover, ...report.lists.domain]) {
+          console.log(chalk.dim(`  - ${list}.md`));
         }
       }
 
       console.log(chalk.green('\n✨ Files generated successfully!'));
-      console.log(chalk.dim('Output: src/core/workflows/advanced-elicitation/data/'));
+      console.log(chalk.dim('Output: src/core/methods/'));
 
       process.exit(0);
     } catch (error) {

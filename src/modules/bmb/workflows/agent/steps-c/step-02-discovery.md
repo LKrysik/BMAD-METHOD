@@ -8,8 +8,10 @@ agentPlan: '{bmb_creations_output_folder}/agent-plan-{agent_name}.md'
 brainstormContext: ../data/brainstorm-context.md
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'research'
 ---
 
 # STEP GOAL
@@ -81,10 +83,10 @@ Document findings to agentPlan file using this structure:
 
 ## Protocol 4: Completion Menu
 
-After documentation, present menu:
+After documentation, present checkpoint menu:
 
-**[A]dvanced Discovery** - Invoke advanced-elicitation task for deeper exploration
-**[P]arty Mode** - Invoke party-mode workflow for creative ideation
+**Load `{checkpointMenu}` to display options.**
+
 **[C]ontinue** - Proceed to next step (type-metadata)
 
 # CONTEXT BOUNDARIES
@@ -125,14 +127,11 @@ After documentation, present menu:
    - Ensure completeness and clarity
 
 4. **Present Completion Menu**
-   - Show [A]dvanced Discovery option
-   - Show [P]arty Mode option
+   - Load `{checkpointMenu}` to display options
    - Show [C]ontinue to next step
    - Await user selection
 
 5. **Handle Menu Choice**
-   - If A: Invoke advanced-elicitation task, then re-document
-   - If P: Invoke party-mode workflow, then re-document
    - If C: Proceed to step-03-type-metadata
 
 # CRITICAL STEP COMPLETION NOTE

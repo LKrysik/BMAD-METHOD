@@ -6,8 +6,11 @@ nextStepFile: './v-02a-validate-metadata.md'
 validationReport: '{bmb_creations_output_folder}/validation-report-{agent-name}.md'
 agentMetadata: ../data/agent-metadata.md
 
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'research'
 ---
 
 # Validate Step 1: Load Agent for Review
@@ -95,12 +98,14 @@ Write to `{validationReport}`.
 
 ### 4. Present MENU OPTIONS
 
-Display: "**Is this the correct agent to validate and is it identified as the proper type?** [A] Advanced Elicitation [P] Party Mode [C] Yes, Begin Validation"
+**Is this the correct agent to validate and is it identified as the proper type?**
+
+**Load `{checkpointMenu}` to display options.**
+
+**[C] Continue** - Yes, begin validation
 
 #### Menu Handling Logic:
 
-- IF A: Execute {advancedElicitationTask}, and when finished redisplay the menu
-- IF P: Execute {partyModeWorkflow}, and when finished redisplay the menu
 - IF C: Save to {validationReport}, then only then load, read entire file, then execute {nextStepFile}
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#4-present-menu-options)
 
@@ -108,7 +113,6 @@ Display: "**Is this the correct agent to validate and is it identified as the pr
 
 - ALWAYS halt and wait for user input after presenting menu
 - ONLY proceed to next step when user selects 'C'
-- After other menu items execution, return to this menu
 
 ## CRITICAL STEP COMPLETION NOTE
 

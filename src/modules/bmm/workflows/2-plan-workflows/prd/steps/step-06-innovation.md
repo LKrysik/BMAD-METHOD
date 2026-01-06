@@ -15,8 +15,10 @@ outputFile: '{planning_artifacts}/prd.md'
 projectTypesCSV: '{workflow_path}/project-types.csv'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'creative'
 ---
 
 # Step 6: Innovation Discovery
@@ -38,25 +40,10 @@ partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
 ## EXECUTION PROTOCOLS:
 
 - 🎯 Show your analysis before taking any action
-- ⚠️ Present A/P/C menu after generating innovation content
+- ⚠️ Present {checkpointMenu} menu after generating innovation content
 - 💾 ONLY save when user chooses C (Continue)
 - 📖 Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6]` before loading next step
 - 🚫 FORBIDDEN to load next step until C is selected
-
-## COLLABORATION MENUS (A/P/C):
-
-This step will generate content and present choices:
-
-- **A (Advanced Elicitation)**: Use discovery protocols to develop deeper innovation insights
-- **P (Party Mode)**: Bring creative perspectives to explore innovation opportunities
-- **C (Continue)**: Save the content to the document and proceed to next step
-
-## PROTOCOL INTEGRATION:
-
-- When 'A' selected: Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml
-- When 'P' selected: Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md
-- PROTOCOLS always return to this step's A/P/C menu
-- User accepts/rejects protocol changes before proceeding
 
 ## CONTEXT BOUNDARIES:
 
@@ -178,28 +165,11 @@ Show the generated innovation content and present choices:
 
 [Show the complete markdown content from step 5]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Let's dive deeper into these innovation opportunities
-[P] Party Mode - Bring creative perspectives to explore innovation further
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Save this and move to Project Type Analysis (Step 7 of 11)"
 
 ### 7. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml with the current innovation content
-- Process the enhanced innovation insights that come back
-- Ask user: "Accept these improvements to the innovation analysis? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md with the current innovation content
-- Process the collaborative innovation exploration and ideation
-- Ask user: "Accept these changes to the innovation analysis? (y/n)"
-- If yes: Update content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 
@@ -212,11 +182,11 @@ Show the generated innovation content and present choices:
 If no genuine innovation signals are found after exploration:
 "After exploring {{project_name}}, I don't see clear innovation signals that warrant a dedicated innovation section. This is perfectly fine - many successful products are excellent executions of existing concepts rather than breakthrough innovations.
 
-**Options:**
-[A] Force innovation exploration - Let's try to find innovative angles
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Skip innovation section and move to Project Type Analysis (Step 7 of 11)"
 
-If user selects 'A', proceed with content generation anyway. If 'C', skip this step and load `{project-root}/_bmad/bmm/workflows/2-plan-workflows/prd/steps/step-07-project-type.md`.
+If 'C', skip this step and load `{project-root}/_bmad/bmm/workflows/2-plan-workflows/prd/steps/step-07-project-type.md`.
 
 ## APPEND TO DOCUMENT:
 
@@ -229,7 +199,7 @@ When user selects 'C', append the content directly to the document using the str
 ✅ Genuine innovation explored (not forced creativity)
 ✅ Validation approach clearly defined for innovative aspects
 ✅ Risk mitigation strategies identified
-✅ A/P/C menu presented and handled correctly
+✅ {checkpointMenu} menu presented and handled correctly
 ✅ Content properly appended to document when C selected
 
 ## FAILURE MODES:
@@ -239,7 +209,7 @@ When user selects 'C', append the content directly to the document using the str
 ❌ Missing market context research for novel concepts
 ❌ Not addressing validation approach for innovative features
 ❌ Creating innovation theater without real innovative aspects
-❌ Not presenting A/P/C menu after content generation
+❌ Not presenting {checkpointMenu} menu after content generation
 ❌ Appending content without user selecting 'C'
 
 ❌ **CRITICAL**: Reading only partial step file - leads to incomplete understanding and poor decisions
@@ -259,4 +229,4 @@ Skip this step and load `{project-root}/_bmad/bmm/workflows/2-plan-workflows/prd
 
 After user selects 'C' and content is saved to document (or step is skipped), load `{project-root}/_bmad/bmm/workflows/2-plan-workflows/prd/steps/step-07-project-type.md`.
 
-Remember: Do NOT proceed to step-07 until user explicitly selects 'C' from the A/P/C menu (or confirms step skip)!
+Remember: Do NOT proceed to step-07 until user explicitly selects 'C' from the {checkpointMenu} menu (or confirms step skip)!

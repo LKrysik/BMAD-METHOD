@@ -1,3 +1,14 @@
+---
+name: 'step-02-generate'
+description: 'Generate context rules for AI agents to follow'
+
+# Task References
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'implementation'
+---
+
 # Step 2: Context Rules Generation
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -258,28 +269,9 @@ After each category, show the generated rules and present choices:
 
 [Show the complete markdown content for this category]
 
-**What would you like to do?**
-[A] Advanced Elicitation - Explore nuanced rules for this category
-[P] Party Mode - Review from different implementation perspectives
-[C] Continue - Save these rules and move to next category"
+**Load `{checkpointMenu}` and display options.**
 
 ### 10. Handle Menu Selection
-
-#### If 'A' (Advanced Elicitation):
-
-- Execute advanced-elicitation.xml with current category rules
-- Process enhanced rules that come back
-- Ask user: "Accept these enhanced rules for {{category}}? (y/n)"
-- If yes: Update content, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### If 'P' (Party Mode):
-
-- Execute party-mode workflow with category rules context
-- Process collaborative insights on implementation patterns
-- Ask user: "Accept these changes to {{category}} rules? (y/n)"
-- If yes: Update content, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### If 'C' (Continue):
 

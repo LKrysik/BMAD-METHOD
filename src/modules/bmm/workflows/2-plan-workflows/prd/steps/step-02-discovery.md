@@ -16,8 +16,10 @@ projectTypesCSV: '{workflow_path}/project-types.csv'
 domainComplexityCSV: '{workflow_path}/domain-complexity.csv'
 
 # Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# Advanced Elicitation Configuration
+aeList: 'research'
 ---
 
 # Step 2: Project & Domain Discovery
@@ -54,25 +56,10 @@ Conduct comprehensive project discovery that leverages existing input documents 
 ## EXECUTION PROTOCOLS:
 
 - 🎯 Show your analysis before taking any action
-- ⚠️ Present A/P/C menu after generating executive summary content
+- ⚠️ Present `{checkpointMenu}` menu after generating executive summary content
 - 💾 ONLY save when user chooses C (Continue)
 - 📖 Update frontmatter `stepsCompleted: [1, 2]` before loading next step
 - 🚫 FORBIDDEN to load next step until C is selected
-
-## COLLABORATION MENUS (A/P/C):
-
-This step will generate content and present choices:
-
-- **A (Advanced Elicitation)**: Use discovery protocols to develop deeper insights about the generated content
-- **P (Party Mode)**: Bring multiple perspectives to discuss and improve the generated content
-- **C (Continue)**: Append and save the content to the `{outputFile}` and proceed to next step
-
-## PROTOCOL INTEGRATION:
-
-- When 'A' selected: Execute {advancedElicitationTask}
-- When 'P' selected: Execute {partyModeWorkflow}
-- PROTOCOLS always return to this step's A/P/C menu
-- User accepts/rejects protocol changes before proceeding
 
 ## CONTEXT BOUNDARIES:
 
@@ -348,28 +335,11 @@ Show the generated content to the user and present:
 
 [Show the complete markdown content from step 7]
 
-**Select an Option:**
-[A] Advanced Elicitation - Let's dive deeper and refine this content
-[P] Party Mode - Bring in different perspectives to improve this
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Save this and move to Success Criteria Definition (Step 3 of 11)"
 
 ### 9. Handle Menu Selection
-
-#### IF A (Advanced Elicitation):
-
-- Execute {advancedElicitationTask} with the current content
-- Process the enhanced content that comes back
-- Ask user: "Accept these changes to the Executive Summary? (y/n)"
-- If yes: Update the content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### IF P (Party Mode):
-
-- Execute {partyModeWorkflow} with the current content
-- Process the collaborative improvements that come back
-- Ask user: "Accept these changes to the Executive Summary? (y/n)"
-- If yes: Update the content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### IF C (Continue):
 
@@ -394,7 +364,7 @@ ONLY WHEN [C continue option] is selected and [executive summary content finaliz
 - User classifications validated and confirmed
 - Product differentiator clearly identified and refined
 - Executive summary content generated collaboratively with document context
-- A/P/C menu presented and handled correctly
+- {checkpointMenu} menu presented and handled correctly
 - Content properly appended to document when C selected
 - Frontmatter updated with stepsCompleted: [1, 2]
 
@@ -407,7 +377,7 @@ ONLY WHEN [C continue option] is selected and [executive summary content finaliz
 - Not validating classifications with user before proceeding
 - Generating executive summary without real user input
 - Missing the "what makes it special" discovery and refinement
-- Not presenting A/P/C menu after content generation
+- Not presenting {checkpointMenu} menu after content generation
 - Appending content without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.
