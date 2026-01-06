@@ -52,7 +52,7 @@ Define how players progress through the game (skill, power, narrative, etc.), th
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after generating content
+- Present checkpoint menu after generating content
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]` before loading next step
 - FORBIDDEN to load next step until C is selected

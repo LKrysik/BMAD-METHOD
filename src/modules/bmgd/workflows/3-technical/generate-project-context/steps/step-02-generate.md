@@ -14,7 +14,7 @@
 
 - Show your analysis before taking any action
 - Focus on specific, actionable rules rather than general advice
-- Present A/P/C menu after each major rule category
+- Present checkpoint menu after each major rule category
 - ONLY save when user chooses C (Continue)
 - Update frontmatter with completed sections
 - FORBIDDEN to load next step until all sections are complete
@@ -31,7 +31,7 @@ This step will generate content and present choices for each rule category:
 
 - When 'A' selected: Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml
 - When 'P' selected: Execute {project-root}/_bmad/core/workflows/party-mode
-- PROTOCOLS always return to display this step's A/P/C menu after the A or P have completed
+- PROTOCOLS always return to display this step's checkpoint menu after the A or P have completed
 - User accepts/rejects protocol changes before proceeding
 
 ## CONTEXT BOUNDARIES:
@@ -326,16 +326,16 @@ After each category, show the generated rules and present choices:
 - Execute advanced-elicitation.xml with current category rules
 - Process enhanced rules that come back
 - Ask user: "Accept these enhanced rules for {{category}}? (y/n)"
-- If yes: Update content, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
+- If yes: Update content, then return to checkpoint menu
+- If no: Keep original content, then return to checkpoint menu
 
 #### If 'P' (Party Mode):
 
 - Execute party-mode workflow with category rules context
 - Process collaborative insights on implementation patterns
 - Ask user: "Accept these changes to {{category}} rules? (y/n)"
-- If yes: Update content, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
+- If yes: Update content, then return to checkpoint menu
+- If no: Keep original content, then return to checkpoint menu
 
 #### If 'C' (Continue):
 
@@ -356,7 +356,7 @@ When user selects 'C' for a category, append the content directly to `{output_fo
 - Testing rules ensure consistent test quality
 - Platform rules prevent cross-platform issues
 - Content is lean and optimized for LLM context
-- A/P/C menu presented and handled correctly for each category
+- checkpoint menu presented and handled correctly for each category
 
 ## FAILURE MODES:
 
@@ -365,7 +365,7 @@ When user selects 'C' for a category, append the content directly to `{output_fo
 - Missing critical anti-patterns or edge cases
 - Not getting user validation for each rule category
 - Not documenting exact versions and configurations
-- Not presenting A/P/C menu after content generation
+- Not presenting checkpoint menu after content generation
 
 ## NEXT STEP:
 

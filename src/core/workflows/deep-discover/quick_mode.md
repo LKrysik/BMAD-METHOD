@@ -222,5 +222,5 @@ Based on discovery, consider:
 
 After presenting results and handling user choice:
 1. Incorporate any accepted insights (user guides, agent assists)
-2. Return to calling step's A/P/C menu
+2. Return to calling step and re-display checkpoint menu
 3. Do NOT stay in quick mode

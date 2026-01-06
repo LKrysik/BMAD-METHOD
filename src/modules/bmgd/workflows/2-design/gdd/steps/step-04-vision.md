@@ -52,7 +52,7 @@ Define the project goals, background context for why this game matters now, and 
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after generating content
+- Present checkpoint menu after generating content
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4]` before loading next step
 - FORBIDDEN to load next step until C is selected
@@ -203,7 +203,7 @@ ONLY WHEN [C continue option] is selected and [vision content saved with frontma
 - Background context captures the "why"
 - USPs are genuinely differentiating, not just features
 - Competitive positioning is clear
-- A/P/C menu presented and handled correctly
+- checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4]
 
 ### SYSTEM FAILURE:
@@ -211,7 +211,7 @@ ONLY WHEN [C continue option] is selected and [vision content saved with frontma
 - Generating generic goals without user input
 - USPs that are just feature lists, not differentiation
 - Not challenging weak USPs
-- Not presenting A/P/C menu after content generation
+- Not presenting checkpoint menu after content generation
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

@@ -52,7 +52,7 @@ Facilitate the actual brainstorming session using selected techniques. Capture a
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after ideation session
+- Present checkpoint menu after ideation session
 - ONLY proceed when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3]` before loading next step
 
@@ -241,15 +241,15 @@ Here's everything we captured:
 
 - Deep dive into selected concepts
 - Ask user: "Accept these additions? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
+- If yes: Update content, return to checkpoint menu
+- If no: Keep original, return to checkpoint menu
 
 #### IF P (Party Mode):
 
 - Get diverse perspectives on concepts
 - Ask user: "Accept these perspectives? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
+- If yes: Update content, return to checkpoint menu
+- If no: Keep original, return to checkpoint menu
 
 #### IF C (Continue):
 
@@ -272,7 +272,7 @@ ONLY WHEN [C continue option] is selected and [ideation content saved with front
 - All ideas captured without judgment
 - Connections and themes identified
 - Ideas organized and summarized
-- A/P/C menu presented and handled correctly
+- checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3]
 
 ### SYSTEM FAILURE:
@@ -281,7 +281,7 @@ ONLY WHEN [C continue option] is selected and [ideation content saved with front
 - Dismissing or criticizing ideas during session
 - Not capturing all ideas
 - Rushing through techniques
-- Not presenting A/P/C menu after ideation
+- Not presenting checkpoint menu after ideation
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

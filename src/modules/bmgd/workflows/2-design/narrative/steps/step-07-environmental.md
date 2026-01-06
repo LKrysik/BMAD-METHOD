@@ -52,7 +52,7 @@ Define how story is told through the environment: visual storytelling, audio sto
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after generating content
+- Present checkpoint menu after generating content
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7]` before loading next step
 
@@ -218,7 +218,7 @@ ONLY WHEN [C continue option] is selected and [environmental content saved with 
 - Audio storytelling integrated
 - Found documents documented (if applicable)
 - Elements connect to story themes
-- A/P/C menu presented and handled correctly
+- checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4, 5, 6, 7]
 
 ### SYSTEM FAILURE:
@@ -226,7 +226,7 @@ ONLY WHEN [C continue option] is selected and [environmental content saved with 
 - Creating environmental details without user input
 - Elements disconnected from story
 - Missing audio considerations
-- Not presenting A/P/C menu after content
+- Not presenting checkpoint menu after content
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

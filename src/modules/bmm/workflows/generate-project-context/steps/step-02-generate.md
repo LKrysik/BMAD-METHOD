@@ -25,7 +25,7 @@ aeList: 'implementation'
 
 - 🎯 Show your analysis before taking any action
 - 📝 Focus on specific, actionable rules rather than general advice
-- ⚠️ Present A/P/C menu after each major rule category
+- ⚠️ Present checkpoint menu after each major rule category
 - 💾 ONLY save when user chooses C (Continue)
 - 📖 Update frontmatter with completed sections
 - 🚫 FORBIDDEN to load next step until all sections are complete
@@ -42,7 +42,7 @@ This step will generate content and present choices for each rule category:
 
 - When 'A' selected: Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml
 - When 'P' selected: Execute {project-root}/_bmad/core/workflows/party-mode
-- PROTOCOLS always return to display this step's A/P/C menu after the A or P have completed
+- PROTOCOLS always return to display this step's checkpoint menu after the A or P have completed
 - User accepts/rejects protocol changes before proceeding
 
 ## CONTEXT BOUNDARIES:
@@ -292,7 +292,7 @@ When user selects 'C' for a category, append the content directly to `{output_fo
 ✅ Code quality rules maintain project standards
 ✅ Workflow rules prevent implementation conflicts
 ✅ Content is lean and optimized for LLM context
-✅ A/P/C menu presented and handled correctly for each category
+✅ checkpoint menu presented and handled correctly for each category
 
 ## FAILURE MODES:
 
@@ -301,7 +301,7 @@ When user selects 'C' for a category, append the content directly to `{output_fo
 ❌ Missing critical anti-patterns or edge cases
 ❌ Not getting user validation for each rule category
 ❌ Not documenting exact versions and configurations
-❌ Not presenting A/P/C menu after content generation
+❌ Not presenting checkpoint menu after content generation
 
 ## NEXT STEP:
 

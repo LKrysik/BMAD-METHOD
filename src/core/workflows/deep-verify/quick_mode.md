@@ -223,5 +223,5 @@ Then search content and report:
 
 After presenting results and handling user choice:
 1. Apply any accepted changes
-2. Return to calling step's A/P/C menu
+2. Return to calling step and re-display checkpoint menu
 3. Do NOT stay in quick mode

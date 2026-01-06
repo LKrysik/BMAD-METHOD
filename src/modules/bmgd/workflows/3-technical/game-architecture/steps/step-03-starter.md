@@ -52,7 +52,7 @@ Discover and evaluate game engine options and starter templates based on project
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after engine selection
+- Present checkpoint menu after engine selection
 - ONLY proceed when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3]` before loading next step
 
@@ -265,7 +265,7 @@ ONLY WHEN [C continue option] is selected and [engine content saved with frontma
 - Engine-provided decisions documented
 - Remaining decisions identified
 - Starter template evaluated if applicable
-- A/P/C menu presented and handled correctly
+- checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3]
 
 ### SYSTEM FAILURE:
@@ -273,7 +273,7 @@ ONLY WHEN [C continue option] is selected and [engine content saved with frontma
 - Using hardcoded versions without verification
 - Not documenting engine-provided decisions
 - Proceeding without user engine selection
-- Not presenting A/P/C menu after selection
+- Not presenting checkpoint menu after selection
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

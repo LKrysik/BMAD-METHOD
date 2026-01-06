@@ -52,7 +52,7 @@ Define dialogue style, key conversations, and branching dialogue systems if appl
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after generating content
+- Present checkpoint menu after generating content
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6]` before loading next step
 
@@ -224,7 +224,7 @@ ONLY WHEN [C continue option] is selected and [dialogue content saved with front
 - Key conversations identified
 - Branching system documented (if applicable)
 - Style matches game tone
-- A/P/C menu presented and handled correctly
+- checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4, 5, 6]
 
 ### SYSTEM FAILURE:
@@ -232,7 +232,7 @@ ONLY WHEN [C continue option] is selected and [dialogue content saved with front
 - Writing actual dialogue without direction
 - Style disconnected from tone
 - Missing branching documentation
-- Not presenting A/P/C menu after content
+- Not presenting checkpoint menu after content
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

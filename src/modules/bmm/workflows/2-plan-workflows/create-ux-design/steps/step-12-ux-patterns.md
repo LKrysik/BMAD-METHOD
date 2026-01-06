@@ -26,7 +26,7 @@ aeList: 'coherence-deep'
 ## EXECUTION PROTOCOLS:
 
 - 🎯 Show your analysis before taking any action
-- ⚠️ Present A/P/C menu after generating UX patterns content
+- ⚠️ Present checkpoint menu after generating UX patterns content
 - 💾 ONLY save when user chooses C (Continue)
 - 📖 Update output file frontmatter, adding this step to the end of the list of stepsCompleted.
 - 🚫 FORBIDDEN to load next step until C is selected
@@ -43,7 +43,7 @@ This step will generate content and present choices:
 
 - When 'A' selected: Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml
 - When 'P' selected: Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md
-- PROTOCOLS always return to this step's A/P/C menu
+- PROTOCOLS always return to this step's checkpoint menu
 - User accepts/rejects protocol changes before proceeding
 
 ## CONTEXT BOUNDARIES:
@@ -205,7 +205,7 @@ When user selects 'C', append the content directly to the document using the str
 ✅ Patterns integrated with chosen design system
 ✅ Accessibility considerations included for all patterns
 ✅ Mobile-first approach incorporated
-✅ A/P/C menu presented and handled correctly
+✅ checkpoint menu presented and handled correctly
 ✅ Content properly appended to document when C selected
 
 ## FAILURE MODES:
@@ -215,7 +215,7 @@ When user selects 'C', append the content directly to the document using the str
 ❌ Missing accessibility considerations
 ❌ Patterns not aligned with design system
 ❌ Not considering mobile differences
-❌ Not presenting A/P/C menu after content generation
+❌ Not presenting checkpoint menu after content generation
 ❌ Appending content without user selecting 'C'
 
 ❌ **CRITICAL**: Reading only partial step file - leads to incomplete understanding and poor decisions
@@ -226,4 +226,4 @@ When user selects 'C', append the content directly to the document using the str
 
 After user selects 'C' and content is saved to document, load `./step-13-responsive-accessibility.md` to define responsive design and accessibility strategy.
 
-Remember: Do NOT proceed to step-13 until user explicitly selects 'C' from the A/P/C menu and content is saved!
+Remember: Do NOT proceed to step-13 until user explicitly selects 'C' from the checkpoint menu and content is saved!

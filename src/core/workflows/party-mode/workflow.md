@@ -204,3 +204,29 @@ Party mode includes Text-to-Speech for each agent response:
 - Rotate agent participation to ensure inclusive discussion
 - Handle topic drift while maintaining productive conversation
 - Facilitate cross-agent collaboration and knowledge sharing
+
+---
+
+## RETURN PROTOCOL
+
+When party mode is invoked from a step's checkpoint menu:
+
+### Exit and Return
+
+When user exits party mode (via exit triggers or natural conclusion):
+
+1. Summarize key insights from the discussion
+2. Ask: "Would you like to apply any insights to the current step?"
+3. Handle response:
+   - If yes → Help user incorporate insights into step content
+   - If no → Acknowledge and prepare to return
+4. **Return to calling step** and re-display checkpoint menu
+
+### Context Preservation
+
+When returning to calling step:
+- Party mode insights are available for reference
+- Step content remains in its previous state (unless user applied changes)
+- User can continue with Q/V/D or select C to proceed
+
+**Note:** Party mode does NOT automatically save changes to the step. User must explicitly choose to apply insights, then select C from checkpoint menu to save and proceed.

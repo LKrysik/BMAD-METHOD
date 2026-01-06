@@ -53,7 +53,7 @@ Identify inspiration games (what you're drawing from and NOT taking), analyze co
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after generating content
+- Present checkpoint menu after generating content
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6]` before loading next step
 
@@ -198,7 +198,7 @@ ONLY WHEN [C continue option] is selected and [references content saved with fro
 - Competition analyzed with strengths and weaknesses
 - Differentiators are concrete and achievable
 - Unique value proposition is clear
-- A/P/C menu presented and handled correctly
+- checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4, 5, 6]
 
 ### SYSTEM FAILURE:
@@ -206,7 +206,7 @@ ONLY WHEN [C continue option] is selected and [references content saved with fro
 - Generating references without user input
 - Generic differentiators like "better gameplay"
 - Missing the "not taking" aspect of inspirations
-- Not presenting A/P/C menu after content generation
+- Not presenting checkpoint menu after content generation
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

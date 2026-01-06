@@ -53,7 +53,7 @@ Validate that the architecture is coherent, complete, and ready to guide AI agen
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after validation complete
+- Present checkpoint menu after validation complete
 - ONLY proceed when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]` before loading next step
 
@@ -267,7 +267,7 @@ ONLY WHEN [C continue option] is selected and [validation content saved with fro
 - GDD coverage verified
 - Pattern completeness confirmed
 - Document has no placeholders
-- A/P/C menu presented and handled correctly
+- checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]
 
 ### SYSTEM FAILURE:
@@ -275,7 +275,7 @@ ONLY WHEN [C continue option] is selected and [validation content saved with fro
 - Skipping validation checks
 - Proceeding with unresolved issues
 - Incomplete document going to completion
-- Not presenting A/P/C menu after validation
+- Not presenting checkpoint menu after validation
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

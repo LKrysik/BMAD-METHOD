@@ -52,7 +52,7 @@ Develop all characters: protagonists, antagonists, and supporting cast. Define t
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after generating content
+- Present checkpoint menu after generating content
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4]` before loading next step
 
@@ -271,7 +271,7 @@ ONLY WHEN [C continue option] is selected and [characters content saved with fro
 - Antagonists with clear motivations
 - Supporting cast defined with functions
 - Character arcs mapped for major characters
-- A/P/C menu presented and handled correctly
+- checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4]
 
 ### SYSTEM FAILURE:
@@ -279,7 +279,7 @@ ONLY WHEN [C continue option] is selected and [characters content saved with fro
 - Creating characters without user input
 - Flat characters without depth
 - Missing character arcs
-- Not presenting A/P/C menu after content
+- Not presenting checkpoint menu after content
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

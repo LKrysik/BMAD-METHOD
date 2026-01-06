@@ -52,7 +52,7 @@ Build the game's world including setting, history/backstory, factions/organizati
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after generating content
+- Present checkpoint menu after generating content
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5]` before loading next step
 
@@ -236,7 +236,7 @@ ONLY WHEN [C continue option] is selected and [world content saved with frontmat
 - History connects to current story
 - Factions developed (if applicable)
 - Locations are narratively significant
-- A/P/C menu presented and handled correctly
+- checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4, 5]
 
 ### SYSTEM FAILURE:
@@ -244,7 +244,7 @@ ONLY WHEN [C continue option] is selected and [world content saved with frontmat
 - Creating world without user input
 - World disconnected from story
 - Generic locations without significance
-- Not presenting A/P/C menu after content
+- Not presenting checkpoint menu after content
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

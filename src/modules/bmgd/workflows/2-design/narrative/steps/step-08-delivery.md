@@ -52,7 +52,7 @@ Define how narrative content is delivered to players: cutscenes, in-game storyte
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after generating content
+- Present checkpoint menu after generating content
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]` before loading next step
 
@@ -238,7 +238,7 @@ ONLY WHEN [C continue option] is selected and [delivery content saved with front
 - In-game delivery methods established
 - Optional content scoped
 - Ending structure documented
-- A/P/C menu presented and handled correctly
+- checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]
 
 ### SYSTEM FAILURE:
@@ -246,7 +246,7 @@ ONLY WHEN [C continue option] is selected and [delivery content saved with front
 - Deciding delivery without user input
 - Methods unrealistic for scope
 - Missing ending documentation
-- Not presenting A/P/C menu after content
+- Not presenting checkpoint menu after content
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

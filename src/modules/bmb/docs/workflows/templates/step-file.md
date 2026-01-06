@@ -18,6 +18,12 @@ outputFile: "{output_folder}/{{outputFileName}}-{project_name}.md"
 # Task References (list only if used in THIS step file instance and only the ones used, there might be others)
 checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
 
+# Advanced Elicitation Configuration
+# Choose from: general, architecture, coherence-deep, core-design, creative, deep-exploration,
+#              first-principles, implementation, narrative, planning, platform-audience, quality,
+#              research, sanity, security, stakeholder, vision
+aeList: '{{aeList}}'
+
 {{#hasTemplates}}
 # Template References
 {{#templates}}

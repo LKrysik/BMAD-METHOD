@@ -6,7 +6,7 @@ Display at workflow step checkpoints. Gateway to verification and discovery work
 
 ## Menu
 
-**[Q] Quick** | **[V] Verify** | **[D] Discover** | **[P] Party Mode**
+**[Q] Quick** | **[V] Verify** | **[D] Discover** | **[P] Party Mode** | **[C] Continue**
 
 | Key | Action | Purpose |
 |-----|--------|---------|
@@ -14,6 +14,7 @@ Display at workflow step checkpoints. Gateway to verification and discovery work
 | **V** | Verify | Full deep verification - check completeness, consistency, quality |
 | **D** | Discover | Full deep discovery - explore assumptions, alternatives, deeper needs |
 | **P** | Party Mode | Multi-agent collaborative discussion |
+| **C** | Continue | Accept current content, save to document, proceed to next step |
 
 ---
 
@@ -54,6 +55,15 @@ Pass mode='discover' to router. Router will load deep-discover/workflow.md.
 
 When finished, return to this menu.
 
+### C (Continue):
+
+**HANDLED BY CALLING STEP** - not by this menu.
+
+When user selects C:
+1. Return control to the calling step file
+2. Step executes its "IF C:" handler (save content, update frontmatter, load next step)
+3. This menu does NOT process C directly
+
 ### Other input:
 
 Treat as question or comment. Respond, then re-display menu.
@@ -75,4 +85,6 @@ After any verification, discovery, or party mode completes:
 1. Present results/insights to user
 2. Ask: "Apply changes? / Continue exploring? / Return to step?"
 3. Handle response
-4. Return to calling step's menu (NOT this checkpoint menu)
+4. Return to calling step and re-display this checkpoint menu
+
+**Note:** When user selects C (Continue) from this menu, control passes to the calling step's "IF C:" handler which saves content and proceeds to the next step.

@@ -40,7 +40,7 @@ nextStepFile: './step-3-bar.md'
 checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
 
 # Advanced Elicitation Configuration
-aeList: '[list-name]'  # e.g., 'research', 'architecture', 'creative', 'sanity', 'general'
+aeList: '[list-name]'  # Choose from 17 ae-lists (see checkpoint-exec.md)
 ---
 ```
 
@@ -388,7 +388,7 @@ outputFile: {bmb_creations_output_folder}/output.md
 checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
 
 # Advanced Elicitation Configuration
-aeList: '[list-name]'  # e.g., 'research', 'architecture', 'creative', 'sanity', 'general'
+aeList: '[list-name]'  # Choose from 17 ae-lists (see checkpoint-exec.md)
 ---
 
 # Step X: [Step Name]

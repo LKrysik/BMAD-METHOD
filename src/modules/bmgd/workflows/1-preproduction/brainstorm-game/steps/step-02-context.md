@@ -57,7 +57,7 @@ Load game-specific brainstorming context and techniques to guide the ideation se
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after context loaded
+- Present checkpoint menu after context loaded
 - ONLY proceed when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2]` before loading next step
 
@@ -187,14 +187,14 @@ ONLY WHEN [C continue option] is selected and [context saved with frontmatter up
 - Game brain methods loaded from CSV
 - Techniques presented clearly
 - User selected brainstorming approach
-- A/P/C menu presented and handled correctly
+- checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2]
 
 ### SYSTEM FAILURE:
 
 - Not loading context files
 - Proceeding without user technique selection
-- Not presenting A/P/C menu after context
+- Not presenting checkpoint menu after context
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

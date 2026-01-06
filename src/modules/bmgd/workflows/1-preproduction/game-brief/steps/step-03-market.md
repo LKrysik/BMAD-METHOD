@@ -53,7 +53,7 @@ Define the primary and secondary target audiences with specific demographics, an
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after generating content
+- Present checkpoint menu after generating content
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3]` before loading next step
 
@@ -193,14 +193,14 @@ ONLY WHEN [C continue option] is selected and [market content saved with frontma
 - Primary audience is specific and well-defined
 - Secondary audience considered (even if none exists)
 - Market context provides business rationale
-- A/P/C menu presented and handled correctly
+- checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3]
 
 ### SYSTEM FAILURE:
 
 - Generating audience without user input
 - Audience is too vague to guide decisions
-- Not presenting A/P/C menu after content generation
+- Not presenting checkpoint menu after content generation
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

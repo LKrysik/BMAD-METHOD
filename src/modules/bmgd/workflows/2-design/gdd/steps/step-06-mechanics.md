@@ -52,7 +52,7 @@ Define the primary game mechanics that players interact with and the control sch
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after generating content
+- Present checkpoint menu after generating content
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6]` before loading next step
 - FORBIDDEN to load next step until C is selected
@@ -222,7 +222,7 @@ ONLY WHEN [C continue option] is selected and [mechanics content saved with fron
 - Mechanic interactions described
 - Control scheme appropriate for platform
 - Input feel considerations captured
-- A/P/C menu presented and handled correctly
+- checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4, 5, 6]
 
 ### SYSTEM FAILURE:
@@ -231,7 +231,7 @@ ONLY WHEN [C continue option] is selected and [mechanics content saved with fron
 - Controls inappropriate for target platform
 - Generating content without real user input
 - Missing mechanic interactions
-- Not presenting A/P/C menu after content generation
+- Not presenting checkpoint menu after content generation
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

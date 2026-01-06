@@ -52,7 +52,7 @@ Define the complete project structure including directory organization, file nam
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after structure defined
+- Present checkpoint menu after structure defined
 - ONLY proceed when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6]` before loading next step
 
@@ -278,7 +278,7 @@ ONLY WHEN [C continue option] is selected and [structure content saved with fron
 - Every system mapped to location
 - Naming conventions explicit and consistent
 - No placeholder or generic structures
-- A/P/C menu presented and handled correctly
+- checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4, 5, 6]
 
 ### SYSTEM FAILURE:
@@ -286,7 +286,7 @@ ONLY WHEN [C continue option] is selected and [structure content saved with fron
 - Generic structure with placeholders
 - Systems without clear locations
 - Vague naming conventions
-- Not presenting A/P/C menu after structure
+- Not presenting checkpoint menu after structure
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

@@ -55,7 +55,7 @@ Define implementation patterns that ensure multiple AI agents write compatible, 
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after patterns defined
+- Present checkpoint menu after patterns defined
 - ONLY proceed when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7]` before loading next step
 
@@ -324,7 +324,7 @@ ONLY WHEN [C continue option] is selected and [patterns content saved with front
 - Standard patterns selected with examples
 - Every pattern has concrete code examples
 - Consistency rules documented
-- A/P/C menu presented and handled correctly
+- checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4, 5, 6, 7]
 
 ### SYSTEM FAILURE:
@@ -332,7 +332,7 @@ ONLY WHEN [C continue option] is selected and [patterns content saved with front
 - Patterns without concrete examples
 - Novel patterns missing design documentation
 - Vague patterns that allow inconsistency
-- Not presenting A/P/C menu after patterns
+- Not presenting checkpoint menu after patterns
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

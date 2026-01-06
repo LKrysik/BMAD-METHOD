@@ -53,7 +53,7 @@ Capture the core game vision including the working title, one-sentence concept, 
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after generating content
+- Present checkpoint menu after generating content
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2]` before loading next step
 - FORBIDDEN to load next step until C is selected
@@ -192,7 +192,7 @@ ONLY WHEN [C continue option] is selected and [vision content saved with frontma
 - Core concept is clear and concise (one sentence)
 - Elevator pitch is compelling (2-3 sentences)
 - Vision statement is aspirational yet achievable
-- A/P/C menu presented and handled correctly
+- checkpoint menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2]
 
 ### SYSTEM FAILURE:
@@ -200,7 +200,7 @@ ONLY WHEN [C continue option] is selected and [vision content saved with frontma
 - Generating vision without user input
 - Core concept is vague or generic
 - Elevator pitch doesn't hook attention
-- Not presenting A/P/C menu after content generation
+- Not presenting checkpoint menu after content generation
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

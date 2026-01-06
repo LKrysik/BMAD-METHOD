@@ -28,7 +28,7 @@ aeList: 'sanity'
 
 - 🎯 Show your analysis before taking any action
 - ✅ Run comprehensive validation checks on the complete architecture
-- ⚠️ Present A/P/C menu after generating validation results
+- ⚠️ Present checkpoint menu after generating validation results
 - 💾 ONLY save when user chooses C (Continue)
 - 📖 Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7]` before loading next step
 - 🚫 FORBIDDEN to load next step until C is selected
@@ -45,7 +45,7 @@ This step will generate content and present choices:
 
 - When 'A' selected: Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml
 - When 'P' selected: Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md
-- PROTOCOLS always return to display this step's A/P/C menu after the A or P have completed
+- PROTOCOLS always return to display this step's checkpoint menu after the A or P have completed
 - User accepts/rejects protocol changes before proceeding
 
 ## CONTEXT BOUNDARIES:
@@ -328,7 +328,7 @@ When user selects 'C', append the content directly to the document using the str
 ✅ Implementation readiness confirmed
 ✅ All gaps identified and addressed
 ✅ Comprehensive validation checklist completed
-✅ A/P/C menu presented and handled correctly
+✅ checkpoint menu presented and handled correctly
 ✅ Content properly appended to document when C selected
 
 ## FAILURE MODES:
@@ -338,7 +338,7 @@ When user selects 'C', append the content directly to the document using the str
 ❌ Missing potential implementation conflicts
 ❌ Not addressing gaps found during validation
 ❌ Providing incomplete validation checklist
-❌ Not presenting A/P/C menu after content generation
+❌ Not presenting checkpoint menu after content generation
 
 ❌ **CRITICAL**: Reading only partial step file - leads to incomplete understanding and poor decisions
 ❌ **CRITICAL**: Proceeding with 'C' without fully reading and understanding the next step file
@@ -348,4 +348,4 @@ When user selects 'C', append the content directly to the document using the str
 
 After user selects 'C' and content is saved to document, load `./step-08-complete.md` to complete the workflow and provide implementation guidance.
 
-Remember: Do NOT proceed to step-08 until user explicitly selects 'C' from the A/P/C menu and content is saved!
+Remember: Do NOT proceed to step-08 until user explicitly selects 'C' from the checkpoint menu and content is saved!

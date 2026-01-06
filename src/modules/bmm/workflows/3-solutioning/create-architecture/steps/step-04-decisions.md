@@ -28,7 +28,7 @@ aeList: 'architecture'
 
 - 🎯 Show your analysis before taking any action
 - 🌐 Search the web to verify technology versions and options
-- ⚠️ Present A/P/C menu after each major decision category
+- ⚠️ Present checkpoint menu after each major decision category
 - 💾 ONLY save when user chooses C (Continue)
 - 📖 Update frontmatter `stepsCompleted: [1, 2, 3, 4]` before loading next step
 - 🚫 FORBIDDEN to load next step until C is selected
@@ -45,7 +45,7 @@ This step will generate content and present choices for each decision category:
 
 - When 'A' selected: Execute {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml
 - When 'P' selected: Execute {project-root}/_bmad/core/workflows/party-mode/workflow.md
-- PROTOCOLS always return to display this step's A/P/C menu after the A or P have completed
+- PROTOCOLS always return to display this step's checkpoint menu after the A or P have completed
 - User accepts/rejects protocol changes before proceeding
 
 ## CONTEXT BOUNDARIES:
@@ -287,7 +287,7 @@ When user selects 'C', append the content directly to the document using the str
 ✅ Decision rationale clearly documented
 ✅ Cascading implications identified and addressed
 ✅ User provided appropriate level of explanation for skill level
-✅ A/P/C menu presented and handled correctly for each category
+✅ checkpoint menu presented and handled correctly for each category
 ✅ Content properly appended to document when C selected
 
 ## FAILURE MODES:
@@ -297,7 +297,7 @@ When user selects 'C', append the content directly to the document using the str
 ❌ Missing cascading implications between decisions
 ❌ Not adapting explanations to user skill level
 ❌ Forgetting to document decisions made by starter template
-❌ Not presenting A/P/C menu after content generation
+❌ Not presenting checkpoint menu after content generation
 
 ❌ **CRITICAL**: Reading only partial step file - leads to incomplete understanding and poor decisions
 ❌ **CRITICAL**: Proceeding with 'C' without fully reading and understanding the next step file
@@ -307,4 +307,4 @@ When user selects 'C', append the content directly to the document using the str
 
 After user selects 'C' and content is saved to document, load `./step-05-patterns.md` to define implementation patterns that ensure consistency across AI agents.
 
-Remember: Do NOT proceed to step-05 until user explicitly selects 'C' from the A/P/C menu and content is saved!
+Remember: Do NOT proceed to step-05 until user explicitly selects 'C' from the checkpoint menu and content is saved!

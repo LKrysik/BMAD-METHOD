@@ -24,9 +24,11 @@ outputFile: '{output_folder}/[output-file-name]-{project_name}.md'
 # Checkpoint Reference
 checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
 
-# AE Configuration - which method list to use for Deep Verify/Discover
-  Available lists (from ae-custom-lists.yaml): Domain: narrative, architecture, core-design, platform-audience, planning, implementation, vision, research, general
-  aeList: '[list-name]'  # e.g., 'narrative', 'architecture', 'core-design'
+# Advanced Elicitation Configuration
+# Available lists: general, architecture, coherence-deep, core-design, creative, deep-exploration,
+#                  first-principles, implementation, narrative, planning, platform-audience, quality,
+#                  research, sanity, security, stakeholder, vision
+aeList: '[list-name]'
 
 # Template References (if this step uses a specific templates)
 

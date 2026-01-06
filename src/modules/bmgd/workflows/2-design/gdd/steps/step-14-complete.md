@@ -48,7 +48,7 @@ Document what is explicitly out of scope, capture key assumptions and dependenci
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Generate final sections without A/P/C menu (just confirmation)
+- Generate final sections without checkpoint menu (just confirmation)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]`
 - Present completion summary and next steps
 

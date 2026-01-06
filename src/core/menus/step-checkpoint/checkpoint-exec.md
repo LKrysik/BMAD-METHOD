@@ -191,5 +191,5 @@ After any mode completes:
 3. Handle response:
    - Apply → Make changes to step content
    - Continue → Re-enter same mode or offer other modes
-   - Return → Go back to calling step's A/P/C menu
-4. **Return to calling step menu** (load step file, display its menu)
+   - Return → Go back to calling step's checkpoint menu
+4. **Return to calling step** (load step file, re-display checkpoint menu)
