@@ -163,7 +163,7 @@ Show the loaded context and present:
 
 **Ready to start ideation?**
 
-**Load `{checkpointMenu}` and display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 ### 7. Handle Menu Selection
 

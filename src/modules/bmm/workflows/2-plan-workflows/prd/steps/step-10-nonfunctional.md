@@ -188,7 +188,7 @@ Show the generated NFR content and present choices:
 
 **Note:** We've skipped categories that don't apply to avoid unnecessary requirements.
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save this and move to Complete PRD (Step 11 of 11)"
 

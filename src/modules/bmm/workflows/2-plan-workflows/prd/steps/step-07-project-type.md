@@ -161,7 +161,7 @@ Show the generated project-type content and present choices:
 
 [Show the complete markdown content from step 5]
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save this and move to Scoping (Step 8 of 11)"
 

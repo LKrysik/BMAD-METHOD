@@ -188,7 +188,7 @@ Show the generated functional requirements and present choices:
 - UX designers will ONLY design interactions for these capabilities
 - Architects will ONLY build systems to support these capabilities
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save this and move to Non-Functional Requirements (Step 10 of 11)"
 

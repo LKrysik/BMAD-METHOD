@@ -85,7 +85,9 @@ Document findings to agentPlan file using this structure:
 
 After documentation, present checkpoint menu:
 
-**Load `{checkpointMenu}` to display options.**
+**[Q] Quick** | **[V] Verify** | **[D] Discover** | **[P] Party Mode** | **[C] Continue**
+
+For Q/V/D/P, execute routing via `{checkpointMenu}`.
 
 **[C]ontinue** - Proceed to next step (type-metadata)
 
@@ -126,9 +128,8 @@ After documentation, present checkpoint menu:
    - Structure with Purpose, Goals, Capabilities, Context, Users
    - Ensure completeness and clarity
 
-4. **Present Completion Menu**
-   - Load `{checkpointMenu}` to display options
-   - Show [C]ontinue to next step
+4. **Present Checkpoint Menu**
+   - Read and execute `{checkpointMenu}` file to display menu and handle user selection
    - Await user selection
 
 5. **Handle Menu Choice**

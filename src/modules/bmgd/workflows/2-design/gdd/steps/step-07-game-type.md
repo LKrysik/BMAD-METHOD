@@ -62,7 +62,7 @@ Process the game-type specific sections from the loaded game type guide ({game_t
 
 ## CHECKPOINT
 
-**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+**At checkpoint:** Read and execute `{checkpointMenu}` file - handles menu display and user selection.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
@@ -211,7 +211,7 @@ Show the generated content to the user and present:
 - Have we covered all required elements for {{game_type}}?
 - Any genre conventions you want to subvert?
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save this and move to Progression & Balance (Step 8 of 14)"
 

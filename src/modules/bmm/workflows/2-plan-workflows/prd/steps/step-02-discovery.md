@@ -335,7 +335,7 @@ Show the generated content to the user and present:
 
 [Show the complete markdown content from step 7]
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save this and move to Success Criteria Definition (Step 3 of 11)"
 

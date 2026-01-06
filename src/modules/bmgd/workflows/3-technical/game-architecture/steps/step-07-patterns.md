@@ -61,7 +61,7 @@ Define implementation patterns that ensure multiple AI agents write compatible, 
 
 ## CHECKPOINT
 
-**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+**At checkpoint:** Read and execute `{checkpointMenu}` file - handles menu display and user selection.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
@@ -299,7 +299,7 @@ Show the generated content to the user and present:
 - Do patterns cover all major coding scenarios?
 - Are novel patterns fully documented?
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save this and move to Validation (Step 8 of 9)"
 

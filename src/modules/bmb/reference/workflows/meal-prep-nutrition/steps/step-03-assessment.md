@@ -109,7 +109,7 @@ Load and append the content from {assessmentTemplate}
 
 ### 4. Present MENU OPTIONS
 
-**Load `{checkpointMenu}` and display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 - IF C: Save content to {outputFile}, update frontmatter, then load, read entire file, then execute {nextStepFile}
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#4-present-menu-options)

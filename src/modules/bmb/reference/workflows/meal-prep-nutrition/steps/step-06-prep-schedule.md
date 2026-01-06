@@ -168,7 +168,7 @@ userSatisfaction: [to be rated]
 
 ### 5. Present MENU OPTIONS
 
-**Load `{checkpointMenu}` and display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 - IF C: update frontmatter `stepsCompleted` to add 6 at the end of the array before loading next step, mark workflow complete, display final message
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#6-present-menu-options)

@@ -105,12 +105,13 @@ Example: "To analyze user requirements and document functional specifications th
 
 ### N. Present Checkpoint Menu
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`
 
 #### Menu Handling:
 
+- IF Q/V/D/P: Handled by `{checkpointMenu}` file instructions
 - IF C (Continue): Save content to {outputFile}, update frontmatter, load {nextStepFile}
 - IF other input: Respond helpfully, re-display checkpoint menu
 
@@ -118,7 +119,7 @@ Example: "To analyze user requirements and document functional specifications th
 
 - ALWAYS halt and wait for user input after presenting menu
 - ONLY proceed to next step when user selects 'C'
-- After V/D execution completes, return to checkpoint menu
+- After Q/V/D/P execution completes, return to checkpoint menu
 - User can chat or ask questions - respond then re-display menu
 
 ## CRITICAL STEP COMPLETION NOTE
@@ -155,19 +156,18 @@ ONLY WHEN [C continue option] is selected and [completion requirements], will yo
 
 Use when user and agent collaborate on content that may need verification or exploration.
 
-**Load `{checkpointMenu}` to display options.**
-- **C (Continue):** Content is good, proceed to next step
+**Read and execute `{checkpointMenu}` file** - displays Q/V/D/P/C options and handles selection.
 
 ```markdown
 ### N. Present Checkpoint Menu
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`
 
 #### Menu Handling:
 
-- IF V (Verify) or D (Discover): Checkpoint-exec.md handles routing
+- IF Q/V/D/P: Handled by `{checkpointMenu}` file instructions
 - IF C (Continue): Save content to {outputFile}, update frontmatter, load {nextStepFile}
 - IF other input: Respond helpfully, re-display checkpoint menu
 ```

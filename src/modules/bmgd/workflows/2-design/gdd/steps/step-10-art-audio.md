@@ -197,7 +197,7 @@ Show the generated content to the user and present:
 - Is the audio direction achievable for your scope?
 - Do art and audio work together cohesively?
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`
 

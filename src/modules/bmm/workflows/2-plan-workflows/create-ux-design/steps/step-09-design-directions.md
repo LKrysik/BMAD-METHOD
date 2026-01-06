@@ -171,7 +171,7 @@ Show the generated design direction content and present choices:
 
 [Show the complete markdown content from step 6]
 
-**Load `{checkpointMenu}` and display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 ### 8. Handle Menu Selection
 

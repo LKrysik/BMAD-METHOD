@@ -192,7 +192,7 @@ After approval, update {outputFile}:
 
 ### 8. Present Menu and Handle Selection
 
-**Load `{checkpointMenu}` and display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 #### IF C (Continue):
 

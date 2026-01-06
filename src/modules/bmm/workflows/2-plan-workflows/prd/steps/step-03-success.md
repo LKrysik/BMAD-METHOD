@@ -207,7 +207,7 @@ Show the generated content and present choices:
 
 [Show the complete markdown content from step 7]
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save success criteria and move to User Journey Mapping (Step 4 of 11)"
 

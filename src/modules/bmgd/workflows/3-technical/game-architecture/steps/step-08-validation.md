@@ -59,7 +59,7 @@ Validate that the architecture is coherent, complete, and ready to guide AI agen
 
 ## CHECKPOINT
 
-**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+**At checkpoint:** Read and execute `{checkpointMenu}` file - handles menu display and user selection.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
@@ -240,7 +240,7 @@ Your architecture document is complete and ready to guide implementation.
 Some issues need resolution before the architecture is ready.
 {{/if_needs_work}}
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save validation and move to Completion (Step 9 of 9)"
 

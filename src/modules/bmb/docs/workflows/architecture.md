@@ -111,7 +111,9 @@ step-[appropriate-next].md
 ### Standard Menu Pattern
 
 ```
-**Load `{checkpointMenu}` to display options.**
+**[Q] Quick** | **[V] Verify** | **[D] Discover** | **[P] Party Mode** | **[C] Continue**
+
+For Q/V/D/P, execute routing via `{checkpointMenu}`.
 
 **[C] Continue:** Save to `{outputFile}` and load `{nextStepFile}`
 

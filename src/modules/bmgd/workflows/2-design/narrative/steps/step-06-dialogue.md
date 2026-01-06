@@ -58,7 +58,7 @@ Define dialogue style, key conversations, and branching dialogue systems if appl
 
 ## CHECKPOINT
 
-**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+**At checkpoint:** Read and execute `{checkpointMenu}` file - handles menu display and user selection.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
@@ -198,7 +198,7 @@ Show the generated content to the user and present:
 - Are key conversations identified?
 - Is branching scope realistic?
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save this and move to Environmental Storytelling (Step 7 of 11)"
 

@@ -145,25 +145,26 @@ You MUST respond in **{language}** throughout this step.
 ```markdown
 ### X. Present Checkpoint Menu
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`
 
 #### Menu Handling:
+- IF Q/V/D/P: Handled by `{checkpointMenu}` file instructions
 - IF C (Continue): Save content to {outputFile}, update frontmatter, load {nextStepFile}
 - IF other input: Respond helpfully, re-display checkpoint menu
 
 #### EXECUTION RULES:
 - ALWAYS halt and wait for user input after presenting menu
 - ONLY proceed to next step when user selects 'C'
-- After V/D execution completes, return to checkpoint menu
+- After Q/V/D/P execution completes, return to checkpoint menu
 - User can chat or ask questions - respond then re-display menu
 
 ## CRITICAL STEP COMPLETION NOTE
 ONLY WHEN [C continue option] is selected and [completion conditions], will you then load and read fully `{nextStepFile}`...
 ```
 
-**Note:** The checkpoint-menu.md displays Q/V/D/P options. The [C] Continue action is defined separately in each step file since it varies per step.
+**Note:** The `{checkpointMenu}` is a frontmatter variable pointing to checkpoint-menu.md file. Agent MUST read this file and execute its instructions. The [C] Continue action is step-specific.
 
 ### 10. SYSTEM SUCCESS/FAILURE METRICS
 
@@ -443,7 +444,9 @@ You MUST respond in **{language}** throughout this step.
 
 ### X. Present Checkpoint Menu
 
-**Load `{checkpointMenu}` to display options.**
+**[Q] Quick** | **[V] Verify** | **[D] Discover** | **[P] Party Mode** | **[C] Continue**
+
+For Q/V/D/P, execute routing via `{checkpointMenu}`.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`
 

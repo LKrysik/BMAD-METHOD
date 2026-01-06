@@ -60,7 +60,7 @@ Define technical requirements including performance targets, platform-specific d
 
 ## CHECKPOINT
 
-**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+**At checkpoint:** Read and execute `{checkpointMenu}` file - handles menu display and user selection.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
@@ -224,7 +224,7 @@ Show the generated content to the user and present:
 
 **Note:** This is GDD-level technical planning. Detailed architecture decisions (engine selection, specific technologies, system design) will be addressed in the Architecture workflow after the GDD is complete.
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`
 

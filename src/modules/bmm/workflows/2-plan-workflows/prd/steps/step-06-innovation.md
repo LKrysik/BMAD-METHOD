@@ -165,7 +165,7 @@ Show the generated innovation content and present choices:
 
 [Show the complete markdown content from step 5]
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save this and move to Project Type Analysis (Step 7 of 11)"
 
@@ -182,7 +182,7 @@ Show the generated innovation content and present choices:
 If no genuine innovation signals are found after exploration:
 "After exploring {{project_name}}, I don't see clear innovation signals that warrant a dedicated innovation section. This is perfectly fine - many successful products are excellent executions of existing concepts rather than breakthrough innovations.
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Skip innovation section and move to Project Type Analysis (Step 7 of 11)"
 

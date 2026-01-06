@@ -269,7 +269,7 @@ After each category, show the generated rules and present choices:
 
 [Show the complete markdown content for this category]
 
-**Load `{checkpointMenu}` and display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 ### 10. Handle Menu Selection
 

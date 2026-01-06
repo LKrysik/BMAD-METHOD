@@ -147,7 +147,7 @@ pantryChecked: [yes/no]
 
 ### 5. Present MENU OPTIONS
 
-**Load `{checkpointMenu}` and display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 - IF C: Save content to nutrition-plan.md, update frontmatter `stepsCompleted` to add 5 at the end of the array before loading next step, then load, read entire file, then execute `{workflow_path}/step-06-prep-schedule.md`
 - IF Any other comments or queries: help user respond then [Redisplay Menu Options](#5-present-menu-options)

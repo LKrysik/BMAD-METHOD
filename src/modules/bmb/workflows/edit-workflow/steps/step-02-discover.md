@@ -213,7 +213,9 @@ Load and append the content from {goalsTemplate}
 
 ### 8. Present MENU OPTIONS
 
-**Load `{checkpointMenu}` to display options.**
+**[Q] Quick** | **[V] Verify** | **[D] Discover** | **[P] Party Mode** | **[C] Continue**
+
+For Q/V/D/P, execute routing via `{checkpointMenu}`.
 
 #### Menu Handling Logic:
 

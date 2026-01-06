@@ -180,7 +180,7 @@ Load and append the content from {analysisTemplate}
 
 ### 8. Present MENU OPTIONS
 
-**Load `{checkpointMenu}` and display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 #### EXECUTION RULES:
 

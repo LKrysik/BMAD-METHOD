@@ -59,7 +59,7 @@ Define the primary game mechanics that players interact with and the control sch
 
 ## CHECKPOINT
 
-**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+**At checkpoint:** Read and execute `{checkpointMenu}` file - handles menu display and user selection.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
@@ -195,7 +195,7 @@ Show the generated content to the user and present:
 - Do controls feel natural for the platform?
 - Are common actions easily accessible?
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save this and move to Game Type Specifics (Step 7 of 14)"
 

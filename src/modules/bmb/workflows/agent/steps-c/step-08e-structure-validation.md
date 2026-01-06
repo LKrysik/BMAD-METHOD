@@ -198,7 +198,9 @@ All required fields present and correctly formatted.
 
 ## 4. Present MENU OPTIONS
 
-**Load `{checkpointMenu}` to display options.**
+**[Q] Quick** | **[V] Verify** | **[D] Discover** | **[P] Party Mode** | **[C] Continue**
+
+For Q/V/D/P, execute routing via `{checkpointMenu}`.
 
 **[F] Fix Findings** - Apply auto-fixes to identified issues
 **[C] Continue** - Proceed to sidecar validation (Expert) or celebration (Simple)

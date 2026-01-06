@@ -76,7 +76,9 @@ Read `{editPlan}` frontmatter to collect validationBefore and validationAfter fi
 
 ### 4. Present MENU OPTIONS
 
-**Load `{checkpointMenu}` to display options.**
+**[Q] Quick** | **[V] Verify** | **[D] Discover** | **[P] Party Mode** | **[C] Continue**
+
+For Q/V/D/P, execute routing via `{checkpointMenu}`.
 
 **[R] Review** - Show detailed before/after comparison
 **[C] Continue** - Proceed to celebration

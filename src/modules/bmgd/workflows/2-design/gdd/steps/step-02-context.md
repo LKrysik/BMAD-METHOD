@@ -73,7 +73,7 @@ Load and analyze the game brief (if available), determine the game type from gam
 
 ## CHECKPOINT
 
-**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+**At checkpoint:** Read and execute `{checkpointMenu}` file - handles menu display and user selection.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
@@ -270,7 +270,7 @@ Show the generated content to the user and present:
 
 [Show the complete markdown content from step 8]
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save this and move to Platforms & Audience (Step 3 of 14)"
 

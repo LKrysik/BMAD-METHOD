@@ -229,7 +229,7 @@ The final {outputFile} must follow this structure exactly:
 
 After all epics and stories are complete:
 
-**Load `{checkpointMenu}` and display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 #### IF C (Continue):
 

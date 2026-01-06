@@ -222,7 +222,7 @@ Show the scoping decisions and present choices:
 
 [Show the complete markdown content from step 6]
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save scoping decisions and move to Functional Requirements (Step 9 of 11)"
 

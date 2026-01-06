@@ -188,7 +188,7 @@ Show the generated domain content and present choices:
 
 **What would you like to do?**
 
-**Load `{checkpointMenu}` and display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save this and move to Innovation Focus (Step 6 of 11)"
 

@@ -98,26 +98,27 @@ aeList: '{{aeList}}'
 
 {{#hasMenu}}
 
-### {{menuNumber}}. Present MENU OPTIONS
+### {{menuNumber}}. Present Checkpoint Menu
 
-Display: **{{checkpointMenu}}**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
+
+**[C] Continue action for this step:** {{continueAction}}
 
 #### EXECUTION RULES:
 
 - ALWAYS halt and wait for user input after presenting menu
 - ONLY proceed to next step when user selects 'C'
-- After other menu items execution, return to this menu
-- User can chat or ask questions - always respond and then end with display again of the menu options
-- Use menu handling logic section below
+- After Q/V/D/P execution completes, return to this menu
+- User can chat or ask questions - always respond and then re-display menu
 
 #### Menu Handling Logic:
 
+- IF Q/V/D/P: Handled by `{checkpointMenu}` file instructions
 {{#menuOptions}}
-
 - IF {{key}}: {{action}}
-  {{/menuOptions}}
-- IF Any other comments or queries: help user respond then [Redisplay Menu Options](#{{menuNumber}}-present-menu-options)
-  {{/hasMenu}}
+{{/menuOptions}}
+- IF Any other comments or queries: help user respond then [Redisplay Menu](#{{menuNumber}}-present-checkpoint-menu)
+{{/hasMenu}}
 
 ## CRITICAL STEP COMPLETION NOTE
 

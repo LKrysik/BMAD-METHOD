@@ -58,7 +58,7 @@ Develop all characters: protagonists, antagonists, and supporting cast. Define t
 
 ## CHECKPOINT
 
-**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+**At checkpoint:** Read and execute `{checkpointMenu}` file - handles menu display and user selection.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
@@ -245,7 +245,7 @@ Show the generated content to the user and present:
 - Are arcs meaningful and complete?
 - Do relationships create conflict?
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save this and move to World Building (Step 5 of 11)"
 

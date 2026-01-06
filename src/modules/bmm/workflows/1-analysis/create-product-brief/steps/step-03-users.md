@@ -162,7 +162,7 @@ Prepare the following structure for document append:
 **Here's what I'll add to the document:**
 [Show the complete markdown content from step 5]
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save this and move to Success Metrics Definition"
 

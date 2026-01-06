@@ -59,7 +59,7 @@ Define the project goals, background context for why this game matters now, and 
 
 ## CHECKPOINT
 
-**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+**At checkpoint:** Read and execute `{checkpointMenu}` file - handles menu display and user selection.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
@@ -177,7 +177,7 @@ Show the generated content to the user and present:
 
 [Show the complete markdown content from step 4]
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save this and move to Core Gameplay (Step 5 of 14)"
 

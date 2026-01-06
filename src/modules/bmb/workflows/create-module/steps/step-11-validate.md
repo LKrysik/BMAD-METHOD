@@ -297,7 +297,9 @@ Would you like me to help you with anything else?"
 
 ### 13. Final MENU OPTIONS
 
-**Load `{checkpointMenu}` to display options.**
+**[Q] Quick** | **[V] Verify** | **[D] Discover** | **[P] Party Mode** | **[C] Continue**
+
+For Q/V/D/P, execute routing via `{checkpointMenu}`.
 
 [C] Exit - Mark as complete and exit gracefully
 

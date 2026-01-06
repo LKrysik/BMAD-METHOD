@@ -68,7 +68,7 @@ Define the fundamental gameplay elements: game pillars (core design tenets), the
 
 ## CHECKPOINT
 
-**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+**At checkpoint:** Read and execute `{checkpointMenu}` file - handles menu display and user selection.
 
 **[→] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
@@ -213,7 +213,7 @@ Show the generated content to the user and present:
 - Does the core loop deliver on your pillars?
 - Do win/loss conditions create appropriate stakes?
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 **[→] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`"
 

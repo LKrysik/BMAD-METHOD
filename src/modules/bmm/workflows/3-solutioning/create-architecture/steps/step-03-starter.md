@@ -279,7 +279,7 @@ Show the generated content and present choices:
 
 [Show the complete markdown content from step 8]
 
-**Load `{checkpointMenu}` and display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 ### 10. Handle Menu Selection
 

@@ -66,7 +66,9 @@ Read `{validationReport}` to collect all validation findings.
 
 ### 4. Present MENU OPTIONS
 
-**Load `{checkpointMenu}` to display options.**
+**[Q] Quick** | **[V] Verify** | **[D] Discover** | **[P] Party Mode** | **[C] Continue**
+
+For Q/V/D/P, execute routing via `{checkpointMenu}`.
 
 **[E] Edit Agent** - Launch edit workflow
 **[F] Fix in Place** - Make quick fixes without full edit workflow

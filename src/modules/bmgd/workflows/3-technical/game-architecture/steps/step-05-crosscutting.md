@@ -58,7 +58,7 @@ Define patterns for concerns that affect EVERY system in the game: error handlin
 
 ## CHECKPOINT
 
-**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+**At checkpoint:** Read and execute `{checkpointMenu}` file - handles menu display and user selection.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
@@ -268,7 +268,7 @@ Show the generated content to the user and present:
 - Are the examples clear enough for AI agents?
 - Any edge cases we missed?
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save this and move to Project Structure (Step 6 of 9)"
 

@@ -100,7 +100,9 @@ Write to `{validationReport}`.
 
 **Is this the correct agent to validate and is it identified as the proper type?**
 
-**Load `{checkpointMenu}` to display options.**
+**[Q] Quick** | **[V] Verify** | **[D] Discover** | **[P] Party Mode** | **[C] Continue**
+
+For Q/V/D/P, execute routing via `{checkpointMenu}`.
 
 **[C] Continue** - Yes, begin validation
 

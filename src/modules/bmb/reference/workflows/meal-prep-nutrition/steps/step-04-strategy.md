@@ -157,7 +157,7 @@ mealStrategy:
 
 ### 5. Present MENU OPTIONS
 
-**Load `{checkpointMenu}` and display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 
 - IF C: Save content to nutrition-plan.md, update frontmatter `stepsCompleted` to add 4 at the end of the array before loading next step, check cooking frequency:

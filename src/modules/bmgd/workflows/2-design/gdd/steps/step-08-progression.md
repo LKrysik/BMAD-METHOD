@@ -59,7 +59,7 @@ Define how players progress through the game (skill, power, narrative, etc.), th
 
 ## CHECKPOINT
 
-**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+**At checkpoint:** Read and execute `{checkpointMenu}` file - handles menu display and user selection.
 
 **[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
@@ -220,7 +220,7 @@ Show the generated content to the user and present:
 - Is the difficulty curve appropriate for your audience?
 - Does the economy (if any) feel fair?
 
-**Load `{checkpointMenu}` to display options.**
+**Read and execute `{checkpointMenu}` file** - this file contains the menu options (Q/V/D/P/C) and their handling logic.
 
 [C] Continue - Save this and move to Level Design (Step 9 of 14)"
 
