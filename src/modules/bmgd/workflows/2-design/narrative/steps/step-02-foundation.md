@@ -11,10 +11,21 @@ nextStepFile: '{workflow_path}/steps/step-03-story.md'
 workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/narrative-design.md'
 
-# Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+# Checkpoint Reference
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# AE Configuration
+aeRole: 'narrative'
 ---
+
+<!-- DEEP_VERIFY -->
+70,sanity,Scope Integrity Check,Does premise have protagonist + goal + obstacle + stakes? List each element: PRESENT / MISSING.,premise elements → completeness check
+73,sanity,Coherence Check,Do themes ALIGN with tone? Dark themes + lighthearted tone = potential mismatch?,theme-tone alignment → contradiction search
+74,sanity,Grounding Check,What assumptions about audience narrative expectations? Which if wrong breaks the story?,audience assumptions → critical dependencies
+
+<!-- DEEP_DISCOVER -->
+41,core,Socratic Questioning,What HIDDEN assumptions about story does the premise contain? What questions does it NOT answer?,premise → hidden assumptions → unanswered questions
+106,exploration,Plato's Cave Inversion,The stated themes are SHADOWS. What is the TRUE theme you're trying to explore?,stated themes → deeper meaning → alignment
 
 # Step 2: Story Foundation
 
@@ -50,15 +61,15 @@ Define the narrative foundation: premise, themes, tone/atmosphere, and overall s
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after generating content
+- Present V/D/C menu after generating content
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2]` before loading next step
 
-## COLLABORATION MENUS (A/P/C):
+## CHECKPOINT
 
-- **A (Advanced Elicitation)**: Explore themes deeper
-- **P (Party Mode)**: Get perspectives on foundation
-- **C (Continue)**: Save the content and proceed
+**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+
+**[→] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
 ## Sequence of Instructions (Do not deviate, skip, or optimize)
 
@@ -208,26 +219,16 @@ Show the generated content to the user and present:
 - Do the themes resonate with your intent?
 - Does the structure fit your gameplay?
 
-**Select an Option:**
-[A] Advanced Elicitation - Explore themes and structure deeper
-[P] Party Mode - Get perspectives on foundation
-[C] Continue - Save this and move to Story Beats (Step 3 of 11)"
+**Load `{checkpointMenu}` to display options.**
+
+**[→] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`"
 
 ### 8. Handle Menu Selection
 
-#### IF A (Advanced Elicitation):
+#### IF V (Verify) or D (Discover):
 
-- Execute {advancedElicitationTask} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
-
-#### IF P (Party Mode):
-
-- Execute {partyModeWorkflow} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
+- Checkpoint-exec.md handles routing
+- After execution completes, return to checkpoint menu
 
 #### IF C (Continue):
 
@@ -249,7 +250,7 @@ ONLY WHEN [C continue option] is selected and [foundation content saved with fro
 - Themes identified and described
 - Tone and atmosphere defined
 - Story structure selected and broken down
-- A/P/C menu presented and handled correctly
+- V/D/C menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2]
 
 ### SYSTEM FAILURE:
@@ -257,7 +258,7 @@ ONLY WHEN [C continue option] is selected and [foundation content saved with fro
 - Generating premise FOR user
 - Generic themes not connected to user's vision
 - Proceeding without structure breakdown
-- Not presenting A/P/C menu after content
+- Not presenting V/D/C menu after content
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

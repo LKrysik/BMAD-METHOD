@@ -21,10 +21,11 @@ altStep{Y}: '{workflow_path}/steps/step-[Y]-[some-other-step].md' # if there is 
 workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/[output-file-name]-{project_name}.md'
 
-# Task References (IF THE workflow uses and it makes sense in this step to have these )
+# Checkpoint Reference
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
 
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+# AE Configuration
+aeRole: '[role-name]'  # e.g., 'discovery', 'architecture', 'narrative', 'core-design'
 
 # Template References (if this step uses a specific templates)
 
@@ -39,6 +40,22 @@ someData: '{workflow_path}/data/foo.csv'
 # Add more as needed - but ONLY what is used in this specific step file!
 
 ---
+
+<!-- DEEP_VERIFY: Targeted verification methods for this step's content -->
+<!-- Format: id,category,method_name,description,output_pattern -->
+<!-- Choose 2-4 methods that check THIS STEP's specific output -->
+<!-- Example methods for verification: -->
+<!-- 70,sanity,Scope Integrity Check,Verify all requirements addressed,scope → gaps -->
+<!-- 73,sanity,Coherence Check,Check for internal contradictions,contradictions → resolution -->
+<!-- 74,sanity,Grounding Check,List hidden assumptions,assumptions → risks -->
+
+<!-- DEEP_DISCOVER: Targeted discover methods for exploring with user -->
+<!-- Format: id,category,method_name,description,output_pattern -->
+<!-- Choose 2-3 methods that help user explore alternatives -->
+<!-- Example methods for discover: -->
+<!-- 39,core,First Principles Analysis,Why this approach?,fundamentals → alternatives -->
+<!-- 41,core,Socratic Questioning,What hidden assumptions?,questions → insights -->
+<!-- 62,challenge,Theseus Paradox,Is this solving the core problem?,core alignment -->
 
 # Step [N]: [Step Name]
 
@@ -100,26 +117,27 @@ Example: "To analyze user requirements and document functional specifications th
 
 ### N. Title (as many as needed)
 
-<!-- not ever step will include advanced elicitation or party mode, in which case generally will just have the C option -->
-<!-- for example an init step 1 that loads data, or step 1b continues a workflow would not need advanced elicitation or party mode - but any step where the user and the llm work together on content, thats where it makes sense to include them -->
+<!-- Not every step needs checkpoint menu - init steps and completion steps typically don't -->
+<!-- Steps where user and agent collaborate on content SHOULD use checkpoint menu -->
 
-### N. Present MENU OPTIONS
+### N. Present Checkpoint Menu
 
-Display: "**Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Continue"
+**Load `{checkpointMenu}` to display options.**
 
-#### Menu Handling Logic:
+**[→] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`
 
-- IF A: Execute {advancedElicitationTask} # Or custom action
-- IF P: Execute {partyModeWorkflow} # Or custom action
-- IF C: Save content to {outputFile}, update frontmatter, then only then load, read entire file, then execute {nextStepFile}
-- IF Any other comments or queries: help user respond then [Redisplay Menu Options](#n-present-menu-options)
+#### Menu Handling:
+
+- IF V (Verify) or D (Discover): Checkpoint-exec.md handles routing
+- IF → (Continue): Save content to {outputFile}, update frontmatter, load {nextStepFile}
+- IF other input: Respond helpfully, re-display checkpoint menu
 
 #### EXECUTION RULES:
 
 - ALWAYS halt and wait for user input after presenting menu
 - ONLY proceed to next step when user selects 'C'
-- After other menu items execution completes, redisplay the menu
-- User can chat or ask questions - always respond when conversation ends, redisplay the menu
+- After V/D execution completes, return to checkpoint menu
+- User can chat or ask questions - respond then re-display menu
 
 ## CRITICAL STEP COMPLETION NOTE
 
@@ -149,32 +167,29 @@ ONLY WHEN [C continue option] is selected and [completion requirements], will yo
 
 <!-- TEMPLATE END-->
 
-## Common Menu Patterns to use in the final sequence item in a step file
+## Common Menu Patterns
 
-FYI Again - party mode is useful for the user to reach out and get opinions from other agents.
+### Checkpoint Menu (Standard)
 
-Advanced elicitation is use to direct you to think of alternative outputs of a sequence you just performed.
+Use when user and agent collaborate on content that may need verification or exploration.
 
-### Standard Menu - when a sequence in a step results in content produced by the agent or human that could be improved before proceeding
+- **V (Verify):** Check agent's work for completeness, consistency, quality
+- **D (Discover):** Explore with user - assumptions, alternatives, deeper needs
+- **C (Continue):** Content is good, proceed to next step
+- **Party Mode:** Available separately via `/party` command
 
 ```markdown
-### N. Present MENU OPTIONS
+### N. Present Checkpoint Menu
 
-Display: "**Select an Option:** [A] [Advanced Elicitation] [P] Party Mode [C] Continue"
+**Load `{checkpointMenu}` to display options.**
 
-#### Menu Handling Logic:
+**[→] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`
 
-- IF A: Execute {advancedElicitationTask}
-- IF P: Execute {partyModeWorkflow}
-- IF C: Save content to {outputFile}, update frontmatter, then only then load, read entire file, then execute {nextStepFile}
-- IF Any other comments or queries: help user respond then [Redisplay Menu Options](#n-present-menu-options)
+#### Menu Handling:
 
-#### EXECUTION RULES:
-
-- ALWAYS halt and wait for user input after presenting menu
-- ONLY proceed to next step when user selects 'C'
-- After other menu items execution, return to this menu
-- User can chat or ask questions - always respond and then end with display again of the menu options
+- IF V (Verify) or D (Discover): Checkpoint-exec.md handles routing
+- IF → (Continue): Save content to {outputFile}, update frontmatter, load {nextStepFile}
+- IF other input: Respond helpfully, re-display checkpoint menu
 ```
 
 ### Optional Menu - Auto-Proceed Menu (No User Choice or confirm, just flow right to the next step once completed)

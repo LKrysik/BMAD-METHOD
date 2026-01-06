@@ -26,6 +26,7 @@
   "scripts": {
     "bmad:generate-ae-methods": "node tools/cli/bmad-cli.js generate-ae-methods",
     "bmad:install": "node tools/cli/bmad-cli.js install",
+    "bmad:migrate-ae-steps": "node tools/cli/bmad-cli.js migrate-ae-steps",
     "bundle": "node tools/cli/bundlers/bundle-web.js all",
     "docs:build": "node tools/build-docs.js",
     "docs:dev": "npm run docs:build && npm run docs:serve",

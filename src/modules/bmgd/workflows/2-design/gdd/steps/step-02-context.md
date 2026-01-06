@@ -15,10 +15,22 @@ outputFile: '{output_folder}/gdd.md'
 gameTypesCSV: '{workflow_path}/game-types.csv'
 gameTypesFolder: '{workflow_path}/game-types'
 
-# Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+# Checkpoint Reference
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# AE Configuration
+aeRole: 'discovery'
 ---
+
+<!-- DEEP_VERIFY -->
+70,sanity,Scope Integrity Check,Verify artifact addresses FULL scope of ORIGINAL task. Quote original task verbatim. List EACH element and classify as ADDRESSED / REDUCED / OMITTED.,original task quote → element-by-element classification → drift detection
+74,sanity,Grounding Check,List ALL assumptions (explicit AND hidden). For each hidden assumption: MARK as issue. Which assumption if false would invalidate >50% of artifact?,assumptions list → hidden vs explicit → critical dependency → CUI BONO
+73,sanity,Coherence Check,Check: Are definitions stable throughout? Does section A contradict section B? Search for contradictory statements and redefinitions.,definitions stability → contradiction search → dual-location quotes
+
+<!-- DEEP_DISCOVER -->
+39,core,First Principles Analysis,Strip away assumptions to rebuild from fundamental truths - breakthrough technique for innovation and solving impossible problems,assumptions → truths → new approach
+40,core,5 Whys Deep Dive,Repeatedly ask why to drill down to root causes - simple but powerful for understanding failures,why chain → root cause → solution
+41,core,Socratic Questioning,Use targeted questions to reveal hidden assumptions and guide discovery - excellent for teaching and self-discovery,questions → revelations → understanding
 
 # Step 2: Game Context & Type
 
@@ -54,25 +66,16 @@ Load and analyze the game brief (if available), determine the game type from gam
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after generating core concept content
+- Present V/D/C menu after generating core concept content
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2]` before loading next step
 - FORBIDDEN to load next step until C is selected
 
-## COLLABORATION MENUS (A/P/C):
+## CHECKPOINT
 
-This step will generate content and present choices:
+**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
 
-- **A (Advanced Elicitation)**: Use discovery protocols to develop deeper insights about the game concept
-- **P (Party Mode)**: Bring multiple perspectives to discuss and improve the game concept
-- **C (Continue)**: Save the content to the document and proceed to next step
-
-## PROTOCOL INTEGRATION:
-
-- When 'A' selected: Execute {advancedElicitationTask}
-- When 'P' selected: Execute {partyModeWorkflow}
-- PROTOCOLS always return to this step's A/P/C menu
-- User accepts/rejects protocol changes before proceeding
+**[C] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
 ## CONTEXT BOUNDARIES:
 
@@ -267,28 +270,11 @@ Show the generated content to the user and present:
 
 [Show the complete markdown content from step 8]
 
-**Select an Option:**
-[A] Advanced Elicitation - Let's dive deeper and refine this content
-[P] Party Mode - Bring in different perspectives to improve this
+**Load `{checkpointMenu}` to display options.**
+
 [C] Continue - Save this and move to Platforms & Audience (Step 3 of 14)"
 
 ### 10. Handle Menu Selection
-
-#### IF A (Advanced Elicitation):
-
-- Execute {advancedElicitationTask} with the current content
-- Process the enhanced content that comes back
-- Ask user: "Accept these changes to the Core Concept? (y/n)"
-- If yes: Update the content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
-
-#### IF P (Party Mode):
-
-- Execute {partyModeWorkflow} with the current content
-- Process the collaborative improvements that come back
-- Ask user: "Accept these changes to the Core Concept? (y/n)"
-- If yes: Update the content with improvements, then return to A/P/C menu
-- If no: Keep original content, then return to A/P/C menu
 
 #### IF C (Continue):
 
@@ -314,7 +300,8 @@ ONLY WHEN [C continue option] is selected and [core concept content finalized an
 - Game type guide loaded and stored for later use
 - Game name captured and stored in frontmatter
 - Core concept content generated collaboratively
-- A/P/C menu presented and handled correctly
+- Checkpoint menu [V][D][C] presented correctly
+- On selection, checkpoint-exec.md loaded for routing
 - Content properly appended to document when C selected
 - Frontmatter updated with stepsCompleted: [1, 2], game_type, game_name
 
@@ -327,7 +314,8 @@ ONLY WHEN [C continue option] is selected and [core concept content finalized an
 - Generating detailed content without real user input
 - Not loading the game type guide file
 - Not capturing game name
-- Not presenting A/P/C menu after content generation
+- Not presenting checkpoint menu after content generation
+- Not loading checkpoint-exec.md on menu selection
 - Appending content without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

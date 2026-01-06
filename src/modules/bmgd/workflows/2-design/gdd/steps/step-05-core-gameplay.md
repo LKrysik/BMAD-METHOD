@@ -11,10 +11,21 @@ nextStepFile: '{workflow_path}/steps/step-06-mechanics.md'
 workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/gdd.md'
 
-# Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+# Checkpoint Reference
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# AE Configuration
+aeRole: 'core-design'
 ---
+
+<!-- DEEP_VERIFY -->
+71,sanity,Alignment Check,Do ALL pillars directly support the stated USPs? Quote each USP and map to pillar coverage.,USPs → pillar mapping → gaps
+73,sanity,Coherence Check,Does core loop DELIVER on pillars? Does win/loss create stakes aligned with pillars?,loop-pillar alignment → win/loss alignment
+75,sanity,Falsifiability Check,What if these pillars are WRONG for this game type? List 3 realistic scenarios where this design fails.,failure scenarios → likelihood → gaps
+
+<!-- DEEP_DISCOVER -->
+62,challenge,Theseus Paradox,Does the CORE LOOP address the CORE of what makes this game fun? Or does it solve an adjacent problem?,core loop → core fun → alignment check
+109,exploration,Contraposition Inversion,What design choices GUARANTEE a boring game? Check if current pillars/loop contain any of them.,boring game recipe → current design check
 
 # Step 5: Core Gameplay
 
@@ -50,16 +61,16 @@ Define the fundamental gameplay elements: game pillars (core design tenets), the
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after generating content
+- Present V/D/C menu after generating content
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4, 5]` before loading next step
 - FORBIDDEN to load next step until C is selected
 
-## COLLABORATION MENUS (A/P/C):
+## CHECKPOINT
 
-- **A (Advanced Elicitation)**: Deep dive into the player experience
-- **P (Party Mode)**: Test these fundamentals with multiple perspectives
-- **C (Continue)**: Save the content to the document and proceed to next step
+**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+
+**[→] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
 ## CONTEXT BOUNDARIES:
 
@@ -202,26 +213,16 @@ Show the generated content to the user and present:
 - Does the core loop deliver on your pillars?
 - Do win/loss conditions create appropriate stakes?
 
-**Select an Option:**
-[A] Advanced Elicitation - Stress test these fundamentals
-[P] Party Mode - Get other perspectives on the core design
-[C] Continue - Save this and move to Game Mechanics (Step 6 of 14)"
+**Load `{checkpointMenu}` to display options.**
+
+**[→] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`"
 
 ### 6. Handle Menu Selection
 
-#### IF A (Advanced Elicitation):
+#### IF V (Verify) or D (Discover):
 
-- Execute {advancedElicitationTask} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
-
-#### IF P (Party Mode):
-
-- Execute {partyModeWorkflow} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
+- Checkpoint-exec.md handles routing
+- After execution completes, return to checkpoint menu
 
 #### IF C (Continue):
 
@@ -244,7 +245,7 @@ ONLY WHEN [C continue option] is selected and [core gameplay content saved with 
 - Core loop clearly described with timing and variation
 - Win/loss conditions appropriate for game type
 - Failure recovery explained
-- A/P/C menu presented and handled correctly
+- V/D/C menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4, 5]
 
 ### SYSTEM FAILURE:
@@ -253,7 +254,7 @@ ONLY WHEN [C continue option] is selected and [core gameplay content saved with 
 - Core loop that doesn't match the game type
 - Generating content without real user input
 - Win/loss conditions misaligned with stated goals
-- Not presenting A/P/C menu after content generation
+- Not presenting V/D/C menu after content generation
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

@@ -15,10 +15,21 @@ outputFile: '{output_folder}/game-architecture.md'
 decisionCatalog: '{workflow_path}/decision-catalog.yaml'
 architecturePatterns: '{workflow_path}/architecture-patterns.yaml'
 
-# Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+# Checkpoint Reference
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# AE Configuration
+aeRole: 'architecture'
 ---
+
+<!-- DEEP_VERIFY -->
+72,sanity,Closure Check,Are ALL critical decisions made? Search for TODO/TBD/undecided. List incomplete decisions.,decision completeness → incomplete markers
+73,sanity,Coherence Check,Do decisions CONFLICT with each other? State management vs save system alignment?,decision compatibility → conflict detection
+74,sanity,Grounding Check,What technical assumptions underpin these decisions? Which if outdated invalidates choices?,technical assumptions → critical dependencies
+
+<!-- DEEP_DISCOVER -->
+110,exploration,Reductio Attack,Assume chosen architecture is WRONG. Build argument why it's worst approach. If convincing = problem.,assume wrong → attack argument → strength assessment
+39,core,First Principles Analysis,WHY this architecture? Strip frameworks - what fundamentally requires these patterns?,architecture → fundamental needs → alternative paths
 
 # Step 4: Architectural Decisions
 
@@ -54,15 +65,15 @@ Facilitate collaborative decision-making for all remaining architectural choices
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after all decisions documented
+- Present V/D/C menu after all decisions documented
 - ONLY proceed when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3, 4]` before loading next step
 
-## COLLABORATION MENUS (A/P/C):
+## CHECKPOINT
 
-- **A (Advanced Elicitation)**: Challenge decisions and explore alternatives
-- **P (Party Mode)**: Get multiple perspectives on choices
-- **C (Continue)**: Confirm decisions and proceed
+**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+
+**[→] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
 ## Sequence of Instructions (Do not deviate, skip, or optimize)
 
@@ -245,26 +256,16 @@ Show the generated content to the user and present:
 - Are versions current and verified?
 - Does the rationale reflect your reasoning?
 
-**Select an Option:**
-[A] Advanced Elicitation - Challenge decisions, explore alternatives
-[P] Party Mode - Get different perspectives on choices
-[C] Continue - Save this and move to Cross-cutting Concerns (Step 5 of 9)"
+**Load `{checkpointMenu}` to display options.**
+
+**[→] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`"
 
 ### 8. Handle Menu Selection
 
-#### IF A (Advanced Elicitation):
+#### IF V (Verify) or D (Discover):
 
-- Execute {advancedElicitationTask} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
-
-#### IF P (Party Mode):
-
-- Execute {partyModeWorkflow} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
+- Checkpoint-exec.md handles routing
+- After execution completes, return to checkpoint menu
 
 #### IF C (Continue):
 
@@ -286,7 +287,7 @@ ONLY WHEN [C continue option] is selected and [decisions content saved with fron
 - User made each decision (not generated)
 - Versions verified via web search
 - Rationale documented for each decision
-- A/P/C menu presented and handled correctly
+- V/D/C menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3, 4]
 
 ### SYSTEM FAILURE:
@@ -295,7 +296,7 @@ ONLY WHEN [C continue option] is selected and [decisions content saved with fron
 - Using unverified versions
 - Missing critical decisions
 - Not documenting rationale
-- Not presenting A/P/C menu after decisions
+- Not presenting V/D/C menu after decisions
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.

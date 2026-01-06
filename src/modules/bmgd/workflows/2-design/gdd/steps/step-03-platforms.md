@@ -11,10 +11,21 @@ nextStepFile: '{workflow_path}/steps/step-04-vision.md'
 workflowFile: '{workflow_path}/workflow.md'
 outputFile: '{output_folder}/gdd.md'
 
-# Task References
-advancedElicitationTask: '{project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml'
-partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
+# Checkpoint Reference
+checkpointMenu: '{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-menu.md'
+
+# AE Configuration
+aeRole: 'platform-audience'
 ---
+
+<!-- DEEP_VERIFY -->
+70,sanity,Scope Integrity Check,Verify all major platform options were considered. List platforms ADDRESSED vs OMITTED without justification.,platforms considered → gaps → justification check
+73,sanity,Coherence Check,Does audience definition align with platform choice? Casual audience + hardcore platform = mismatch?,audience-platform alignment → contradiction search
+74,sanity,Grounding Check,List assumptions about platform capabilities and audience behavior. Which if wrong invalidates the choice?,assumptions → critical dependencies → risk
+
+<!-- DEEP_DISCOVER -->
+39,core,First Principles Analysis,Why THIS platform? Strip away assumptions - what fundamentally requires this choice?,platform choice → fundamental reasons → alternatives
+27,creative,What If Scenarios,What if you targeted a DIFFERENT platform? How would the game change?,alternative platform → implications → insights
 
 # Step 3: Platforms & Audience
 
@@ -50,16 +61,16 @@ Define the target platform(s) for the game and establish a clear picture of the 
 ## EXECUTION PROTOCOLS:
 
 - Show your analysis before taking any action
-- Present A/P/C menu after generating content for each section
+- Present V/D/C menu after generating content for each section
 - ONLY save when user chooses C (Continue)
 - Update frontmatter `stepsCompleted: [1, 2, 3]` before loading next step
 - FORBIDDEN to load next step until C is selected
 
-## COLLABORATION MENUS (A/P/C):
+## CHECKPOINT
 
-- **A (Advanced Elicitation)**: Explore platform constraints and audience nuances deeper
-- **P (Party Mode)**: Get multiple perspectives on platform/audience decisions
-- **C (Continue)**: Save the content to the document and proceed to next step
+**At checkpoint:** Load `{checkpointMenu}` to display menu and handle selection.
+
+**[→] Continue action for this step:** Save to `{outputFile}` and load `{nextStepFile}`.
 
 ## CONTEXT BOUNDARIES:
 
@@ -190,26 +201,11 @@ Show the generated content to the user and present:
 
 [Show the complete markdown content from step 5]
 
-**Select an Option:**
-[A] Advanced Elicitation - Explore platform/audience deeper
-[P] Party Mode - Get other perspectives on these decisions
-[C] Continue - Save this and move to Goals & Vision (Step 4 of 14)"
+**Load `{checkpointMenu}` to display options.**
+
+[→] Continue - Save this and move to Goals & Vision (Step 4 of 14)"
 
 ### 7. Handle Menu Selection
-
-#### IF A (Advanced Elicitation):
-
-- Execute {advancedElicitationTask} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
-
-#### IF P (Party Mode):
-
-- Execute {partyModeWorkflow} with the current content
-- Ask user: "Accept these changes? (y/n)"
-- If yes: Update content, return to A/P/C menu
-- If no: Keep original, return to A/P/C menu
 
 #### IF C (Continue):
 
@@ -219,7 +215,7 @@ Show the generated content to the user and present:
 
 ## CRITICAL STEP COMPLETION NOTE
 
-ONLY WHEN [C continue option] is selected and [platforms and audience content saved with frontmatter updated], will you then load and read fully `{nextStepFile}`.
+ONLY WHEN [→ continue option] is selected and [platforms and audience content saved with frontmatter updated], will you then load and read fully `{nextStepFile}`.
 
 ---
 
@@ -232,7 +228,7 @@ ONLY WHEN [C continue option] is selected and [platforms and audience content sa
 - Target audience demographics defined
 - Gaming experience level captured
 - Session length expectations established
-- A/P/C menu presented and handled correctly
+- V/D/C menu presented and handled correctly
 - Frontmatter updated with stepsCompleted: [1, 2, 3]
 
 ### SYSTEM FAILURE:
@@ -240,7 +236,7 @@ ONLY WHEN [C continue option] is selected and [platforms and audience content sa
 - Assuming platform without user confirmation
 - Generating audience profile without user input
 - Not considering platform-specific constraints
-- Not presenting A/P/C menu after content generation
+- Not presenting V/D/C menu after content generation
 - Proceeding without user selecting 'C'
 
 **Master Rule:** Skipping steps, optimizing sequences, or not following exact instructions is FORBIDDEN and constitutes SYSTEM FAILURE.
