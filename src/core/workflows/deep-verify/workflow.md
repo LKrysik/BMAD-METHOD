@@ -1,506 +1,616 @@
 # Deep Verify
 
-Verify that agent's output correctly addresses the task.
+Iterative verification of agent output using structured methods.
 
 ---
 
 name: Deep Verify
-description: Verification process with Quick and Guided modes
+description: Iterative verification with context-derived concerns and methods
 
 ---
 
-## Goal
+## Purpose
 
-Check if OUTPUT correctly addresses TASK in given CONTEXT.
+Improve CONTENT quality through systematic verification of concerns derived from TASK and ENVIRONMENT.
 
-**Verification dimensions:**
-- **Completeness** — all requirements addressed?
-- **Correctness** — no errors in what's present?
-- **Coherence** — fits with context/ecosystem?
-- **Clarity** — understandable and usable?
+Each iteration can:
+- Find new issues
+- Deepen analysis of found issues
+- Expand verification scope
+- Apply different thinking methods
 
-Find what's wrong, what's missing, what doesn't fit, what's unclear.
+---
 
-## Method Source
+## Thinking Methods
 
+This workflow uses **Thinking Methods** — structured reasoning patterns that guide how agent analyzes and verifies.
+
+Each method:
+- Has a specific **pattern** agent must follow
+- Forces **deeper analysis** than intuitive response
+- Produces **concrete output** (not vague statements)
+
+**Source:**
 ```
 {project-root}/_bmad/core/methods/methods.csv
 ```
+
+Agent reads method description from source and applies its pattern to current context.
+
+---
+
+## Terminology
+
+**Concern** — A specific area requiring verification, derived from analyzing TASK, CONTENT, and ENVIRONMENT. Agent identifies concerns relevant to the specific case — not limited to predefined list.
+
+### Example Concern Areas
+
+These are common areas — agent should identify others as context requires:
+
+| Area | Typical concerns within |
+|------|------------------------|
+| **Completeness** | Requirements coverage, missing elements, scope gaps |
+| **Correctness** | Logic errors, factual errors, wrong values |
+| **Consistency** | Internal contradictions, naming conflicts, style mismatches |
+| **Coherence** | Logical flow, structural fit, narrative sense |
+| **Clarity** | Understandability, ambiguity, documentation |
+| **Integration** | Environment fit, interface compatibility, dependency safety |
+| **Constraints** | Rule compliance, security, performance |
+
+Agent generates concerns specific to THIS verification — may include areas not in examples above.
+
+---
+
+## Required Inputs
+
+Before verification, establish:
+
+| Input | Description | Example |
+|-------|-------------|---------|
+| **TASK** | Original user request | "Add authentication to API endpoints" |
+| **CONTENT** | What agent produced (added/changed/removed) | New auth middleware, modified routes |
+| **ENVIRONMENT** | Surrounding context (related code, docs, constraints) | Existing codebase, security requirements |
+
+If any input missing → ask user to provide.
+
+---
+
+## Severity Levels
+
+| Level | Symbol | Meaning | Action |
+|-------|--------|---------|--------|
+| **CRITICAL** | `!!!` | Blocks TASK completion or breaks ENVIRONMENT | Must fix before use |
+| **IMPORTANT** | `!!` | Significantly affects quality | Should fix |
+| **MINOR** | `!` | Small issue, low impact | Can defer |
+| **INFO** | `i` | Observation, not a problem | For awareness |
+
+---
+
+## Finding Types
+
+| Type | Code | Description |
+|------|------|-------------|
+| **Problem** | `P` | Something wrong in CONTENT |
+| **Gap** | `G` | Something missing that should exist |
+| **Question** | `Q` | Needs clarification or decision |
+| **Verified** | `V` | Checked and confirmed OK |
 
 ---
 
 ## Start
 
-### 1. Receive verification request
-
-**Required inputs:**
-- **TASK:** What was the original request?
-- **OUTPUT:** What did agent produce?
-- **CONTEXT:** What ecosystem/project/constraints exist?
-
-If not provided, ask for each.
-
----
-
-### 2. Choose verification mode
+### Step 1: Confirm Inputs
 
 ```
 ## Deep Verify
 
-**Task:** [what was requested]
-**Output:** [what was produced]
-**Context:** [constraints, ecosystem]
+**TASK:** [original request]
+**CONTENT:** [what was produced — added/changed/removed]
+**ENVIRONMENT:** [context — related code, docs, constraints]
 
-How do you want to verify?
+Is this correct?
 
-[Q] Quick — I verify automatically, you review results
-[G] Guided — We decide together what and how to verify
+[Y] Yes, proceed
+[E] Edit inputs
 [X] Exit
 ```
 
-**HALT:** Wait for user choice.
-
-- If [Q] → Go to QUICK MODE
-- If [G] → Go to GUIDED MODE
+**HALT** — Wait for confirmation.
 
 ---
 
-## QUICK MODE
-
-Agent performs all steps automatically, presents results for review.
-
-### Q1. Self-discipline SELECTION
-
-I select 2-3 methods to keep myself honest:
+### Step 2: Choose Mode
 
 ```
-**My self-discipline methods:**
+## Verification Mode
 
-| # | Method | Prevents | Applied at |
-|---|--------|----------|------------|
-| [N] | [name] | [what] | Q4 + Q6 |
-| [N] | [name] | [what] | Q4 + Q6 |
-
-I will apply these at checkpoint (Q4) and before concluding (Q6).
+[A] Auto — I prepare and execute, you review results
+[S] Supervised — I prepare plan, you approve before execution
+[X] Exit
 ```
 
-### Q2. Understand task and output
+**HALT** — Wait for choice.
 
-I break down what I'm verifying:
+---
 
+## Phase 1: Context Analysis
+
+Agent analyzes TASK + CONTENT + ENVIRONMENT to identify verification concerns.
+
+### 1.1 Analyze Context
+
+Extract key elements from each input to find risk areas.
+
+**Suggested Thinking Methods:**
+- #70 Scope Integrity — identify all elements in TASK
+- #74 Grounding Check — find hidden assumptions in CONTENT
+- #119 Assumption Archaeology — surface inherited assumptions from ENVIRONMENT
+
+Agent may use other methods as context requires.
+
+**Output format:**
 ```
-**Task breakdown:**
-- Explicit requirements: [list]
-- Implied requirements: [list from context]
-- Constraints: [list]
+## Context Analysis
 
-**Output breakdown:**
-- What's included: [list]
-- What addresses which requirement: [mapping]
-- Potential gaps: [list]
-```
+### From TASK
+- Key requirements: [list]
+- Explicit constraints: [list]
+- Implied expectations: [list]
 
-### Q3. Determine what to check
+### From CONTENT
+- What was added: [list]
+- What was changed: [list]
+- What was removed: [list]
 
-Based on breakdown, I identify what needs verification across all dimensions:
+### From ENVIRONMENT
+- Related components: [list]
+- Dependencies: [list]
+- Conventions to follow: [list]
 
-```
-**Verification checklist:**
+### Risk Areas (TASK ↔ CONTENT ↔ ENVIRONMENT)
 
-| What to check | Dimension | Risk if wrong |
-|---------------|-----------|---------------|
-| [requirement coverage] | Completeness | [consequence] |
-| [factual accuracy] | Correctness | [consequence] |
-| [ecosystem fit] | Coherence | [consequence] |
-| [understandability] | Clarity | [consequence] |
-```
-
-### Q4. Self-discipline CHECKPOINT
-
-Before execution, I verify my approach:
-
-```
-**Self-discipline CHECKPOINT:**
-
-- [ ] Not skipping hard parts
-- [ ] Not selecting easy methods
-- [ ] Not planning to answer for user
-
-If any unchecked → REVISE before Q5.
-```
-
-### Q5. Select verification methods
-
-I match methods to each element:
-
-```
-**Verification plan:**
-
-| Check | Method | Looking for |
-|-------|--------|-------------|
-| [element] | #[N] [name] | [what specifically] |
+| Area | Risk | Why verify |
+|------|------|-----------|
+| [area] | [what could go wrong] | [consequence] |
 ```
 
-### Q6. Execute verification
+### 1.2 Identify Concerns
 
-For each check, I search and report:
+Based on context analysis, identify specific concerns to verify.
 
-**If issue found:**
+**Suggested Thinking Methods:**
+- #56 Sorites Paradox — which elements are critical (removal destroys solution)?
+- #93 Aristotle's Four Causes — what is CONTENT made of, structured as, caused by, for?
+- #112 Topological Invariant — what is the essence that must be verified?
+
+Agent may use other methods as context requires.
+
+**Output format:**
 ```
-**FINDING [F-001]** — [SEVERITY] — Confidence: [LEVEL]
+## Verification Concerns
 
-**Problem:** [what's wrong]
-**Evidence:** "[quote]" — [location]
-**Impact:** [consequence]
-**Fix:** [action]
+| # | Concern | What to verify | Source |
+|---|---------|----------------|--------|
+| 1 | [name] | [specific check] | TASK: [element] |
+| 2 | [name] | [specific check] | CONTENT: [element] |
+| 3 | [name] | [specific check] | ENVIRONMENT: [element] |
+| 4 | [name] | [specific check] | TASK↔CONTENT: [relationship] |
+| 5 | [name] | [specific check] | CONTENT↔ENV: [relationship] |
 ```
 
-**If something missing:**
+### 1.3 Assign Thinking Methods
+
+For each concern, select thinking methods that will verify it.
+
+**Suggested Thinking Methods for selection:**
+- #33 Comparative Analysis — evaluate against criteria
+- #54 CUI BONO — who benefits from each choice (detect bias)
+- #115 Alternative Autopsy — consider genuinely different approaches
+
+Agent browses Thinking Methods source to find best matches for each concern.
+
+**Output format:**
 ```
-**OMISSION [O-001]** — [SEVERITY] — Confidence: [LEVEL]
+## Thinking Methods per Concern
+
+| Concern | Methods | Looking for |
+|---------|---------|-------------|
+| [concern 1] | #[N] [name], #[N] [name] | [specific targets] |
+| [concern 2] | #[N] [name] | [specific targets] |
+```
+
+---
+
+## Phase 1 Checkpoint
+
+### Auto Mode
+→ Proceed to Phase 2 execution.
+
+### Supervised Mode
+
+```
+## Verification Plan
+
+### Concerns
+
+| # | Concern | Source | Thinking Methods |
+|---|---------|--------|------------------|
+| 1 | [name] | [source] | #[N] [name], #[N] [name] |
+| 2 | [name] | [source] | #[N] [name] |
+
+### Actions
+
+[OK] Approve and execute
+[+] Add concern — describe what to check
+[−] Remove concern — specify number
+[M] Modify thinking methods for concern
+[?] Search — describe what you're looking for
+[X] Exit
+```
+
+**HALT** — Wait for approval.
+
+After modifications → show updated plan.
+After [OK] → proceed to Phase 2.
+
+---
+
+## Phase 2: Execute Verification
+
+For each concern, apply assigned thinking methods.
+
+### Execution Format
+
+```
+**Concern:** [name]
+**Thinking Method:** #[N] [method name]
+**Target:** [what specifically checking]
+
+[method execution following the pattern from method description]
+```
+
+### Finding Format
+
+Each finding gets unique ID: `[iteration].[sequence]` (e.g., `1.01`, `1.02`, `2.01`)
+
+**Problem found:**
+```
+### [1.01] P-!!! Problem Title
+
+**What:** [description of problem]
+**Where:** [location in CONTENT]
+**Evidence:** "[quote]" — [line/section]
+**Impact:** [consequence for TASK or ENVIRONMENT]
+**Fix:** [suggested action]
+```
+
+**Gap found:**
+```
+### [1.02] G-!! Gap Title
 
 **Missing:** [what should exist]
-**Expected because:** [TASK says / CONTEXT shows]
+**Expected because:** [TASK requires / ENVIRONMENT shows]
 **Impact:** [consequence]
-**Add:** [what and where]
+**Add:** [what to add and where]
 ```
 
-**If element passes:**
+**Question raised:**
 ```
-**CLEAR [C-001]:** [element] — verified with #[N], no issues found
-```
+### [1.03] Q Question Title
 
-### Q7. Self-discipline APPLICATION (REQUIRED)
-
-Before concluding, I apply methods from Q1 with **evidence**:
-
-```
-**Self-discipline APPLICATION:**
-
-**REQUIRED: Evidence per checkbox** (quote + location: line N, section X, or paragraph Y)
-
-- [ ] Applied #[N]:
-  - Result: [what found]
-  - Evidence: "[quote]" — [location]
-
-- [ ] "Did I tell user what they wanted to hear?"
-  - Answer: [YES/NO]
-  - Evidence: [specific example OR "N/A - findings were critical"]
-
-- [ ] "Did I skip hard parts?"
-  - Answer: [YES/NO]
-  - If YES: [list what + why]
-  - If NO: [hardest part addressed: ...]
-
-⛔ Checkbox without evidence = checkbox unchecked
-⛔ Cannot proceed if any unchecked
+**Issue:** [what needs clarification]
+**Context:** [why this matters]
+**Options:** [possible resolutions]
 ```
 
-**Evidence formats accepted:**
-- Line number: `"quote" — line 42`
-- Section: `"quote" — section G3`
-- Paragraph: `"quote" — para 2 of Results`
-- Element: `"quote" — in FINDING F-001`
-
-### Q8. Present results
-
+**Verified OK:**
 ```
-## Verification Results
-
-**Task:** [original request]
-**Output:** [what was verified]
-
-**Summary:**
-- Findings: [N] CRITICAL, [N] IMPORTANT, [N] MINOR
-- Omissions: [N] CRITICAL, [N] IMPORTANT, [N] MINOR
-- Clear: [N]
-
-**Issues:**
-
-| ID | Type | Severity | Problem | Fix |
-|----|------|----------|---------|-----|
-| [id] | [type] | [level] | [issue] | [fix] |
-
-**Verification Status:** GREEN / YELLOW / RED
-
----
-
-## Your Review
-
-Please check:
-1. Did I verify what you expected?
-2. Any element I missed?
-3. Do findings make sense?
-4. Your confidence in this verification (1-10)?
-
-[F] Fix issues — apply suggested fixes
-[S] Select fixes — choose which to apply
-[M] More verification — verify additional elements
-[T] Templates — choose output format
-[X] Exit — done
-```
-
-**HALT:** Wait for user review and choice.
-
----
-
-## GUIDED MODE
-
-User and agent decide together at each step.
-
-### G1. Self-discipline
-
-**What we're doing:** Selecting methods that will keep ME (the agent) honest during verification. These prevent shortcuts and self-deception.
-
-```
-## Self-Discipline Setup
-
-Before I verify anything, I need methods to check my own work.
-
-I suggest these methods to keep myself honest:
-
-| Method | What it catches |
-|--------|-----------------|
-| #[N] [name] | [prevents what] |
-| #[N] [name] | [catches what] |
-
-[OK] Use these methods
-[C] Browse categories to choose different ones
-[X] Exit
-```
-
-**HALT:** Wait for user choice.
-
----
-
-### G2. Understand task and output
-
-**What we're doing:** Breaking down the original task and the output into pieces so we know exactly what to check.
-
-```
-## Understanding What We're Verifying
-
-I need to break down the task and output into checkable pieces.
-
-[AUTO] Do this automatically — show me results
-[MANUAL] Let me guide the breakdown
-[X] Exit
-```
-
-**HALT:** Wait for user choice.
-
-**If AUTO:** Agent performs breakdown, presents:
-
-```
-## Task Breakdown
-
-**Original task:** "[exact words]"
-
-**Requirements I found:**
-1. [explicit requirement] — from task
-2. [explicit requirement] — from task
-3. [implied requirement] — inferred from context
-4. [constraint] — from context
-
-## Output Breakdown
-
-**What was produced:** [description]
-
-**Elements in output:**
-1. [element] → addresses requirement [N]
-2. [element] → addresses requirement [N]
-3. [element] → no clear requirement match
-4. [requirement N] → NOT addressed in output
-
-## Gaps I See
-
-- [potential issue 1]
-- [potential issue 2]
-
-[OK] This breakdown is correct
-[A] Add something I missed
-[R] Remove something incorrect
-[X] Exit
-```
-
-**HALT:** Wait for user confirmation.
-
-**If MANUAL:** Agent asks questions:
-- "What are the key requirements in this task?"
-- "What should the output definitely include?"
-- "What constraints apply?"
-
----
-
-### G3. Decide what to verify
-
-**What we're doing:** Based on the breakdown, deciding which elements to verify across all four dimensions.
-
-```
-## What Should I Verify?
-
-Based on breakdown, here's what I think needs checking:
-
-| Element | Dimension | Risk if wrong |
-|---------|-----------|---------------|
-| [requirement coverage] | Completeness | [consequence] |
-| [factual claims] | Correctness | [consequence] |
-| [ecosystem fit] | Coherence | [consequence] |
-| [understandability] | Clarity | [consequence] |
-
-**Dimensions:**
-- Completeness — all requirements addressed?
-- Correctness — no errors in what's present?
-- Coherence — fits with context/ecosystem?
-- Clarity — understandable and usable?
-
-**Priorities:**
-1. [highest risk]
-2. [second priority]
-3. [third priority]
-
-[OK] Verify these elements
-[A] Add element to verify
-[R] Remove element (not important)
-[AUTO] You decide, show me results
-[X] Exit
-```
-
-**HALT:** Wait for user choice.
-
----
-
-### G4. Choose verification methods
-
-**What we're doing:** Selecting which methods from methods.csv to use for checking each element.
-
-```
-## How Should I Check?
-
-For each element, I'll use specific methods:
-
-| Element | Method | Why this method |
-|---------|--------|-----------------|
-| [element 1] | #[N] [name] | [matches because] |
-| [element 2] | #[N] [name] | [matches because] |
-
-**Anti-gaming methods (I must use):**
-| Method | Catches |
-|--------|---------|
-| #[N] | [what] |
-
-[OK] Use these methods
-[A] Add method
-[R] Remove method
-[AUTO] You decide, proceed with verification
-[X] Exit
-```
-
-**HALT:** Wait for user choice.
-
----
-
-### G5. Execute verification
-
-**What we're doing:** Actually checking each element using selected methods, reporting findings.
-
-For each element + method:
-
-```
-**Checking:** [element]
-**Using:** #[N] [method name]
-**Looking for:** [what specifically]
-```
-
-Then report result (FINDING / OMISSION / CLEAR) using formats from Q5.
-
-**Running totals after each check:**
-```
-Progress: [N]/[N] elements checked
-Issues: [N] CRITICAL, [N] IMPORTANT, [N] MINOR
+### [1.04] V Verified Element
+
+**Checked:** [element]
+**Thinking Method:** #[N] [name]
+**Status:** OK
 ```
 
 ---
 
-### G6. Self-discipline check
+## Phase 3: Report
 
-**What we're doing:** Applying the methods from G1 to my own verification work before concluding.
+### Report Format
 
 ```
-## Checking My Own Work
+## Verification Report
 
-Applying self-discipline methods:
-
-### #[N] [Method name]
-[Execute method on own work]
-**Result:** [what I found]
-
-### #[N] [Method name]
-[Execute method on own work]
-**Result:** [what I found]
-
-**Adjustments needed:** [yes/no]
-```
-
-If adjustments needed → return to relevant step.
+**Iteration:** [N]
+**TASK:** [summary]
+**CONTENT:** [summary]
 
 ---
 
-### G7. Confirm with user
+### Summary
 
-**What we're doing:** Making sure you agree with the verification results before finalizing.
+| Type | !!! | !! | ! | i |
+|------|-----|----|---|---|
+| Problems | [N] | [N] | [N] | — |
+| Gaps | [N] | [N] | [N] | — |
+| Questions | [N] | — | — | — |
+| Verified | — | — | — | [N] |
+
+**Status:** RED (critical issues) / YELLOW (important issues) / GREEN (minor or none)
+
+---
+
+### Verification Scope
+
+**Verified areas:**
+
+| Concern | Coverage | Notes |
+|---------|----------|-------|
+| [name] | Full | All aspects checked |
+| [name] | Partial | [what checked], [what skipped] |
+
+**Not verified:**
+
+| Area | Source | Reason |
+|------|--------|--------|
+| [area] | TASK | Out of scope for this iteration |
+| [area] | CONTENT | Requires access to [X] |
+| [area] | ENV | Deferred — low risk |
+
+**Coverage assessment:**
+- TASK requirements: [X]/[Y] addressed
+- CONTENT elements: [X]/[Y] checked
+- Recommended next: [suggestion or "None — sufficient coverage"]
+
+---
+
+### Findings
+
+| ID | Type | Sev | Description | Concern |
+|----|------|-----|-------------|---------|
+| 1.01 | P | !!! | [short desc] | [concern] |
+| 1.02 | G | !! | [short desc] | [concern] |
+| 1.03 | Q | — | [short desc] | [concern] |
+
+---
+
+### Concerns Verified
+
+| Concern | Thinking Methods | Findings |
+|---------|------------------|----------|
+| [name] | #[N] [name], #[N] [name] | 1.01, 1.03 |
+| [name] | #[N] [name] | V |
+
+---
+
+## Actions
+
+[F] Fix — apply fixes (specify IDs or "all")
+[D] Deeper — analyze finding in more depth (specify ID)
+[N] New — run new iteration with different concerns
+[M] More — expand thinking methods for current concerns
+[?] Search — find concern or thinking method by description
+[X] Done — finish verification
+```
+
+**HALT** — Wait for user decision.
+
+---
+
+## Action Handlers
+
+### [F] Fix
+
+Apply fixes for specified findings.
+
+```
+## Applying Fixes
+
+**[1.01]:** [what was fixed]
+**Verification:** [quick check if fix is correct]
+
+**[1.02]:** [what was fixed]
+**Verification:** [quick check if fix is correct]
+
+---
+
+Report updated. Returning to actions.
+```
+
+→ Update report: mark fixed findings.
+→ Return to report.
+
+---
+
+### [D] Deeper [ID]
+
+Deeper analysis of specific finding.
+
+```
+## Deeper Analysis: [1.01]
+
+**Original finding:** [summary]
+
+### Extended Analysis
+
+**Additional Thinking Methods applied:**
+- #[N] [name] — [what it checks]
+- #[N] [name] — [what it checks]
+
+### Results
+
+[detailed analysis following each method's pattern]
+
+### Sub-findings
+
+| ID | Type | Sev | Description |
+|----|------|-----|-------------|
+| 1.01.1 | [type] | [sev] | [found in deeper analysis] |
+| 1.01.2 | [type] | [sev] | [found in deeper analysis] |
+
+---
+
+Report updated. Returning to actions.
+```
+
+→ Add sub-findings to report.
+→ Return to report.
+
+---
+
+### [N] New Concerns
+
+Start new iteration with different concerns.
+
+```
+## New Iteration
+
+**Previous iteration verified:**
+[list of concerns from previous]
+
+**Suggested new concerns:**
+
+| # | Concern | Source | Why now |
+|---|---------|--------|---------|
+| 1 | [name] | [source] | [not checked before / suggested by finding X] |
+| 2 | [name] | [source] | [reason] |
+
+[OK] Execute with these concerns
+[+] Add concern
+[−] Remove concern
+[?] Search for concern
+```
+
+**HALT** — Wait for approval.
+
+→ Execute new iteration.
+→ Append findings to report with new iteration number.
+
+---
+
+### [M] More Depth
+
+Expand thinking methods for existing concerns.
+
+```
+## Expand Thinking Methods
+
+**Current methods per concern:**
+
+| Concern | Current | Suggested additions |
+|---------|---------|---------------------|
+| [name] | #[N] [name] | #[N] [name] — [what it adds] |
+| [name] | #[N] [name], #[N] [name] | #[N] [name] — [what it adds] |
+
+[OK] Add suggested and execute
+[+] Add specific thinking method to concern
+[?] Search for thinking method
+```
+
+**HALT** — Wait for approval.
+
+→ Execute with expanded methods.
+→ Update report with new findings.
+
+---
+
+### [?] Search
+
+Find concern or thinking method by description.
+
+```
+## Search
+
+Describe what you want to verify or how:
+
+> [user input]
+
+**Matches found:**
+
+**Concerns:**
+| Name | Verifies |
+|------|----------|
+| [name] | [description] |
+
+**Thinking Methods:**
+| # | Name | Category | What it does |
+|---|------|----------|--------------|
+| [N] | [name] | [cat] | [description] |
+
+[A] Add to plan — specify what
+[X] Cancel search
+```
+
+**HALT** — Wait for selection.
+
+---
+
+### [X] Done
+
+Finalize verification.
 
 ```
 ## Verification Complete
 
-**Verified:** [N] elements
-**Found:** [N] findings, [N] omissions
-**Self-check:** PASSED / CONCERNS
+**Total iterations:** [N]
+**Total findings:** [N] (P:[N] G:[N] Q:[N])
+**Fixed:** [N]
+**Open:** [N]
 
-**Questions for you:**
+### Final Status
 
-1. Did I verify what you expected?
-2. Any element I should have checked but didn't?
-3. Do findings make sense?
-4. Your confidence in this verification (1-10)?
+| Category | Count |
+|----------|-------|
+| !!! Critical open | [N] |
+| !! Important open | [N] |
+| ! Minor open | [N] |
+| Questions pending | [N] |
 
-[Record your answers — this confirms completeness]
+### All Findings
+
+[complete list with final status: FIXED / OPEN / ACCEPTED]
+
+### Verified Concerns (all iterations)
+
+[complete list]
 ```
-
-**HALT:** Wait for user answers.
-
-If user identifies gaps → return to G3 or G4.
-
----
-
-### G8. Present results
-
-Same format as Q7 (Quick mode results).
-
----
-
-## Key Principles
-
-- **Two modes:** Quick for efficiency, Guided for control
-- **Self-discipline first:** Agent checks itself before checking output
-- **User confirms:** Verification is valid when user agrees, not when agent declares
-- **Evidence required:** Every finding needs quote + location
 
 ---
 
 ## Quick Reference
 
-| Mode | When to use |
-|------|-------------|
-| **Quick** | Trust agent judgment, want fast results |
-| **Guided** | Want control over what/how, learning the process |
+### Modes
 
-| Step | Quick | Guided |
-|------|-------|--------|
-| Self-discipline | Auto | User confirms |
-| Breakdown | Auto | Auto or Manual |
-| Scope | Auto | User confirms/edits |
-| Methods | Auto | User confirms/edits |
-| Execution | Auto | Shown per element |
-| Self-check | Auto | Shown |
-| Confirm | User reviews | User answers questions |
+| Mode | When to use | HALTs |
+|------|-------------|-------|
+| **Auto** | Trust agent, want quick results | 1 (after report) |
+| **Supervised** | Control concerns and methods | 2 (plan + report) |
+
+### Actions
+
+| Action | Purpose | When to use |
+|--------|---------|-------------|
+| [F] Fix | Apply corrections | When ready to fix issues |
+| [D] Deeper | More analysis | Complex finding needs investigation |
+| [N] New | Different concerns | Want to check other areas |
+| [M] More | More thinking methods | Want deeper coverage of same concerns |
+| [?] Search | Find by description | Don't know exact concern/method name |
+| [X] Done | Finish | Verification complete |
+
+### Finding IDs
+
+Format: `[iteration].[sequence]` or `[iteration].[parent].[sub]`
+
+Examples:
+- `1.01` — First finding in iteration 1
+- `2.03` — Third finding in iteration 2
+- `1.01.2` — Second sub-finding from deeper analysis of 1.01
+
+### Severity Quick Guide
+
+| Symbol | Level | Typical examples |
+|--------|-------|------------------|
+| `!!!` | CRITICAL | Broken functionality, security flaw, data loss risk |
+| `!!` | IMPORTANT | Missing feature, wrong behavior, inconsistency |
+| `!` | MINOR | Style issue, suboptimal approach, minor inconsistency |
+| `i` | INFO | Observation, suggestion, note |
