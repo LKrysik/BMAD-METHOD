@@ -48,7 +48,7 @@ How do you want to explore?
 [X] Exit
 ```
 
-**HALT:** Wait for user choice.
+**HALT:** Wait for user response (timeout: 5 min) → See `shared/halt-timeout.md`
 
 - If [Q] → Go to QUICK MODE
 - If [G] → Go to GUIDED MODE
@@ -59,16 +59,19 @@ How do you want to explore?
 
 Agent performs all steps automatically, presents results for review.
 
-### Q1. Self-discipline
+### Q1. Self-discipline SELECTION
 
 I select 2-3 methods to keep myself honest:
 
 ```
 **My self-discipline methods:**
-- #[N] [name] — prevents [what]
-- #[N] [name] — catches [what]
 
-I will apply these throughout and before concluding.
+| # | Method | Prevents | Applied at |
+|---|--------|----------|------------|
+| [N] | [name] | [what] | Q4 + Q6 |
+| [N] | [name] | [what] | Q4 + Q6 |
+
+I will apply these at checkpoint (Q4) and before concluding (Q6).
 ```
 
 ### Q2. Analyze content
@@ -97,7 +100,21 @@ Based on content, I choose methods for each need:
 | [expand idea] | #[N] [name] | [reason] |
 ```
 
-### Q4. Execute discovery — Iteration 1
+### Q4. Self-discipline CHECKPOINT
+
+Before execution, I verify my approach:
+
+```
+**Self-discipline CHECKPOINT:**
+
+- [ ] Not skipping hard parts
+- [ ] Not selecting easy methods
+- [ ] Not planning to answer for user
+
+If any unchecked → REVISE before Q5.
+```
+
+### Q5. Execute discovery — Iteration 1
 
 For each method, I:
 1. Formulate questions according to method pattern
@@ -119,7 +136,7 @@ After questions answered:
 **Certainty:** HIGH / MODERATE / LOW
 ```
 
-### Q5. Decide: continue or conclude?
+### Q6. Decide: continue or conclude?
 
 Based on current knowledge:
 
@@ -130,22 +147,42 @@ Based on current knowledge:
 - Direction needed: [DISCOVER more / CHALLENGE assumptions / ENRICH idea / DONE]
 ```
 
-If not done → select more methods and iterate (return to Q4)
-If done → proceed to Q6
+If not done → select more methods and iterate (return to Q5)
+If done → proceed to Q7
 
-### Q6. Apply self-discipline
+### Q7. Self-discipline APPLICATION (REQUIRED)
 
-Before concluding, I apply methods from Q1 to my own work:
+Before concluding, I apply methods from Q1 with **evidence**:
 
 ```
-**Self-check results:**
-- [Method]: [what I found about my own work]
-- Did I tell user what they wanted to hear? [yes/no — evidence]
-- Did I skip hard questions? [yes/no — what]
-- Adjustments needed: [yes/no — what]
+**Self-discipline APPLICATION:**
+
+**REQUIRED: Evidence per checkbox** (quote + location: line N, section X, or paragraph Y)
+
+- [ ] Applied #[N]:
+  - Result: [what found]
+  - Evidence: "[quote]" — [location]
+
+- [ ] "Did I tell user what they wanted to hear?"
+  - Answer: [YES/NO]
+  - Evidence: [specific example OR "N/A - questions were challenging"]
+
+- [ ] "Did I skip hard questions?"
+  - Answer: [YES/NO]
+  - If YES: [list what + why]
+  - If NO: [hardest question asked: ...]
+
+⛔ Checkbox without evidence = checkbox unchecked
+⛔ Cannot proceed if any unchecked
 ```
 
-### Q7. Present results
+**Evidence formats accepted:**
+- Line number: `"quote" — line 42`
+- Section: `"quote" — section G3`
+- Paragraph: `"quote" — para 2 of Results`
+- Method: `"quote" — in method #51`
+
+### Q8. Present results
 
 ```
 ## Discovery Results

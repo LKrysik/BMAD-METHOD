@@ -6,15 +6,25 @@ Display at workflow step checkpoints. Gateway to verification and discovery work
 
 ## Menu
 
-**[Q] Quick** | **[V] Verify** | **[D] Discover** | **[P] Party Mode** | **[C] Continue**
+**[QV] Quick Verify** | **[QD] Quick Discover** | **[V] Verify** | **[D] Discover** | **[P] Party** | **[C] Continue**
 
-| Key | Action | Purpose |
-|-----|--------|---------|
-| **Q** | Quick verify | Fast verification using aeList methods from current step |
-| **V** | Verify | Full deep verification - check completeness, consistency, quality |
-| **D** | Discover | Full deep discovery - explore assumptions, alternatives, deeper needs |
-| **P** | Party Mode | Multi-agent collaborative discussion |
-| **C** | Continue | Accept current content, save to document, proceed to next step |
+| Key | Action | Tokens |
+|-----|--------|--------|
+| **QV** | Quick verification | ~500-800 |
+| **QD** | Quick discovery | ~500-800 |
+| **V** | Full verification (guided) | ~1500-3000 |
+| **D** | Full discovery (guided) | ~1500-3500 |
+| **P** | Multi-agent discussion | ~5000+ |
+| **C** | Save and continue | 0 |
+
+### Legacy Support
+
+```
+If user enters [Q]:
+→ Display: "Option [Q] has been split. Please use:"
+→ Show: "[QV] Quick Verify or [QD] Quick Discover"
+→ Wait for valid input
+```
 
 ---
 
@@ -30,12 +40,19 @@ Agent verification cannot check these - they require YOUR judgment:
 
 ## Execution
 
-### Q (Quick Verify):
+### QV (Quick Verify):
 
 **LOAD:** `{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-exec.md`
 
-Pass mode='quick' and current step context to router.
-Router will extract aeList from step frontmatter and execute quick_mode.md.
+Pass mode='QV' and current step context to router.
+Router will extract aeList from step frontmatter and execute deep-verify/quick_mode.md.
+
+### QD (Quick Discover):
+
+**LOAD:** `{project-root}/_bmad/core/menus/step-checkpoint/checkpoint-exec.md`
+
+Pass mode='QD' and current step context to router.
+Router will extract aeList from step frontmatter and execute deep-discover/quick_mode.md.
 
 ### V (Verify):
 

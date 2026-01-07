@@ -3,6 +3,7 @@
 Fast discovery session using methods from ae-list files.
 
 **Token Cost:** ~500-800 tokens (target)
+**Timeout:** 5 min per HALT
 
 ---
 
@@ -86,11 +87,14 @@ For each method from ae-list:
 
 **Exploration Plan:** [what assumptions/insights to surface based on method]
 
-**Questions for you:**
+**Questions for you:** (2-4 per method, max)
 
 1. {probing question based on method pattern}
 2. {probing question based on method pattern}
-3. {probing question based on method pattern}
+3. {optional if needed}
+4. {optional for complex topics}
+
+**Note:** Use [D] Full Discover for deeper exploration.
 
 ---
 

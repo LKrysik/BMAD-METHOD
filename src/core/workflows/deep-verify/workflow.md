@@ -69,16 +69,19 @@ How do you want to verify?
 
 Agent performs all steps automatically, presents results for review.
 
-### Q1. Self-discipline
+### Q1. Self-discipline SELECTION
 
 I select 2-3 methods to keep myself honest:
 
 ```
 **My self-discipline methods:**
-- #[N] [name] — prevents [what]
-- #[N] [name] — catches [what]
 
-I will apply these before concluding.
+| # | Method | Prevents | Applied at |
+|---|--------|----------|------------|
+| [N] | [name] | [what] | Q4 + Q6 |
+| [N] | [name] | [what] | Q4 + Q6 |
+
+I will apply these at checkpoint (Q4) and before concluding (Q6).
 ```
 
 ### Q2. Understand task and output
@@ -112,7 +115,21 @@ Based on breakdown, I identify what needs verification across all dimensions:
 | [understandability] | Clarity | [consequence] |
 ```
 
-### Q4. Select verification methods
+### Q4. Self-discipline CHECKPOINT
+
+Before execution, I verify my approach:
+
+```
+**Self-discipline CHECKPOINT:**
+
+- [ ] Not skipping hard parts
+- [ ] Not selecting easy methods
+- [ ] Not planning to answer for user
+
+If any unchecked → REVISE before Q5.
+```
+
+### Q5. Select verification methods
 
 I match methods to each element:
 
@@ -124,7 +141,7 @@ I match methods to each element:
 | [element] | #[N] [name] | [what specifically] |
 ```
 
-### Q5. Execute verification
+### Q6. Execute verification
 
 For each check, I search and report:
 
@@ -153,17 +170,39 @@ For each check, I search and report:
 **CLEAR [C-001]:** [element] — verified with #[N], no issues found
 ```
 
-### Q6. Apply self-discipline
+### Q7. Self-discipline APPLICATION (REQUIRED)
 
-Before concluding, I apply methods from Q1 to my own work:
+Before concluding, I apply methods from Q1 with **evidence**:
 
 ```
-**Self-check results:**
-- [Method]: [what I found about my own work]
-- Adjustments needed: [yes/no — what]
+**Self-discipline APPLICATION:**
+
+**REQUIRED: Evidence per checkbox** (quote + location: line N, section X, or paragraph Y)
+
+- [ ] Applied #[N]:
+  - Result: [what found]
+  - Evidence: "[quote]" — [location]
+
+- [ ] "Did I tell user what they wanted to hear?"
+  - Answer: [YES/NO]
+  - Evidence: [specific example OR "N/A - findings were critical"]
+
+- [ ] "Did I skip hard parts?"
+  - Answer: [YES/NO]
+  - If YES: [list what + why]
+  - If NO: [hardest part addressed: ...]
+
+⛔ Checkbox without evidence = checkbox unchecked
+⛔ Cannot proceed if any unchecked
 ```
 
-### Q7. Present results
+**Evidence formats accepted:**
+- Line number: `"quote" — line 42`
+- Section: `"quote" — section G3`
+- Paragraph: `"quote" — para 2 of Results`
+- Element: `"quote" — in FINDING F-001`
+
+### Q8. Present results
 
 ```
 ## Verification Results

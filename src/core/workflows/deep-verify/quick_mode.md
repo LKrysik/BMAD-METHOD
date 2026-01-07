@@ -3,6 +3,7 @@
 Fast verification using methods from ae-list files.
 
 **Token Cost:** ~500-800 tokens (target)
+**Timeout:** 5 min per HALT
 
 ---
 
@@ -79,15 +80,18 @@ Beginning verification...
 
 ### 2. Execute Each Method
 
-For each method from ae-list:
+For each method from ae-list (2-4 checks per method, max):
 
 ```markdown
 ### #{num} {method_name}
 
 **Search Plan:** [what I'm looking for based on method description]
+**Checks:** (2-4 per method)
 
 **Applying to content...**
 ```
+
+**Note:** Use [V] Full Verify for deeper analysis.
 
 Then search content and report:
 

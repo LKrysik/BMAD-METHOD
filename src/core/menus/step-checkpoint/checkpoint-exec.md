@@ -8,7 +8,7 @@ Routes checkpoint menu selections to appropriate workflows with aeList context.
 
 | Parameter | Source | Description |
 |-----------|--------|-------------|
-| `mode` | checkpoint-menu.md | 'quick', 'verify', or 'discover' |
+| `mode` | checkpoint-menu.md | 'QV', 'QD', 'verify', or 'discover' |
 | `stepContext` | Calling step | Current step file path and content |
 | `aeList` | Step frontmatter | Method list(s) for verification/discovery |
 
@@ -18,9 +18,10 @@ Routes checkpoint menu selections to appropriate workflows with aeList context.
 
 | Mode | Path |
 |------|------|
-| quick | `deep-verify/quick_mode.md` OR `deep-discover/quick_mode.md` |
-| verify | `deep-verify/workflow.md` |
-| discover | `deep-discover/workflow.md` |
+| QV | `deep-verify/quick_mode.md` |
+| QD | `deep-discover/quick_mode.md` |
+| V | `deep-verify/workflow.md` |
+| D | `deep-discover/workflow.md` |
 
 **Base path:** `{project-root}/_bmad/core/workflows/`
 
@@ -78,21 +79,39 @@ IF methodFiles is empty:
 
 ## Routing Logic
 
-### Q (Quick) Mode
+### QV (Quick Verify) Mode
 
 ```
 1. Extract aeList from step frontmatter (see protocol above)
-2. Determine quick mode type based on context:
-   - If called after content generation → quick VERIFY
-   - If called for exploration → quick DISCOVER
-   - If unclear → ask user: "[V] Quick Verify / [D] Quick Discover"
-3. Load appropriate quick_mode.md
-4. Pass parameters:
+2. Load deep-verify/quick_mode.md
+3. Pass parameters:
    - aeList: '{extracted_aeList}'
    - content: '{current step content}'
    - stepPath: '{current step file path}'
-5. Execute quick mode
-6. After completion: Return to calling step menu
+4. Execute quick verify
+5. After completion: Return to calling step menu
+```
+
+### QD (Quick Discover) Mode
+
+```
+1. Extract aeList from step frontmatter (see protocol above)
+2. Load deep-discover/quick_mode.md
+3. Pass parameters:
+   - aeList: '{extracted_aeList}'
+   - content: '{current step content}'
+   - stepPath: '{current step file path}'
+4. Execute quick discover
+5. After completion: Return to calling step menu
+```
+
+### Legacy [Q] Input
+
+```
+If user enters [Q]:
+1. Display: "Option [Q] has been split into [QV] and [QD]"
+2. Show: "[QV] Quick Verify | [QD] Quick Discover"
+3. Wait for valid input (QV or QD)
 ```
 
 ### V (Verify) Mode
@@ -179,6 +198,42 @@ All methods are stored in:
 1. Load ALL specified ae-list files
 2. Combine methods from all files
 3. Present unified method set
+
+---
+
+## Error Handling
+
+### Missing ae-list File
+
+```
+1. LOG: ⚠️ ae-list '{name}' not found at {path}
+2. DISPLAY WARNING:
+   ┌──────────────────────────────────────┐
+   │ ⚠️ aeList '{name}' NOT FOUND         │
+   │ Using fallback: 'general'            │
+   │ Methods may be less relevant.        │
+   │                                      │
+   │ 💡 Add to frontmatter: aeList: '{x}' │
+   └──────────────────────────────────────┘
+3. CONTINUE with 'general' fallback
+```
+
+### Corrupted Method File
+
+```
+1. LOG: ⚠️ Cannot parse: {path}
+2. SKIP corrupted file, continue with next
+3. NOTIFY: Skipped '{name}' due to format error
+```
+
+### No Methods Available
+
+```
+1. LOG: ❌ No methods could be loaded
+2. OFFER:
+   [R] Retry with 'general'
+   [X] Exit to step menu
+```
 
 ---
 
