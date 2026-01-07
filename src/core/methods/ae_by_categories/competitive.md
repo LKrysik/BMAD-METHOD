@@ -1,5 +1,5 @@
-<!-- GENERATED: 2026-01-06T11:55:35.974Z -->
-<!-- SOURCE: methods.csv + ae-custom-lists.yaml (hash: 94ae6f09) -->
+<!-- GENERATED: 2026-01-07T19:15:10.804Z -->
+<!-- SOURCE: methods.csv + ae-custom-lists.yaml (hash: 54b50899) -->
 <!-- DO NOT EDIT MANUALLY - regenerate with: npm run bmad:generate-ae-methods -->
 
 # Competitive Methods
