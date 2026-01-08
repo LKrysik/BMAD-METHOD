@@ -58,6 +58,121 @@ Agent cannot say "Applied #70, looks good" — must show the actual execution wi
 
 ---
 
+## Core Mechanisms
+
+Deep Verify uses two core mechanisms: MAB (supervision) and MSE (evidence quality).
+
+### Mandatory Anti-Bias (MAB)
+
+**Purpose:** Supervise EVERY agent action through structured self-examination.
+
+**Principle:** Agent cannot be trusted to make honest choices. MAB forces agent to examine how it could deceive and prove it's not doing so.
+
+**ALL FOUR methods are MANDATORY at each action point:**
+
+| # | Method | Question | Required output |
+|---|--------|----------|-----------------|
+| #51 | Liar's Trap | How could I deceive in this action? | 3 ways + proof not doing |
+| #52 | Mirror Trap | What would dishonest agent do? | Comparison + difference % |
+| #53 | Confession | What's the hardest part? | Identification + focus proof |
+| #54 | CUI BONO | Who benefits from this decision? | AGENT / USER / OUTCOME |
+
+**When to apply MAB:**
+- Selecting concerns
+- Selecting verification methods
+- Executing each method
+- Creating each finding
+- Before final report
+
+**Output format:**
+```
+## MAB: [action name]
+
+**#51 Liar's Trap:**
+How could I deceive: [3 ways]
+Proof not doing: [specifics]
+
+**#52 Mirror Trap:**
+Dishonest agent would: [description]
+My action: [description]
+Difference: [X%]
+
+**#53 Confession:**
+Hardest part: [identification]
+My focus on it: [proof]
+
+**#54 CUI BONO:**
+| Decision | Benefits |
+|----------|----------|
+| [X] | AGENT / USER / OUTCOME |
+```
+
+**Note:** MAB replaces the previous OAP mechanism. Mirror Trap (#52) achieves the same externalization of perspective ("what would another agent do") while adding three more verification layers.
+
+---
+
+### Minimum Specificity Evidence (MSE)
+
+**Purpose:** Prevent vague or fabricated evidence in findings.
+
+**Requirements for Evidence field:**
+
+| Requirement | Minimum | Example good | Example bad |
+|-------------|---------|--------------|-------------|
+| Quote length | ≥30 characters | "if (user.role === 'admin') return true" | "admin check" |
+| Location | file:line OR section:element | `auth.ts:47` | "somewhere" |
+| Verbatim | 100% exact | exactly as in source | paraphrase |
+
+**Format:**
+```
+**Evidence:** "[VERBATIM_QUOTE ≥30 chars]" — [LOCATION]
+```
+
+**Agent self-check before adding Evidence:**
+```
+□ Quote ≥30 characters?
+□ Quote is EXACT (copy-paste from source)?
+□ Location is file:line OR section:element?
+□ Someone can find this quote in source?
+```
+
+**Exceptions:**
+
+| Situation | Allowed | Format |
+|-----------|---------|--------|
+| Gap (missing) | Describe what's missing + where should be | "MISSING: [what] in [where]" |
+| Pattern in many places | One full quote + count | "[quote]" — and 7 similar |
+| Long context | Quote with [...] | "start [...] end" — file:lines |
+
+---
+
+### User Validation Step (UVS)
+
+**Purpose:** User confirms ONE finding has real Evidence. This breaks information asymmetry.
+
+**When:** ALWAYS before final report (both modes).
+
+**Procedure:**
+
+Agent selects finding with highest severity that has Evidence.
+
+```
+## User Validation
+
+**Finding:** [ID] [Title]
+**Evidence:** "[quote]" — [file:line]
+
+Does this quote exist at this location?
+[Y] Yes — continue
+[N] No — agent explains and corrects
+```
+
+**HALT** — wait for user.
+
+If [N]: Agent explains discrepancy, corrects finding, repeats UVS.
+
+---
+
 ## Terminology
 
 **Concern** — A specific area requiring verification, derived from analyzing TASK, CONTENT, and ENVIRONMENT. Agent identifies concerns relevant to the specific case — not limited to predefined list.
@@ -113,8 +228,8 @@ If any input missing → ask user to provide.
 |------|------|-------------|
 | **Problem** | `P` | Something wrong in CONTENT |
 | **Gap** | `G` | Something missing that should exist |
-| **Question** | `Q` | Needs clarification or decision |
-| **Verified** | `V` | Checked and confirmed OK |
+
+**Note:** Previous "V Verified OK" type removed — it allowed agent to close items without depth. If something is verified, it simply has no finding.
 
 ---
 
@@ -154,81 +269,61 @@ Is this correct?
 
 ---
 
-## Phase 1: Context Analysis
+## Phase 1: Analyze & Plan
 
-Agent analyzes TASK + CONTENT + ENVIRONMENT to identify verification concerns.
+Agent analyzes context and prepares verification plan. **Use MAB to verify this action.**
 
-**Note:** This phase uses Thinking Methods to guide analysis — not just intuition. Agent reads and executes methods to extract insights systematically.
+### Step 1: Context Analysis
 
-### 1.1 Analyze Context
+Use Thinking Methods to extract key elements:
+- #70 Scope Integrity — elements in TASK
+- #74 Grounding Check — assumptions in CONTENT
+- #119 Assumption Archaeology — inherited assumptions from ENVIRONMENT
 
-Extract key elements from each input to find risk areas.
-
-**Use Thinking Methods to analyze:**
-- #70 Scope Integrity — identify all elements in TASK
-- #74 Grounding Check — find hidden assumptions in CONTENT
-- #119 Assumption Archaeology — surface inherited assumptions from ENVIRONMENT
-
-Agent executes these methods (following patterns from source) to produce structured analysis. May use other methods as context requires.
-
-**Output format:**
 ```
-## Context Analysis
+### Context
 
-### From TASK
-- Key requirements: [list]
-- Explicit constraints: [list]
-- Implied expectations: [list]
-
-### From CONTENT
-- What was added: [list]
-- What was changed: [list]
-- What was removed: [list]
-
-### From ENVIRONMENT
-- Related components: [list]
-- Dependencies: [list]
-- Conventions to follow: [list]
-
-### Risk Areas (TASK ↔ CONTENT ↔ ENVIRONMENT)
-
-| Area | Risk | Why verify |
-|------|------|-----------|
-| [area] | [what could go wrong] | [consequence] |
+**TASK elements:** [list]
+**CONTENT changes:** added: [...], changed: [...], removed: [...]
+**ENVIRONMENT constraints:** [list]
+**Risk areas:** [where TASK↔CONTENT↔ENV may conflict]
 ```
 
-### 1.2 Identify Concerns and Select Thinking Methods
+### Step 2: Select Concerns and Methods
 
-Based on context analysis, identify specific concerns to verify and select thinking methods for each.
+For each risk area, define concern and select verification methods.
 
-**Step A: Use Thinking Methods to identify what needs verification:**
-- #56 Sorites Paradox — which elements are critical (removal destroys solution)?
-- #93 Aristotle's Four Causes — what is CONTENT made of, structured as, caused by, for?
-- #112 Topological Invariant — what is the essence that must be verified?
-
-Agent executes these methods to discover concerns systematically — not just list obvious ones.
-
-**Step B: For each identified concern, select verification methods:**
-
-Agent browses Thinking Methods source using insights from Step A to find best matches. Common verification methods:
-- #70 Scope Integrity — check completeness against original task
-- #73 Coherence Check — find contradictions
-- #74 Grounding Check — surface hidden assumptions
-- #33 Comparative Analysis — evaluate against criteria
-
-Agent may find other methods more suitable based on specific concern characteristics.
-
-**Output format:**
+**Apply MAB to this selection:**
 ```
-## Verification Concerns
+## MAB: Selecting concerns and methods
 
-| # | Concern | What to verify | Source | Thinking Methods |
-|---|---------|----------------|--------|------------------|
-| 1 | [name] | [specific check] | TASK: [element] | #[N] [name], #[N] [name] |
-| 2 | [name] | [specific check] | CONTENT: [element] | #[N] [name] |
-| 3 | [name] | [specific check] | ENVIRONMENT: [element] | #[N] [name] |
-| 4 | [name] | [specific check] | TASK↔CONTENT: [gap] | #[N] [name] |
-| 5 | [name] | [specific check] | CONTENT↔ENV: [conflict] | #[N] [name] |
+**#51 Liar's Trap:**
+How could I select easy concerns: [3 ways]
+Proof not doing: [specifics]
+
+**#52 Mirror Trap:**
+Dishonest agent would select: [easy concerns]
+I select: [hard concerns]
+Difference: [X%]
+
+**#53 Confession:**
+Hardest concern to verify: [identification]
+My focus on it: [proof]
+
+**#54 CUI BONO:**
+| Concern selected | Benefits |
+|------------------|----------|
+| [X] | AGENT / USER / OUTCOME |
+```
+
+**Output:**
+```
+### Verification Plan
+
+| # | Concern | What to verify | Source | Methods |
+|---|---------|----------------|--------|---------|
+| 1 | [name] | [check] | TASK↔CONTENT | #[N], #[N] |
+| 2 | [name] | [check] | CONTENT↔ENV | #[N] |
 ```
 
 ---
@@ -291,13 +386,18 @@ For each concern, apply assigned thinking methods.
 
 Each finding gets unique ID: `[iteration].[sequence]` (e.g., `1.01`, `1.02`, `2.01`)
 
+**IMPORTANT: All Evidence fields MUST follow MSE (Minimum Specificity Evidence) requirements:**
+- Quote ≥30 characters (verbatim from source)
+- Location as file:line OR section:element
+- Self-check before adding: "Can someone find this exact quote?"
+
 **Problem found:**
 ```
 ### [1.01] P-!!! Problem Title
 
 **What:** [description of problem]
 **Where:** [location in CONTENT]
-**Evidence:** "[quote]" — [line/section]
+**Evidence:** "[VERBATIM QUOTE ≥30 chars]" — [file:line]
 **Impact:** [consequence for TASK or ENVIRONMENT]
 **Fix:** [suggested action]
 ```
@@ -308,27 +408,33 @@ Each finding gets unique ID: `[iteration].[sequence]` (e.g., `1.01`, `1.02`, `2.
 
 **Missing:** [what should exist]
 **Expected because:** [TASK requires / ENVIRONMENT shows]
+**Evidence:** MISSING: [what] in [where should be]
 **Impact:** [consequence]
 **Add:** [what to add and where]
 ```
 
-**Question raised:**
-```
-### [1.03] Q Question Title
+**Use MAB when creating each finding.**
 
-**Issue:** [what needs clarification]
-**Context:** [why this matters]
-**Options:** [possible resolutions]
+---
+
+## Phase 2.5: User Validation (UVS)
+
+Before report, user validates ONE finding. Agent selects finding with highest severity that has Evidence.
+
+```
+## User Validation
+
+**Finding:** [ID] [Title]
+**Evidence:** "[quote]" — [file:line]
+
+Does this quote exist at this location?
+[Y] Yes — continue to report
+[N] No — agent explains and corrects
 ```
 
-**Verified OK:**
-```
-### [1.04] V Verified Element
+**HALT** — wait for user.
 
-**Checked:** [element]
-**Thinking Method:** #[N] [name]
-**Status:** OK
-```
+If [N]: Agent explains discrepancy, corrects finding, repeats UVS.
 
 ---
 
@@ -342,19 +448,18 @@ Each finding gets unique ID: `[iteration].[sequence]` (e.g., `1.01`, `1.02`, `2.
 **Iteration:** [N]
 **TASK:** [summary]
 **CONTENT:** [summary]
+**UVS:** [Y/N] — Finding [ID]
 
 ---
 
 ### Summary
 
-| Type | !!! | !! | ! | i |
-|------|-----|----|---|---|
-| Problems | [N] | [N] | [N] | — |
-| Gaps | [N] | [N] | [N] | — |
-| Questions | [N] | — | — | — |
-| Verified | — | — | — | [N] |
+| Type | !!! | !! | ! |
+|------|-----|----|----|
+| Problems | [N] | [N] | [N] |
+| Gaps | [N] | [N] | [N] |
 
-**Status:** RED (critical issues) / YELLOW (important issues) / GREEN (minor or none)
+**Status:** RED (critical) / YELLOW (important) / GREEN (minor or none)
 
 ---
 
@@ -603,12 +708,36 @@ Finalize verification.
 
 ## Quick Reference
 
+### Core Mechanisms
+
+| Mechanism | Purpose | When |
+|-----------|---------|------|
+| **MAB** | Supervise every action (4 methods mandatory) | ALL actions |
+| **MSE** | Prevent vague evidence | Every finding |
+| **UVS** | User validates one finding | Before report |
+
+### MAB Methods (all mandatory at each action)
+
+| # | Method | Question |
+|---|--------|----------|
+| #51 | Liar's Trap | How could I deceive? |
+| #52 | Mirror Trap | What would dishonest agent do? |
+| #53 | Confession | What's the hardest part? |
+| #54 | CUI BONO | Who benefits? |
+
 ### Modes
 
 | Mode | When to use | HALTs |
 |------|-------------|-------|
-| **Auto** | Trust agent, want quick results | 1 (after report) |
-| **Supervised** | Control concerns and methods | 2 (plan + report) |
+| **Auto** | Quick results | 2 (UVS + report) |
+| **Supervised** | Control plan | 3 (plan + UVS + report) |
+
+### Process Flow
+
+```
+Inputs → Mode → Phase 1 (MAB) → Checkpoint → Phase 2 (MAB + MSE)
+→ UVS → Report → Actions
+```
 
 ### Actions
 
