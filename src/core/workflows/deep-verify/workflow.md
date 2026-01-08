@@ -35,13 +35,34 @@ Each method:
 {project-root}/_bmad/core/methods/methods.csv
 ```
 
-Agent reads method description from source and applies its pattern to current context.
+### How Agent Uses Thinking Methods
+
+1. **Read** the method from source — find the method by number, read its `description` and `output_pattern`
+2. **Understand** what the method asks — each method has specific questions or steps
+3. **Execute** the pattern on current context — answer the questions, follow the steps
+4. **Produce output** matching the method's pattern — not generic statements
+
+**Example:**
+```
+Method #70 Scope Integrity says:
+"Verify artifact addresses FULL scope of ORIGINAL task. Quote original task verbatim..."
+
+Agent MUST:
+1. Quote the original TASK verbatim
+2. List EACH element from TASK
+3. Classify each as ADDRESSED / REDUCED / OMITTED
+4. Show the classification with evidence
+```
+
+Agent cannot say "Applied #70, looks good" — must show the actual execution with output.
 
 ---
 
 ## Terminology
 
 **Concern** — A specific area requiring verification, derived from analyzing TASK, CONTENT, and ENVIRONMENT. Agent identifies concerns relevant to the specific case — not limited to predefined list.
+
+**HALT** — Instruction for agent to stop and wait for user response. Agent presents options and waits — does not proceed until user responds.
 
 ### Example Concern Areas
 
@@ -110,12 +131,12 @@ If any input missing → ask user to provide.
 
 Is this correct?
 
-[Y] Yes, proceed
-[E] Edit inputs
-[X] Exit
+[Y] Yes, proceed — start verification with these inputs
+[E] Edit inputs — tell me what to change (in your own words)
+[X] Exit — cancel verification
 ```
 
-**HALT** — Wait for confirmation.
+**HALT** — Wait for user response.
 
 ---
 
@@ -124,12 +145,12 @@ Is this correct?
 ```
 ## Verification Mode
 
-[A] Auto — I prepare and execute, you review results
-[S] Supervised — I prepare plan, you approve before execution
-[X] Exit
+[A] Auto — I do everything, you review final report
+[S] Supervised — I prepare plan, you can modify before I execute
+[X] Exit — cancel verification
 ```
 
-**HALT** — Wait for choice.
+**HALT** — Wait for user response.
 
 ---
 
@@ -137,16 +158,18 @@ Is this correct?
 
 Agent analyzes TASK + CONTENT + ENVIRONMENT to identify verification concerns.
 
+**Note:** This phase uses Thinking Methods to guide analysis — not just intuition. Agent reads and executes methods to extract insights systematically.
+
 ### 1.1 Analyze Context
 
 Extract key elements from each input to find risk areas.
 
-**Suggested Thinking Methods:**
+**Use Thinking Methods to analyze:**
 - #70 Scope Integrity — identify all elements in TASK
 - #74 Grounding Check — find hidden assumptions in CONTENT
 - #119 Assumption Archaeology — surface inherited assumptions from ENVIRONMENT
 
-Agent may use other methods as context requires.
+Agent executes these methods (following patterns from source) to produce structured analysis. May use other methods as context requires.
 
 **Output format:**
 ```
@@ -174,49 +197,38 @@ Agent may use other methods as context requires.
 | [area] | [what could go wrong] | [consequence] |
 ```
 
-### 1.2 Identify Concerns
+### 1.2 Identify Concerns and Select Thinking Methods
 
-Based on context analysis, identify specific concerns to verify.
+Based on context analysis, identify specific concerns to verify and select thinking methods for each.
 
-**Suggested Thinking Methods:**
+**Step A: Use Thinking Methods to identify what needs verification:**
 - #56 Sorites Paradox — which elements are critical (removal destroys solution)?
 - #93 Aristotle's Four Causes — what is CONTENT made of, structured as, caused by, for?
 - #112 Topological Invariant — what is the essence that must be verified?
 
-Agent may use other methods as context requires.
+Agent executes these methods to discover concerns systematically — not just list obvious ones.
+
+**Step B: For each identified concern, select verification methods:**
+
+Agent browses Thinking Methods source using insights from Step A to find best matches. Common verification methods:
+- #70 Scope Integrity — check completeness against original task
+- #73 Coherence Check — find contradictions
+- #74 Grounding Check — surface hidden assumptions
+- #33 Comparative Analysis — evaluate against criteria
+
+Agent may find other methods more suitable based on specific concern characteristics.
 
 **Output format:**
 ```
 ## Verification Concerns
 
-| # | Concern | What to verify | Source |
-|---|---------|----------------|--------|
-| 1 | [name] | [specific check] | TASK: [element] |
-| 2 | [name] | [specific check] | CONTENT: [element] |
-| 3 | [name] | [specific check] | ENVIRONMENT: [element] |
-| 4 | [name] | [specific check] | TASK↔CONTENT: [relationship] |
-| 5 | [name] | [specific check] | CONTENT↔ENV: [relationship] |
-```
-
-### 1.3 Assign Thinking Methods
-
-For each concern, select thinking methods that will verify it.
-
-**Suggested Thinking Methods for selection:**
-- #33 Comparative Analysis — evaluate against criteria
-- #54 CUI BONO — who benefits from each choice (detect bias)
-- #115 Alternative Autopsy — consider genuinely different approaches
-
-Agent browses Thinking Methods source to find best matches for each concern.
-
-**Output format:**
-```
-## Thinking Methods per Concern
-
-| Concern | Methods | Looking for |
-|---------|---------|-------------|
-| [concern 1] | #[N] [name], #[N] [name] | [specific targets] |
-| [concern 2] | #[N] [name] | [specific targets] |
+| # | Concern | What to verify | Source | Thinking Methods |
+|---|---------|----------------|--------|------------------|
+| 1 | [name] | [specific check] | TASK: [element] | #[N] [name], #[N] [name] |
+| 2 | [name] | [specific check] | CONTENT: [element] | #[N] [name] |
+| 3 | [name] | [specific check] | ENVIRONMENT: [element] | #[N] [name] |
+| 4 | [name] | [specific check] | TASK↔CONTENT: [gap] | #[N] [name] |
+| 5 | [name] | [specific check] | CONTENT↔ENV: [conflict] | #[N] [name] |
 ```
 
 ---
@@ -240,15 +252,15 @@ Agent browses Thinking Methods source to find best matches for each concern.
 
 ### Actions
 
-[OK] Approve and execute
-[+] Add concern — describe what to check
+[OK] Approve and execute (recommended if plan looks complete)
+[+] Add concern — describe in your own words what else to check
 [−] Remove concern — specify number
 [M] Modify thinking methods for concern
-[?] Search — describe what you're looking for
+[?] Search — describe in your own words what you're looking for
 [X] Exit
 ```
 
-**HALT** — Wait for approval.
+**HALT** — Wait for user response.
 
 After modifications → show updated plan.
 After [OK] → proceed to Phase 2.
@@ -259,6 +271,8 @@ After [OK] → proceed to Phase 2.
 
 For each concern, apply assigned thinking methods.
 
+**Important:** Agent must show actual method execution, not just claim it was done. See "How Agent Uses Thinking Methods" section.
+
 ### Execution Format
 
 ```
@@ -266,7 +280,11 @@ For each concern, apply assigned thinking methods.
 **Thinking Method:** #[N] [method name]
 **Target:** [what specifically checking]
 
-[method execution following the pattern from method description]
+**Method execution:**
+[Show actual execution: questions asked, steps followed, evidence found]
+[Must match the method's output_pattern from source]
+
+**Result:** [finding or verified OK]
 ```
 
 ### Finding Format
@@ -376,24 +394,30 @@ Each finding gets unique ID: `[iteration].[sequence]` (e.g., `1.01`, `1.02`, `2.
 
 ### Concerns Verified
 
-| Concern | Thinking Methods | Findings |
-|---------|------------------|----------|
-| [name] | #[N] [name], #[N] [name] | 1.01, 1.03 |
-| [name] | #[N] [name] | V |
+| # | Concern | Source | Thinking Methods | Findings |
+|---|---------|--------|------------------|----------|
+| 1 | [name] | [source] | #[N] [name], #[N] [name] | 1.01, 1.03 |
+| 2 | [name] | [source] | #[N] [name] | V |
 
 ---
 
-## Actions
+## What's Next?
+
+Based on status:
+- **RED/YELLOW:** Consider [F] Fix to address issues, or [D] Deeper to investigate
+- **GREEN:** Consider [X] Done, or [N] New to check other areas
+
+### Actions
 
 [F] Fix — apply fixes (specify IDs or "all")
 [D] Deeper — analyze finding in more depth (specify ID)
 [N] New — run new iteration with different concerns
 [M] More — expand thinking methods for current concerns
-[?] Search — find concern or thinking method by description
+[?] Search — describe in your own words what you're looking for
 [X] Done — finish verification
 ```
 
-**HALT** — Wait for user decision.
+**HALT** — Wait for user response.
 
 ---
 
@@ -476,12 +500,12 @@ Start new iteration with different concerns.
 | 2 | [name] | [source] | [reason] |
 
 [OK] Execute with these concerns
-[+] Add concern
-[−] Remove concern
-[?] Search for concern
+[+] Add concern — describe in your own words
+[−] Remove concern — specify number
+[?] Search — describe what you're looking for
 ```
 
-**HALT** — Wait for approval.
+**HALT** — Wait for user response.
 
 → Execute new iteration.
 → Append findings to report with new iteration number.
@@ -503,11 +527,11 @@ Expand thinking methods for existing concerns.
 | [name] | #[N] [name], #[N] [name] | #[N] [name] — [what it adds] |
 
 [OK] Add suggested and execute
-[+] Add specific thinking method to concern
-[?] Search for thinking method
+[+] Add specific thinking method — describe what kind of check you need
+[?] Search — describe what you're looking for
 ```
 
-**HALT** — Wait for approval.
+**HALT** — Wait for user response.
 
 → Execute with expanded methods.
 → Update report with new findings.
@@ -541,7 +565,7 @@ Describe what you want to verify or how:
 [X] Cancel search
 ```
 
-**HALT** — Wait for selection.
+**HALT** — Wait for user response.
 
 ---
 
@@ -606,11 +630,8 @@ Examples:
 - `2.03` — Third finding in iteration 2
 - `1.01.2` — Second sub-finding from deeper analysis of 1.01
 
-### Severity Quick Guide
+### Severity
 
-| Symbol | Level | Typical examples |
-|--------|-------|------------------|
-| `!!!` | CRITICAL | Broken functionality, security flaw, data loss risk |
-| `!!` | IMPORTANT | Missing feature, wrong behavior, inconsistency |
-| `!` | MINOR | Style issue, suboptimal approach, minor inconsistency |
-| `i` | INFO | Observation, suggestion, note |
+See **Severity Levels** section above for full definitions.
+
+Quick: `!!!` = must fix, `!!` = should fix, `!` = can defer, `i` = info only
