@@ -27,9 +27,9 @@
 3. **FINDING** = a problem (P) or gap (G) discovered
 4. **Severity** = 🔴 (must fix) / 🟠 (should fix) / 🟡 (can defer)
 
-**Everything else is internal workflow mechanics.** Just follow the prompts and choose options when asked (Y/N, A/G, F/D/R/X).
+**Everything else is internal workflow mechanics.** Just follow the prompts and choose options when asked (A/G, P/A/R, F/D/R/X, etc.).
 
-**First time?** Choose **Guided mode** [G] to see each step.
+**First time?** Choose **Guided mode** [**G**] to see each step.
 
 ---
 
@@ -94,6 +94,8 @@ num, category, method_name, description, output_pattern
 
 **Note:** MAB is self-supervision. It reduces but cannot eliminate agent bias. For high-stakes verification, consider using a different agent or human reviewer.
 
+**Method Numbers:** MAB uses #51-54 (anti-bias category in methods.csv). Sanity Suite uses #70-75, #150 (sanity category). All numbers reference the same methods.csv file - different ranges are different categories.
+
 ---
 
 ## MSE - Evidence Requirements
@@ -151,10 +153,19 @@ Before starting Deep Verify:
 3. **ENVIRONMENT** - Related files accessible if referenced
 4. **Agent capability** - Agent must execute MAB honestly (self-supervision limitation)
 
-**Fundamental Circularity:** This workflow verifies agent work but is itself executed by an agent. This circularity cannot be fully broken. Mitigations:
-- User can spot-check any finding's evidence
-- MAB requires concrete evidence, not just assertions
-- For critical verification: use a DIFFERENT agent or human reviewer
+**Fundamental Circularity:** This workflow verifies agent work but is itself executed by an agent. This circularity cannot be fully broken.
+
+**Active Mitigations (MANDATORY):**
+1. **Evidence Anchoring** - Every finding MUST include MSE (quote + location). User can verify quote exists.
+2. **Severity Justification** - 🔴 findings require user confirmation before proceeding to fix.
+3. **Null Finding Challenge** - If agent reports "no issues found", user SHOULD request agent run #51 Liar's Trap on itself.
+
+**Passive Mitigations (RECOMMENDED):**
+- User spot-checks 1-2 findings per verification (verify quote, check context)
+- For 🔴 critical content: use DIFFERENT agent or human reviewer
+- Compare findings against user's intuition - suspiciously clean results warrant scrutiny
+
+**Trust Calibration:** Track verification accuracy over time. If agent consistently misses issues user later finds, reduce trust in Auto mode.
 
 ---
 
@@ -167,9 +178,13 @@ Step 0: Inputs -> Step 1: Mode -> Step 2: Concerns
                     [D] Discovery (2a+2b) ───────┤
                                                  ↓
                               Step 3: Methods -> Step 4: Verify -> Step 5: Results
-                                                                         ↓
-                                                         [F]ix/[D]eeper → Loop
-                                                         [R]eject / [X] Done
+                                   ↑                                    ↓
+                                   ├─────────────── [M] Methods ────────┤
+                                   │                                    │
+              Step 2 ←───────────── [C] Concerns ──────────────────────┤
+                                                                        │
+                                                    [F]ix/[D]eeper ─────┤ Loop
+                                                    [R]eject / [X] Done ┘
 ```
 
 **HALT Legend:**
@@ -178,7 +193,7 @@ Step 0: Inputs -> Step 1: Mode -> Step 2: Concerns
 
 ---
 
-## Step 0: Confirm Inputs
+## 📋 Step 0: Confirm Inputs
 
 **What happens now:** Agent shows what it will verify. You confirm it's correct.
 
@@ -192,17 +207,17 @@ CONTENT: [what was produced]
 TYPE: [Code / Document / Plan]
 ENVIRONMENT: [context]
 
-[C] Correct - start verification
+[**C**] Correct - start verification
 
-[E] Edit - I'll describe what to change
-[X] Exit - cancel verification
+[**E**] Edit - I'll describe what to change
+[**X**] Exit - cancel verification
 ```
 
 **HALT** - waiting for your choice
 
 ---
 
-## Step 1: Mode
+## ⚙️ Step 1: Mode
 
 **What happens now:** You choose how much control you want during verification.
 
@@ -219,15 +234,15 @@ ENVIRONMENT: [context]
 | Trust agent's judgment | Want to shape verification |
 
 ```
-[A] Auto - run all steps, show results at end
-[G] Guided - pause at each step for my approval
+[**A**] Auto - run all steps, show results at end
+[**G**] Guided - pause at each step for my approval
 ```
 
 **HALT** - waiting for your choice
 
 ---
 
-## Step 2: Generate Concerns
+## 🔍 Step 2: Generate Concerns
 
 **What happens now:** Define what areas of CONTENT need verification.
 
@@ -239,8 +254,8 @@ ENVIRONMENT: [context]
 
 How do you want to define concerns? 
 
-[M] Manual - I'll specify what to verify
-[D] Discovery - Agent finds concerns using methods
+[**M**] Manual - I'll specify what to verify
+[**D**] Discovery - Agent finds concerns using methods
 ```
 
 **HALT** - waiting for your choice
@@ -276,9 +291,9 @@ Agent expands:
 | C3 | Edge cases | #70 | Boundary conditions implied by spec |
 | C4 | Assumptions | #74 | Hidden assumptions in logic |
 
-[P] Proceed with these concerns
-[A] Add concern - describe what area to verify
-[R] Remove concern - specify ID (e.g., R C2)
+[**P**] Proceed with these concerns
+[**A**] Add concern - describe what area to verify
+[**R**] Remove concern - specify ID (e.g., R C2)
 ```
 
 **HALT** - waiting for choice
@@ -314,7 +329,15 @@ ADDITIONAL:
 | # | Why this method for THIS content |
 |---|----------------------------------|
 | #[N] | [specific reason based on content] |
+
+[**P**] Proceed - use these methods for discovery
+[**A**] Add method - I'll specify method to ADD to list
+[**R**] Remove method - specify # (e.g., R #38)
 ```
+
+**IMPORTANT:** [**A**] adds method to ADDITIONAL list (append). Does NOT replace existing methods.
+
+**HALT** (G only) - waiting for your choice
 
 ### 2b: Execute Discovery
 
@@ -332,16 +355,16 @@ ADDITIONAL:
 
 **Mode G only - you can modify concerns:**
 ```
-[P] Proceed - continue to select verification methods
-[A] Add concern - describe what area to verify
-[R] Remove concern - specify ID (e.g., R C2)
+[**P**] Proceed - continue to select verification methods
+[**A**] Add concern - describe what area to verify
+[**R**] Remove concern - specify ID (e.g., R C2)
 ```
 
 **HALT** (G only) - waiting for your choice
 
 ---
 
-## Step 3: Select Methods for Concerns
+## 🧰 Step 3: Select Methods for Concerns
 
 **What happens now:** For each CONCERN, agent selects verification methods that will find problems.
 
@@ -369,10 +392,10 @@ ADDITIONAL:
 **Mode A:** Auto-select based on TYPE and proceed.
 **Mode G:**
 ```
-[A] Auto-select additional methods
-[M] Manual - I'll specify which methods to add
+[**A**] Auto-select additional methods
+[**M**] Manual - I'll specify which methods to add
 
-[V] Verify - proceed to execute verification
+[**V**] Verify - proceed to execute verification
 ```
 
 **HALT** (G only) - waiting for your choice
@@ -385,7 +408,7 @@ ADDITIONAL:
 
 ---
 
-## Step 4: Verify
+## ✅ Step 4: Verify
 
 **[MAB: Find real problems, not confirm "all OK"]**
 
@@ -431,8 +454,9 @@ Result: [Finding ID] OR [No issue: reason]
 ### Finding Format (MSE required)
 
 ```
-### [N] [P/G]-[🔴|🟠|🟡] Title
+### [N] 🔴|🟠|🟡 [P|G] Title
 
+Type: Problem (P) = something wrong | Gap (G) = something missing
 What: [description]
 Where: [location]
 Evidence: "[quote]" - [file:line]
@@ -440,7 +464,7 @@ Impact: [consequence]
 Fix: [action]
 ```
 
-**Severity:** 🔴 must fix | 🟠 should fix | 🟡 can defer
+This detailed format is used DURING Step 4 verification. Results table (Step 5) shows summary only.
 
 ### Anti-patterns (redo if detected)
 
@@ -450,9 +474,11 @@ Fix: [action]
 
 ---
 
-## Step 5: Results
+## 📊 Step 5: Results
 
-**What happens now:** Agent shows all findings and you decide what to do next.
+**What happens now:** Agent shows summary of all findings. You decide what to do next.
+
+**MANDATORY:** Use this exact table format:
 
 ```
 ## Verification Results
@@ -462,14 +488,25 @@ CONTENT: [summary]
 
 ### Findings
 
-| ID | Concern | Type | Sev | Description |
-|----|---------|------|-----|-------------|
-| 1 | C1 | P | 🔴 | [desc] |
+| ID | Concern | Sev | Finding |
+|----|---------|-----|---------|
+| 1 | C1: [name] | 🔴 | [What] → [Impact] → [Action] |
+| 2 | C2: [name] | 🟠 | [What] → [Impact] → [Action] |
 
 Status: 🔴 / 🟠 / 🟡 / ✅
 
-[F] Fix | [D] Deeper | [R] Reject | [X] Done
+### Actions
+[**F**] Fix [ID]      - fix the finding
+[**D**] Deeper [ID]   - investigate finding as new concern
+[**R**] Reject [ID]   - mark finding as invalid
+
+### Navigation
+[**C**] Concerns      - go back to modify/add concerns
+[**M**] Methods       - re-run verification with different methods
+[**X**] Done          - finish verification
 ```
+
+**Note:** Full evidence (MSE) is in Step 4 output. This table is summary for decision-making.
 
 **HALT**
 
@@ -564,6 +601,34 @@ Methods selected for deeper analysis:
 → Finding marked REJECTED
 → Results refreshed, **HALT** for next action
 
+---
+
+## Navigation Detail
+
+### Concerns
+
+**What happens:** Go back to Step 2 to modify concerns list.
+
+**Use when:**
+- New area to verify discovered during verification
+- Want to remove concern that proved irrelevant
+- Need to split broad concern into specific ones
+
+→ Returns to Step 2 with current concerns editable
+→ After changes: re-run Step 3 (Methods) and Step 4 (Verify) for modified concerns only
+
+### Methods
+
+**What happens:** Re-run verification with different methods for same concerns.
+
+**Use when:**
+- Current methods didn't find expected issues
+- Want deeper analysis with specialized methods
+- Suspected blind spots in verification
+
+→ Returns to Step 3 (Select Methods)
+→ Keep existing findings, add new from re-verification
+
 ### Done
 
 **What happens:** Verification complete. Final summary shown.
@@ -581,22 +646,3 @@ Fixed: [N] | Open: [N] | Rejected: [N]
 | 🟡 | N |
 ```
 
----
-
-## Quick Ref
-
-**Flow:** Inputs → Mode → Concerns → Methods → Verify → Results
-
-**MAB:** Agent executes internally when seeing `[MAB: purpose]`. Output = step result only.
-
-**MSE:** Every finding needs quote + location.
-
-**Sanity (mandatory):** #70 Scope | #71 Align | #72 Closure | #73 Coherence | #74 Ground | #75 Falsify | #150 Exec
-
-**Severity:** 🔴 must fix | 🟠 should fix | 🟡 defer
-
-**Actions:** 
-[F]ix - fix findings
-[D]eeper - explain and deeper verification
-[R]eject - reject findings (remove from list)
-[X]Done - exit process
