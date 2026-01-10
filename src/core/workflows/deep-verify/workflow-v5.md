@@ -31,6 +31,8 @@
 
 **First time?** Choose **Guided mode** [**G**] to see each step.
 
+**⚠️ Important limitation:** This workflow is executed BY an agent TO verify agent work. It reduces but cannot eliminate self-verification bias. For 🔴 critical content, consider human review.
+
 ---
 
 ## Key Concepts
@@ -107,31 +109,6 @@ Every FINDING must include:
 
 **Why quote length matters:** Too short = ambiguous location. Too long = noise. Target: shortest quote that uniquely identifies the location. 30 chars is a guideline, not a rule.
 
----
-
-## Sanity Suite (7 Methods - MANDATORY)
-
-| # | Method | Check | Output |
-|---|--------|-------|--------|
-| #70 | Scope Integrity | TASK coverage | Each element: ADDRESSED/REDUCED/OMITTED |
-| #71 | Alignment Check | Goal realization | Each goal part: realized Y/N |
-| #72 | Closure Check | Incomplete markers | TODO/TBD/PLACEHOLDER with locations |
-| #73 | Coherence Check | Contradictions | Terms with conflicting definitions |
-| #74 | Grounding Check | Assumptions | EXPLICIT/HIDDEN, validated Y/N |
-| #75 | Falsifiability | Failure scenarios | 3 scenarios, 3 gaps |
-| #150 | Executability Check | Can it be used? | Each step: ACTIONABLE/BLOCKED/UNCLEAR |
-
-*#150 Executability: For each step/instruction, verify a practitioner could actually perform it without asking questions. List blockers (missing info, undefined terms, impossible actions).
-
----
-
-## Content-Type Methods
-
-| Type | Methods |
-|------|---------|
-| Code | #17 Red Team, #38 Chaos Monkey, #76 Camouflage, #83 Boundary |
-| Document | #62 Theseus, #79 DNA Inheritance, #82 Temporal |
-| Plan | #34 Pre-mortem, #101 Quantum, #102 Cantor |
 
 ---
 
@@ -169,15 +146,33 @@ Before starting Deep Verify:
 
 ---
 
+## Error Handling
+
+**What to do when things go wrong:**
+
+| Error | Symptom | Recovery |
+|-------|---------|----------|
+| methods.csv not found | Agent cannot read methods file | Verify file exists at `src/core/methods/methods.csv`. If missing, workflow cannot proceed. |
+| CONTENT not accessible | Agent cannot read artifact to verify | Provide correct path or paste content directly. |
+| Verification timeout | Step 4 takes too long | Use [**C**] to reduce concerns or [**M**] to select fewer methods. |
+| All concerns irrelevant | Generated concerns don't match user intent | Use [**C**] Navigation → clear all → use [**M**] Manual to specify directly. |
+| False positives | Agent reports problems that don't exist | Use [**R**] Reject with reason. Track pattern - may indicate method mismatch. |
+| Fix keeps failing | Multiple fix attempts don't resolve issue | Use [**D**] Deeper to understand root cause. Consider human review. |
+| Agent stuck in loop | Same findings keep appearing | Use [**O**] Restart with different approach or simpler scope. |
+
+**General recovery:** At any HALT point, you can describe what's wrong and agent will attempt to help. For unrecoverable errors, use [**X**] Done or [**O**] Restart.
+
+---
+
 ## Flow
 
 ```
-Step 0: Inputs -> Step 1: Mode -> Step 2: Concerns
-                                      ↓
-                    [M] Manual ──────────────────┐
-                    [D] Discovery (2a+2b) ───────┤
-                                                 ↓
-                              Step 3: Methods -> Step 4: Verify -> Step 5: Results
+Step 0: Confirm Inputs -> Step 1: Mode -> Step 2: Generate Concerns
+                                                ↓
+                              [M] Manual ──────────────────┐
+                              [D] Discovery (2a+2b) ───────┤
+                                                           ↓
+                                    Step 3: Select Methods -> Step 4: Verify -> Step 5: Results
                                    ↑                                    ↓
                                    ├─────────────── [M] Methods ────────┤
                                    │                                    │
@@ -193,7 +188,7 @@ Step 0: Inputs -> Step 1: Mode -> Step 2: Concerns
 
 ---
 
-## 📋 Step 0: Confirm Inputs
+## 📋 Step 0 of 5: Confirm Inputs
 
 **What happens now:** Agent shows what it will verify. You confirm it's correct.
 
@@ -213,11 +208,13 @@ ENVIRONMENT: [context]
 [**X**] Exit - cancel verification
 ```
 
+**If [E] Edit:** Describe what's wrong (e.g., "TASK should be X", "wrong file"). Agent updates and shows corrected inputs for confirmation.
+
 **HALT** - waiting for your choice
 
 ---
 
-## ⚙️ Step 1: Mode
+## ⚙️ Step 1 of 5: Mode
 
 **What happens now:** You choose how much control you want during verification.
 
@@ -242,7 +239,7 @@ ENVIRONMENT: [context]
 
 ---
 
-## 🔍 Step 2: Generate Concerns
+## 🔍 Step 2 of 5: Generate Concerns
 
 **What happens now:** Define what areas of CONTENT need verification.
 
@@ -294,7 +291,10 @@ Agent expands:
 [**P**] Proceed with these concerns
 [**A**] Add concern - describe what area to verify
 [**R**] Remove concern - specify ID (e.g., R C2)
+[**D**] Discover more - expand concerns using Discovery methods (with MAB)
 ```
+
+**Note:** [**D**] runs Discovery process (Step 2a+2b) on your manual concerns to find related areas you might have missed.
 
 **HALT** - waiting for choice
 
@@ -304,16 +304,24 @@ Agent expands:
 
 Agent uses methods to find concerns systematically.
 
+**Why two method selection phases?**
+| Phase | Purpose | Methods answer |
+|-------|---------|----------------|
+| **Discovery** (Step 2) | Find WHAT to verify | "What areas might have problems?" |
+| **Verification** (Step 3) | Decide HOW to verify | "How to check if this area has problems?" |
+
+*Discovery methods = find concerns. Verification methods = test concerns.*
+
 ### 2a: Select Discovery Methods
 
-**[MAB: Select methods that will find ALL concerns, not just obvious ones]**
+**[MAB: Select methods that will find ALL concerns that are key for CONTENT, TASK AND , not just obvious ones]**
 
 **Purpose:** These methods will be used to DISCOVER CONCERNS (areas that need verification) - not to verify yet.
 
 **MANDATORY:** Sanity Suite #70-#75, #150 (see Sanity Suite section)
 
 **ADDITIONAL:** Select 3-9 methods from `methods.csv` based on:
-1. **TYPE** - Code/Document/Plan (see Content-Type Methods section)
+1. **TYPE**
 2. **CONTENT specifics** - what does THIS content need?
    - What could go wrong here specifically?
    - What's unique/risky about this content?
@@ -331,11 +339,14 @@ ADDITIONAL:
 | #[N] | [specific reason based on content] |
 
 [**P**] Proceed - use these methods for discovery
-[**A**] Add method - I'll specify method to ADD to list
+[**A**] Add method - by ID (#N) or by description ("find X problems")
 [**R**] Remove method - specify # (e.g., R #38)
+[**S**] Show categories - display method categories from methods.csv
 ```
 
 **IMPORTANT:** [**A**] adds method to ADDITIONAL list (append). Does NOT replace existing methods.
+
+**[A] by description:** If you describe what you want (e.g., "method to find logic errors"), agent finds matching methods from methods.csv using [MAB: select methods that match user intent, not easiest ones].
 
 **HALT** (G only) - waiting for your choice
 
@@ -346,6 +357,12 @@ ADDITIONAL:
 **Next:** These concerns will be verified in Step 3 and 4.
 
 **[MAB: Extract ALL relevant concerns, not just safe/obvious ones]**
+
+**Extraction process:**
+1. For each selected method → run against TASK + CONTENT
+2. From method output → identify areas that need verification
+3. Formulate as CONCERN: "Area X needs checking because method found Y"
+4. Avoid duplicates - merge similar concerns
 
 ```
 | ID | Concern | Source | Discovery Method | Description |
@@ -364,7 +381,7 @@ ADDITIONAL:
 
 ---
 
-## 🧰 Step 3: Select Methods for Concerns
+## 🧰 Step 3 of 5: Select Methods for Concerns
 
 **What happens now:** For each CONCERN, agent selects verification methods that will find problems.
 
@@ -393,9 +410,11 @@ ADDITIONAL:
 **Mode G:**
 ```
 [**A**] Auto-select additional methods
-[**M**] Manual - I'll specify which methods to add
+[**M**] Manual - I'll specify which methods to add (by ID or description)
+[**S**] Show categories - display method categories from methods.csv
 
 [**V**] Verify - proceed to execute verification
+[**C**] Back to Concerns - return to Step 2 to modify concerns
 ```
 
 **HALT** (G only) - waiting for your choice
@@ -408,7 +427,7 @@ ADDITIONAL:
 
 ---
 
-## ✅ Step 4: Verify
+## ✅ Step 4 of 5: Verify
 
 **[MAB: Find real problems, not confirm "all OK"]**
 
@@ -427,7 +446,7 @@ For each Concern + Method:
 
 3. **Apply** method's logic: define what violation would look like
    - Based on method description: what SPECIFIC pattern indicates problem?
-   - Example: #73 Coherence → "same term defined differently in two places"
+   - Example: #73 Coherence → "same term defined differently in two places" OR "same term defined IDENTICALLY in multiple places (redundancy)"
    - Write down: "Looking for: [concrete pattern]"
 
 4. **Search** for that violation
@@ -471,10 +490,12 @@ This detailed format is used DURING Step 4 verification. Results table (Step 5) 
 - "Looks fine" without specifics
 - No evidence for OK conclusions
 - Skipping hard-to-verify areas
+- "Intentional redundancy" without proof it's intentional or beneficial
+- Finding only contradictions, ignoring unnecessary duplications
 
 ---
 
-## 📊 Step 5: Results
+## 📊 Step 5 of 5: Results
 
 **What happens now:** Agent shows summary of all findings. You decide what to do next.
 
@@ -495,15 +516,24 @@ CONTENT: [summary]
 
 Status: 🔴 / 🟠 / 🟡 / ✅
 
-### Actions
-[**F**] Fix [ID]      - fix the finding
-[**D**] Deeper [ID]   - investigate finding as new concern
-[**R**] Reject [ID]   - mark finding as invalid
+---
 
-### Navigation
-[**C**] Concerns      - go back to modify/add concerns
-[**M**] Methods       - re-run verification with different methods
-[**X**] Done          - finish verification
+### 🔧 Actions (per finding)
+[**F**] Fix [ID,...]     - fix one or more findings (e.g., F 1 or F 1,2,3)
+[**D**] Deeper [ID]      - investigate finding as new concern
+[**R**] Reject [ID]      - mark finding as invalid (with reason)
+
+---
+
+### 🧭 Navigation
+[**C**] Concerns         - go back to modify/add concerns (Step 2)
+[**M**] Methods          - re-run verification with different methods (Step 3)
+[**X**] Done             - finish verification
+
+---
+
+### 🔄 Session
+[**O**] Restart          - start over from Step 0 (discard current progress)
 ```
 
 **Note:** Full evidence (MSE) is in Step 4 output. This table is summary for decision-making.
@@ -522,13 +552,36 @@ Status: 🔴 / 🟠 / 🟡 / ✅
 
 **[MAB: Fix must solve the problem, not just change something]**
 
+**⚠️ For 🔴 critical fixes:** User SHOULD independently verify the fix after agent completes it. Agent self-verification has inherent limitations (circularity).
+
 **Process:**
 1. **Analyze** finding → understand root cause
 2. **Plan** fix → what exactly needs to change
-3. **Select verification methods** (1-3 from methods.csv) to confirm fix works
+3. **Select verification methods** → user chooses mode:
+   - [**A**] Auto - agent selects 1-3 methods appropriate for this fix type
+   - [**M**] Manual - user specifies methods (by ID or description)
+   - [**S**] Show categories - display available method categories
 4. **Execute** fix → make changes
 5. **Verify** using selected methods → confirm problem is solved
 6. **Report** changes made
+
+**Method selection (Auto mode):**
+
+**[MAB: Select methods that will DETECT if fix failed, not confirm it worked]**
+
+For the problem/error/issue being fixed, agent selects methods that will verify what was actually done during the fix. Agent must NOT take shortcuts, must NOT avoid difficult aspects of verification.
+
+Selected methods must:
+- Cover different scopes and aspects of the fix (not just one angle)
+- Catch as many potential problems with the fix as possible
+- Be appropriate for THIS specific type of problem
+
+Agent must justify: "Method #X verifies [aspect] and will catch [failure mode] if fix is incomplete or incorrect."
+
+**Anti-patterns:**
+- Selecting generic/easy methods that would pass regardless of fix quality
+- Selecting methods that verify only surface-level changes
+- Avoiding methods that would require deep analysis
 
 ```
 ## Fix: [ID]
@@ -560,6 +613,12 @@ Verification:
 
 Status: FIXED / PARTIALLY FIXED / FAILED
 ```
+
+**If FAILED:**
+- Review root cause analysis - was it correct?
+- Consider [**D**] Deeper on original finding to understand better
+- Try different fix approach
+- For persistent failures: escalate to human review
 
 → Finding marked with status
 → Results refreshed, **HALT** for next action
@@ -645,4 +704,3 @@ Fixed: [N] | Open: [N] | Rejected: [N]
 | 🟠 | N |
 | 🟡 | N |
 ```
-
