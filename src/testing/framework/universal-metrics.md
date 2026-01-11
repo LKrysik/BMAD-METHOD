@@ -34,6 +34,18 @@ GUARD 4: Standard Deviation
     - RS = 1.0 (perfect stability)
   IF Mean == 0:
     - RS = undefined, report "INSUFFICIENT_DATA"
+
+GUARD 5: Zero Findings (NEW)
+  IF Confirmed_Findings == 0 AND Expected_Errors > 0:
+    - DR = 0% (valid result - protocol missed everything)
+    - P = undefined (no TP, no FP to calculate)
+    - Report: "ZERO_DETECTION"
+    - This is NOT an error - may indicate protocol blind spot
+
+GUARD 6: Perfect Detection (NEW)
+  IF Detected == Expected AND FP == 0:
+    - P = 1.0
+    - Report: "PERFECT_RUN" (flag for review - may indicate data leak)
 ```
 
 ---

@@ -20,10 +20,16 @@ Skopiuj i wklej poniższy prompt, uzupełniając wartości w nawiasach kwadratow
 - [ ] **Czas Protocol Run 1**: ___sek
 - [ ] **Czas Protocol Run 2**: ___sek
 - [ ] **Czas Protocol Run 3**: ___sek
+- [ ] **Agent Isolation**: potwierdzono że agent NIE miał dostępu do ground-truth.md
 - [ ] **Blind evaluation**: findings opisane PRZED otwarciem ground-truth.md
 - [ ] **Wyniki zapisane** do experiment-log.md
 
 > **UWAGA:** Jeśli którykolwiek pomiar brakuje, oznacz w logu jako "MEASUREMENT_MISSING" i uzasadnij dlaczego.
+
+> **EDGE CASES:**
+> - Jeśli protokół wykryje 0 findings → zapisz "ZERO_FINDINGS" i kontynuuj (to może być valid result dla czystego artefaktu)
+> - Jeśli WDS = 0 → pomiń metryki TE, TiE, OES (division by zero) i oznacz jako "WDS_ZERO"
+> - Jeśli agent nie wygeneruje artefaktu → zapisz "AGENT_FAILURE" i powtórz run
 
 ---
 
@@ -44,10 +50,11 @@ KROK 1 - Przeczytaj pliki:
 6. src/core/methods/methods.csv
 
 KROK 2 - Wykonaj test:
-- 3 uruchomienia agenta na zadaniu T[N]
-- 3 uruchomienia procesu na artefaktach
-- Mierz tokeny (input + output) i czas dla każdego uruchomienia
+- 3 uruchomienia agenta na zadaniu T[N] (Run 1, Run 2, Run 3)
+- 3 uruchomienia procesu na artefaktach (dla każdego artefaktu z agenta)
+- Mierz tokeny (input + output) i czas dla KAŻDEGO uruchomienia (6 pomiarów łącznie)
 - Blind evaluation (NIE otwieraj ground-truth.md przed krokiem 3)
+- ISOLATION CHECK: Potwierdź że agent NIE ma dostępu do ground-truth.md
 
 KROK 3 - Przed tworzeniem nowej wersji procesu:
 - Sprawdź czy plik o proponowanej nazwie już istnieje
@@ -64,16 +71,17 @@ KROK 4 - Zapisz wyniki:
 
 ## Dostępne procesy do testowania
 
-| Proces | Ścieżka |
-|--------|---------|
-| Deep Verify V5 | `src/core/workflows/deep-verify/workflow-v5.md` |
-| Deep Verify V6 | `src/core/workflows/deep-verify/workflow-v6.md` |
-| Deep Verify V6.1 | `src/core/workflows/deep-verify/workflow-v6.1.md` |
-| Deep Verify V6.2 | `src/core/workflows/deep-verify/workflow-v6.2.md` |
-| Deep Verify V6.3 | `src/core/workflows/deep-verify/workflow-v6.3.md` |
-| Deep Verify Lite | `src/core/workflows/deep-verify/workflow-v6-lite.md` |
-| Tensor V-GD | `src/core/quality_gates/Tensor-Based-Verification-Protocol.md` |
-| Quadrant QVP | `src/core/quality_gates/Quadrant-Verification-Protocol.md` |
+| Proces | Ścieżka | Opis |
+|--------|---------|------|
+| Deep Verify V5 | `src/core/workflows/deep-verify/workflow-v5.md` | Podstawowy |
+| Deep Verify V6 | `src/core/workflows/deep-verify/workflow-v6.md` | + Concern layers A/B/C |
+| Deep Verify V6.1 | `src/core/workflows/deep-verify/workflow-v6.1.md` | + Layer D (Security) |
+| **Deep Verify V6.2** | `src/core/workflows/deep-verify/workflow-v6.2.md` | **+ Bayesian Stopping** |
+| ~~Deep Verify V6.3~~ | ~~`src/core/workflows/deep-verify/workflow-v6.3.md`~~ | ⚠️ RESERVED - NOT IMPLEMENTED |
+| Deep Verify Lite | `src/core/workflows/deep-verify/workflow-v6-lite.md` | Szybki |
+| Tensor V-GD | `src/core/quality_gates/Tensor-Based-Verification-Protocol.md` | Matematyczny |
+| Quadrant QVP | `src/core/quality_gates/Quadrant-Verification-Protocol.md` | 4-wymiarowy |
+| Universal UAQG | `src/core/quality_gates/Universal-Agent-Quality-Gate-Protocol.md` | 6-bramkowy |
 
 ## Dostępne zadania testowe
 

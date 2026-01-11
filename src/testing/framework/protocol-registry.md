@@ -68,15 +68,83 @@ Mode: [G] Guided - for detailed phase tracking
 
 ---
 
-### DV-V6.1, DV-V6.2, DV-V6.3: Deep Verify Variants
+### DV-V6.1: Deep Verify with Layer D
 
-| Property | V6.1 | V6.2 | V6.3 |
-|----------|------|------|------|
-| **ID** | `DV-V6.1` | `DV-V6.2` | `DV-V6.3` |
-| **File** | `workflow-v6.1.md` | `workflow-v6.2.md` | `workflow-v6.3.md` |
-| **Parent** | V6 | V6.1 | V6.2 |
+| Property | Value |
+|----------|-------|
+| **ID** | `DV-V6.1` |
+| **File** | `src/core/workflows/deep-verify/workflow-v6.1.md` |
+| **Parent** | V6 |
+| **Key Features** | Layer D (Security/Operational), #115, #39, #61, #67 |
+| **Token Profile** | Medium-High (15k-40k) |
+| **Best For** | Security-relevant artifacts |
 
 *Same invocation and extraction as DV-V6*
+
+---
+
+### DV-V6.2: Deep Verify with Bayesian Stopping (NEW)
+
+| Property | Value |
+|----------|-------|
+| **ID** | `DV-V6.2` |
+| **File** | `src/core/workflows/deep-verify/workflow-v6.2.md` |
+| **Parent** | V6.1 |
+| **Key Features** | Phase 4.5 Bayesian Stop Check + all V6.1 features |
+| **Token Profile** | Variable: 10k-40k (depends on artifact quality) |
+| **Time Profile** | 2-7 minutes |
+| **Expected Savings** | 30-40% tokens on clean artifacts |
+
+#### New Feature: Phase 4.5 Bayesian Stop Check
+
+Evaluates P(remaining_errors > 0) after Phase 4. If below threshold, skips Phase 5 (Challenge).
+
+**Safety Constraints (never stop if):**
+- Phase < 4
+- Categories covered < 3
+- Tokens < 2000
+- SECURE not checked (for security-relevant artifacts)
+- Unresolved CRITICAL findings
+
+**Thresholds:**
+| Artifact Type | Threshold θ |
+|---------------|-------------|
+| Safety-critical | 0.05 |
+| Standard | 0.15 |
+| Low-priority | 0.25 |
+
+#### Invocation Template
+```markdown
+## Deep Verify V6.2
+
+TASK: [task_verbatim]
+CONTENT: [artifact]
+TYPE: Document
+ENVIRONMENT: BMAD-METHOD project
+ARTIFACT_CRITICALITY: [Safety-critical / Standard / Low-priority]
+
+Mode: [G] Guided - for detailed phase tracking
+```
+
+#### Output Extraction Rules
+- **All DV-V6 rules apply**
+- **Additional**: Check for "Early Stop Decision" in output
+- If early stop: Note P(remaining) and threshold in results
+
+---
+
+### DV-V6.3: Deep Verify V6.3 (RESERVED)
+
+| Property | Value |
+|----------|-------|
+| **ID** | `DV-V6.3` |
+| **File** | `src/core/workflows/deep-verify/workflow-v6.3.md` |
+| **Parent** | V6.2 |
+| **Status** | ⚠️ **RESERVED - NOT YET IMPLEMENTED** |
+
+> **NOTE:** This version slot is reserved for future development. Do not use in experiments until status changes to ACTIVE.
+>
+> When implementing, define unique features that differentiate from V6.2 (e.g., new methods, different phase structure, or novel optimization).
 
 ---
 

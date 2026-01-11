@@ -522,11 +522,20 @@ Confidence: [HIGH / MEDIUM / LOW]
 - [ ] DR_critical > 90% for 3 consecutive experiments
 - [ ] Protocol shows no improvement after 3 variants
 - [ ] Token efficiency becomes unacceptable (TE < 0.05)
+- [ ] OES regression: new version scores LOWER than previous for 2 consecutive experiments
+- [ ] Maximum iterations reached: 10 versions of same protocol family
 
 **CONTINUE if:**
 - [ ] DR_critical < 90%
 - [ ] Known blind spots remain addressable
 - [ ] Token efficiency acceptable
+- [ ] OES trending upward or stable
+
+**ROLLBACK TRIGGER:**
+If new protocol version has OES < (previous OES - 5%), consider:
+1. Reverting to previous version
+2. Documenting what change caused regression
+3. Trying alternative modification approach
 
 ### 7.2 Protocol Evolution
 
@@ -608,13 +617,18 @@ After all tasks:
 src/
 ├── testing/                                    # ALL TESTING FILES
 │   ├── framework/                              # Testing framework
+│   │   ├── prompt.md                          # Test prompt template (START HERE)
+│   │   ├── universal-test-orchestrator.md     # This file - main orchestrator
+│   │   ├── protocol-registry.md               # Protocol definitions & invocation
+│   │   ├── universal-metrics.md               # Metrics formulas & guards
+│   │   ├── meta-analysis-protocol.md          # Phase 8 meta-analysis
+│   │   ├── meta-analysis-execution-template.md # Meta-analysis template
 │   │   ├── AGENT-INSTRUCTIONS-UNIVERSAL.md    # Quick start for agents
-│   │   ├── universal-test-orchestrator.md     # This file
-│   │   ├── protocol-registry.md               # Protocol definitions
-│   │   ├── universal-metrics.md               # Metrics formulas
-│   │   ├── method-matrix.md                   # Methods per action
-│   │   ├── metrics.md                         # Legacy metrics
-│   │   └── modification-operators.md          # How to evolve
+│   │   ├── method-matrix.md                   # Methods per action (reference)
+│   │   ├── modification-operators.md          # How to evolve protocols (reference)
+│   │   ├── [LEGACY] metrics.md                # Deprecated - use universal-metrics.md
+│   │   ├── [LEGACY] test-orchestrator-legacy.md # Deprecated - use this file
+│   │   └── [LEGACY] AGENT-INSTRUCTIONS-legacy.md # Deprecated
 │   │
 │   ├── tasks/                                  # Test tasks
 │   │   ├── trap-tasks.md                      # Standard tasks T1-T10
@@ -729,6 +743,24 @@ Go BEYOND incremental optimization to discover:
 ### Theoretical Foundations
 [Research directions for deeper optimization]
 ```
+
+### 8.5 Feedback Loop (CRITICAL)
+
+**Meta-analysis MUST feed back into protocols:**
+
+```
+Meta-Analysis Output → Protocol Evolution Input
+
+1. DO recommendations → Immediate changes to next protocol version
+2. TRY experiments → New experiment configurations in Phase 0
+3. AVOID anti-patterns → Add to protocol-registry.md as warnings
+4. INVESTIGATE areas → Add to research backlog
+```
+
+**Verification of feedback loop:**
+- [ ] Each meta-analysis produces at least 1 actionable change
+- [ ] Changes are tracked in Change Registry (Phase 1.2 of meta-analysis)
+- [ ] Next experiment references meta-analysis findings
 
 ---
 
