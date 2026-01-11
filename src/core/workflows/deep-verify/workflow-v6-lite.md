@@ -1,19 +1,29 @@
-# Deep Verify V6
+# Deep Verify V6-Lite
 
 ## Core Principle
 
 ```
-HONESTY → DEPTH → CHALLENGE → ROOT CAUSE → FIX
+HONESTY → DEPTH → ROOT CAUSE → FIX
 ```
 
-**What changed from v5:**
-- Phase 0 (Self-Check) BEFORE analysis - not inline MAB
-- Multi-layer concerns (Content + Structure + Assumptions)
-- Mandatory depth analysis (5 Whys to root cause)
-- Challenge phase for every conclusion
-- Higher method volume (20-35 methods)
+**What this is:** Streamlined V6 without Challenge phase. Keeps depth analysis, reduces token cost by ~20%.
 
-**Limitation:** Agent verifies agent work. This reduces but cannot eliminate self-verification bias. For critical content, consider human review.
+**V6-Lite vs V6:**
+- ✅ Phase 0 (Self-Check) — kept
+- ✅ Multi-layer concerns — kept
+- ✅ 5 Whys to root cause — kept
+- ❌ Phase 5 (Challenge) — removed (findings go directly to Results)
+- 🔄 Lower method volume (15-25 methods vs 25-35)
+
+**When to use V6-Lite vs V6:**
+| Use V6-Lite | Use Full V6 |
+|-------------|-------------|
+| Medium-stakes content | High-stakes / production |
+| Token budget constrained | Quality over cost |
+| Trusted agent | New/untested agent |
+| Iterative verification | Final verification |
+
+**Limitation:** Agent verifies agent work. Without Challenge phase, false positives may pass through. For critical content, consider full V6 or human review.
 
 ---
 
@@ -38,12 +48,14 @@ HONESTY → DEPTH → CHALLENGE → ROOT CAUSE → FIX
 ```
 Phase 0: Self-Check ──→ Phase 1: Inputs ──→ Phase 2: Multi-Layer Concerns
                                                         ↓
-              Phase 6: Results ←── Phase 5: Challenge ←── Phase 4: Verify ←── Phase 3: Methods
-                   ↓
-              Phase 7: Fix Root Cause
-                   ↓
-              [Loop or Done]
+                  Phase 5: Results ←── Phase 4: Verify ←── Phase 3: Methods
+                       ↓
+                  Phase 6: Fix Root Cause
+                       ↓
+                  [Loop or Done]
 ```
+
+**Phases:** 0 → 1 → 2 → 3 → 4 → 5 → 6 (7 phases total, vs 8 in full V6)
 
 ---
 
@@ -89,7 +101,7 @@ Commitment: [how I'll address it]
 CUI BONO awareness: [what I'll watch for]
 ```
 
-→  Auto proceed to Phase 1
+→ Auto proceed to Phase 1
 
 ---
 
@@ -98,7 +110,7 @@ CUI BONO awareness: [what I'll watch for]
 **Purpose:** Confirm what we're verifying and how.
 
 ```
-## Deep Verify V6
+## Deep Verify V6-Lite
 
 TASK: [original request - quote verbatim if possible]
 CONTENT: [what was produced]
@@ -123,7 +135,7 @@ ENVIRONMENT: [context, related files]
 [G] Guided - pause at each phase for approval
 ```
 
-**Recommendation:** Use Guided [G] for first time or high-stakes content.
+**Recommendation:** Use Guided [G] for first time or higher-stakes content.
 
 **HALT** - waiting for choice
 
@@ -175,11 +187,11 @@ What problems might exist in what's ASSUMED?
 
 | Layer | Mandatory Methods | Purpose |
 |-------|-------------------|---------|
-| A: Content | #70, #71, #72, #73, #75, #150 | Sanity checks on content |
-| B: Structure | #79, #81, #107, #117 | Structure analysis |
-| C: Assumptions | #74, #146, #84 | Assumption excavation |
+| A: Content | #70, #71, #72, #73, #75 | Sanity checks on content |
+| B: Structure | #79, #81, #117 | Structure analysis |
+| C: Assumptions | #74, #146 | Assumption excavation |
 
-**Additional:** Select 3-6 more methods based on TYPE and CONTENT specifics.
+**Additional:** Select 2-4 more methods based on TYPE and CONTENT specifics.
 
 ```
 ## Concerns by Layer
@@ -215,19 +227,18 @@ What problems might exist in what's ASSUMED?
 **[MAB: Select methods from DIFFERENT categories to get multiple perspectives]**
 
 ### Requirements:
-1. **Minimum 5 methods per concern**
-2. **Category diversity:** Each concern must have methods from at least 3 different categories
-3. **Attack method:** Each concern must have at least 2 methods that ATTACKS (challenge, risk, anti-bias, meta-check)
-
+1. **Minimum 3 methods per concern**
+2. **Category diversity:** Each concern must have methods from at least 2 different categories
+3. **One critical method:** Each concern should have at least 1 method that challenges assumptions
 
 ```
 ## Methods per Concern
 
-| Concern | Methods | Categories | Attack Method |
-|---------|---------|------------|---------------|
-| A1 | #73, #56, #110 | sanity, challenge, exploration | #110 |
-| B1 | #79, #107, #65 | coherence, exploration, meta-check | #65 |
-| C1 | #74, #146, #51 | sanity, exploration, anti-bias | #51 |
+| Concern | Methods | Categories | Critical Method |
+|---------|---------|------------|-----------------|
+| A1 | #73, #56, #74 | sanity, challenge, sanity | #56 |
+| B1 | #79, #107, #81 | coherence, exploration, coherence | #107 |
+| C1 | #74, #146, #54 | sanity, exploration, anti-bias | #54 |
 
 [P] Proceed to verification
 [A] Add method (by ID or description)
@@ -271,6 +282,8 @@ WHY 4: Why [answer 3]? → [answer]
 WHY 5: Why [answer 4]? → [ROOT CAUSE]
 ```
 
+**Note:** Stop at the level where actionable root cause is found. Not all findings need 5 full iterations.
+
 ### Finding Format
 
 ```
@@ -292,61 +305,34 @@ Fix: [action - specify if fixes symptom vs root cause]
 ### Anti-patterns (redo if detected)
 
 - "Looks fine" without specifics
-- Stopping at symptom without 5 Whys
+- Stopping at symptom without asking Why
 - "Intentional" without proof of intention AND benefit
 - Accepting redundancy without questioning necessity
 - Analyzing only content, ignoring structure/assumptions
 
----
+### Quick Validation (V6-Lite specific)
 
-## Phase 5: Challenge
+Since Challenge phase is omitted, perform quick self-check on each finding:
 
-**Purpose:** Every finding must survive attack. Unvalidated findings may be false.
+**For each finding, ask:**
+1. Is there evidence this problem EXISTS? (quote + location)
+2. Could this be a false positive? Why/why not?
+3. Is the severity justified?
 
-**[MAB: Try to DISPROVE findings, not confirm them]**
-
-### For each finding, execute:
-
-#### #110 Reductio Attack
-"Assume this finding is WRONG. Build argument why it's invalid."
-- If argument is convincing → finding needs revision
-- If argument fails → finding is stronger
-
-#### #65 Abilene Paradox
-"Does this problem ACTUALLY exist? Or am I finding problems where none exist?"
-- Evidence it exists: [quote + location]
-- Evidence it doesn't exist: [counter-evidence]
-- Verdict: EXISTS / QUESTIONABLE / REJECTED
-
-#### #109 Contraposition Inversion
-"What would GUARANTEE this finding is correct?"
-- Conditions that must be true: [list]
-- Are all conditions met? [yes/no with evidence]
-
-```
-## Challenge Results
-
-| Finding | Reductio Survives | Abilene Verdict | Contraposition Met | Status |
-|---------|-------------------|-----------------|---------------------|--------|
-| 1 | Yes/No | Exists/Questionable | Yes/No | CONFIRMED/REVISED/REJECTED |
-```
-
-→ Only CONFIRMED findings proceed to Results
-
-**HALT** (G only) - waiting for review
+If any answer is uncertain → mark finding as [?] for user review.
 
 ---
 
-## Phase 6: Results
+## Phase 5: Results
 
-**Purpose:** Summary of confirmed findings with depth levels and actions.
+**Purpose:** Summary of findings with depth levels and actions.
 
 ```
 ## Verification Results
 
 TASK: [summary]
 CONTENT: [summary]
-Phases completed: 0-5
+Phases completed: 0-4
 
 ### Findings by Depth
 
@@ -357,7 +343,15 @@ Phases completed: 0-5
 
 Depth legend: SYMPTOM → CAUSE → STRUCTURE → ASSUMPTION → ROOT_CAUSE
 
-Status: 🔴 N / 🟠 N / 🟡 N
+Status: 🔴 N / 🟠 N / 🟡 N / [?] N
+
+---
+
+### Findings marked [?] (uncertain)
+These findings skipped full challenge validation. User should verify:
+| ID | Uncertainty reason |
+|----|-------------------|
+| [N] | [why uncertain] |
 
 ---
 
@@ -367,6 +361,7 @@ Status: 🔴 N / 🟠 N / 🟡 N
 [P] Patch [ID] - fix SYMPTOM only (with warning)
 [D] Deeper [ID] - investigate further
 [R] Reject [ID] - mark as invalid
+[V] Validate [ID] - run Challenge methods on uncertain finding
 
 ---
 
@@ -385,9 +380,40 @@ Status: 🔴 N / 🟠 N / 🟡 N
 
 ---
 
+### When user selects [V] Validate (V6-Lite specific)
+
+**Purpose:** Run Challenge methods on specific finding when uncertainty exists.
+
+**Process:**
+Apply these methods to the finding:
+
+#### #110 Reductio Attack
+"Assume this finding is WRONG. Build argument why it's invalid."
+- If argument is convincing → finding needs revision
+- If argument fails → finding is confirmed
+
+#### #65 Abilene Paradox
+"Does this problem ACTUALLY exist? Or am I finding problems where none exist?"
+- Evidence it exists: [quote + location]
+- Evidence it doesn't exist: [counter-evidence]
+- Verdict: EXISTS / QUESTIONABLE / REJECTED
+
+```
+## Validation Result for Finding [ID]
+
+Reductio survives: [Yes/No]
+Abilene verdict: [Exists/Questionable/Rejected]
+
+Status: CONFIRMED / REVISED / REJECTED
+```
+
+→ Return to Phase 5 Results with updated finding status
+
+---
+
 ### When user selects [E] Explain
 
-**Purpose:** User needs to understand the problem before deciding on action. Summary table is too brief.
+**Purpose:** User needs to understand the problem before deciding on action.
 
 **Process:**
 
@@ -415,11 +441,11 @@ Status: 🔴 N / 🟠 N / 🟡 N
    [B] Back - return to Results
    ```
 
-→ Return to Phase 6 Results after user decision
+→ Return to Phase 5 Results after user decision
 
 ---
 
-## Phase 7: Fix Root Cause
+## Phase 6: Fix Root Cause
 
 **Purpose:** Fix the ROOT CAUSE, not just the symptom.
 
@@ -435,7 +461,7 @@ Why symptom fix is insufficient: [explanation]
 ```
 
 **Step 2: Alternative Approaches (#142)**
-Generate 3 genuinely different approaches to fix root cause:
+Generate 2-3 different approaches to fix root cause:
 
 | Approach | Description | Addresses Root Cause? |
 |----------|-------------|----------------------|
@@ -449,14 +475,9 @@ Generate 3 genuinely different approaches to fix root cause:
 [M] Manual - I'll specify different approach
 ```
 
-**Step 4: Method Selection for Verification**
-Select methods that will verify root cause is fixed (not just symptom):
-- Methods must test the ROOT CAUSE specifically
-- Must cover different aspects of the fix
+**Step 4: Execute Fix**
 
-**Step 5: Execute Fix**
-
-**Step 6: Verify Fix**
+**Step 5: Verify Fix**
 ```
 ## Fix Verification
 
@@ -473,7 +494,7 @@ Status: FIXED (root cause) / PATCHED (symptom only) / FAILED
 - Try different approach
 - Escalate to human review
 
-→ Return to Phase 6 Results
+→ Return to Phase 5 Results
 
 **HALT** - waiting for next action
 
@@ -486,6 +507,7 @@ Status: FIXED (root cause) / PATCHED (symptom only) / FAILED
 | CRITICAL | 🔴 | Blocks usage or causes harm | Must fix root cause |
 | IMPORTANT | 🟠 | Significant issue | Should fix root cause |
 | MINOR | 🟡 | Small issue | Can defer or patch |
+| UNCERTAIN | [?] | Needs validation | User verify or use [V] |
 
 ---
 
@@ -499,7 +521,7 @@ Status: FIXED (root cause) / PATCHED (symptom only) / FAILED
 | ASSUMPTION | Hidden belief | "Self-contained sections are good" |
 | ROOT_CAUSE | Fundamental reason | "Wrong document pattern for procedure" |
 
-**Goal:** Every finding should reach ROOT_CAUSE level through 5 Whys.
+**Goal:** Most findings should reach at least CAUSE or STRUCTURE level. ROOT_CAUSE for 🔴 critical findings.
 
 ---
 
@@ -509,9 +531,9 @@ Status: FIXED (root cause) / PATCHED (symptom only) / FAILED
 |-------|----------|
 | Phase 0 reveals major honesty issue | Stop, acknowledge, restart with awareness |
 | No concerns found at a layer | Re-run with different methods, or acknowledge layer is clean |
-| Finding doesn't survive Challenge | Revise or reject finding |
-| Fix doesn't address root cause | Return to Step 2, try different approach |
-| 5 Whys doesn't reach root cause | Continue asking Why, or accept current depth with note |
+| Finding seems false positive | Use [V] Validate or [R] Reject with reason |
+| Fix doesn't address root cause | Return to Phase 6 Step 2, try different approach |
+| 5 Whys doesn't reach root cause | Accept current depth with note, or continue asking Why |
 
 ---
 
@@ -520,12 +542,18 @@ Status: FIXED (root cause) / PATCHED (symptom only) / FAILED
 | Phase | Minimum Methods | Categories Required |
 |-------|-----------------|---------------------|
 | Phase 0 | 3 (#51, #53, #54) | anti-bias |
-| Phase 2 | 9-12 (3 per layer) | sanity, coherence, exploration |
-| Phase 3 | 3 per concern | Must include 2+ categories + 1 attack |
-| Phase 5 | 3 (#110, #65, #109) | challenge, meta-check |
-| Phase 7 | 3+ | Appropriate for fix type |
+| Phase 2 | 8-10 (per layer guidance) | sanity, coherence, exploration |
+| Phase 3 | 3 per concern | Must include 2+ categories |
+| Phase 6 | 2+ | Appropriate for fix type |
 
-**Total minimum: ~25-35 methods per verification**
+**Total minimum: ~15-25 methods per verification**
+
+**Comparison:**
+| Version | Methods | Estimated Tokens |
+|---------|---------|------------------|
+| V5 | ~10-15 | ~2,700 |
+| V6-Lite | ~15-25 | ~5,000 |
+| V6 Full | ~25-35 | ~6,300 |
 
 ---
 
@@ -537,7 +565,42 @@ Phase 1: What am I verifying? (TASK, CONTENT, MODE)
 Phase 2: What could be wrong? (Content, Structure, Assumptions)
 Phase 3: How will I check? (Methods with diversity)
 Phase 4: What IS wrong? (Surface → 5 Whys → Root Cause)
-Phase 5: Is it really wrong? (Reductio, Abilene, Contraposition)
-Phase 6: What will I do? (Fix Root Cause, not symptom)
-Phase 7: Did I fix the real problem? (Verify root cause addressed)
+Phase 5: What will I do? (Results + optional Validation)
+Phase 6: Did I fix the real problem? (Verify root cause addressed)
 ```
+
+---
+
+## V6-Lite vs V6 Decision Guide
+
+**Choose V6-Lite when:**
+- You trust the agent's findings without additional challenge
+- Token budget is a concern
+- Iterating quickly (will verify again later)
+- Content is medium-stakes
+
+**Upgrade to V6 Full when:**
+- High false-positive rate observed
+- Critical/production content
+- Agent is new or untested
+- Single verification opportunity (no iteration)
+
+**Downgrade to V5 when:**
+- Very low stakes
+- Severe token constraints
+- Quick sanity check only needed
+- Familiar, well-understood content
+
+---
+
+## Changelog from V6
+
+| Change | Rationale |
+|--------|-----------|
+| Removed Phase 5 (Challenge) | 20% token reduction, acceptable for medium-stakes |
+| Added [?] uncertain marker | Flags findings that would benefit from Challenge |
+| Added [V] Validate action | On-demand Challenge for specific findings |
+| Reduced methods per concern (5→3) | Cost optimization |
+| Reduced discovery methods | Cost optimization |
+| Added Quick Validation in Phase 4 | Partial replacement for Challenge |
+| Simplified depth goal | ROOT_CAUSE for critical only |

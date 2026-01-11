@@ -1,4 +1,4 @@
-# Deep Verify V6
+# Deep Verify V6.2
 
 ## Core Principle
 
@@ -6,12 +6,15 @@
 HONESTY → DEPTH → CHALLENGE → ROOT CAUSE → FIX
 ```
 
-**What changed from v5:**
-- Phase 0 (Self-Check) BEFORE analysis - not inline MAB
-- Multi-layer concerns (Content + Structure + Assumptions)
-- Mandatory depth analysis (5 Whys to root cause)
-- Challenge phase for every conclusion
-- Higher method volume (20-35 methods)
+**What changed from v6:**
+- Added Layer D (Security/Privacy) to Phase 2 - addresses SECURE category blind spot
+- Added mandatory security concerns for all artifact types
+- Added #23 Security Audit Personas to Layer D discovery methods
+
+**What changed from v6.2 (EXP-2026-01-11-010):**
+- NEW: Phase 2a (Category Coverage Check) - ensures all 9 categories checked
+- NEW: Phase 6a (Consolidation) - for multi-run experiments, FC target 60%+
+- FC was 15.8% in v6 T5 experiment; these changes address consistency issue
 
 **Limitation:** Agent verifies agent work. This reduces but cannot eliminate self-verification bias. For critical content, consider human review.
 
@@ -24,7 +27,7 @@ HONESTY → DEPTH → CHALLENGE → ROOT CAUSE → FIX
 | TASK | Original user request (spec, message, ticket) |
 | CONTENT | Artifact to verify (code, document, plan) |
 | CONCERN | Area needing verification at specific LAYER |
-| LAYER | Level of analysis: Content / Structure / Assumptions |
+| LAYER | Level of analysis: Content / Structure / Assumptions / Security |
 | METHOD | Thinking pattern from methods.csv |
 | FINDING | Discovered issue with DEPTH LEVEL |
 | DEPTH | Symptom → Cause → Structure → Assumption → Root Cause |
@@ -36,7 +39,7 @@ HONESTY → DEPTH → CHALLENGE → ROOT CAUSE → FIX
 ## Flow Overview
 
 ```
-Phase 0: Self-Check ──→ Phase 1: Inputs ──→ Phase 2: Multi-Layer Concerns
+Phase 0: Self-Check ──→ Phase 1: Inputs ──→ Phase 2: Multi-Layer Concerns (4 layers)
                                                         ↓
               Phase 6: Results ←── Phase 5: Challenge ←── Phase 4: Verify ←── Phase 3: Methods
                    ↓
@@ -98,7 +101,7 @@ CUI BONO awareness: [what I'll watch for]
 **Purpose:** Confirm what we're verifying and how.
 
 ```
-## Deep Verify V6
+## Deep Verify V6.2
 
 TASK: [original request - quote verbatim if possible]
 CONTENT: [what was produced]
@@ -131,9 +134,9 @@ ENVIRONMENT: [context, related files]
 
 ## Phase 2: Multi-Layer Concerns
 
-**Purpose:** Identify concerns at THREE layers, not just content.
+**Purpose:** Identify concerns at FOUR layers, not just content.
 
-**Why three layers:** Problems hide at different depths. Content issues are visible. Structure issues are hidden. Assumption issues are invisible. All three must be checked.
+**Why four layers:** Problems hide at different depths. Content issues are visible. Structure issues are hidden. Assumption issues are invisible. Security issues are often ignored entirely. All four must be checked.
 
 ### Layer A: Content Concerns
 What problems might exist IN the content?
@@ -151,6 +154,20 @@ What problems might exist in what's ASSUMED?
 - Hidden assumptions that could be wrong
 - Inherited patterns applied without questioning
 - Invisible constraints taken as given
+
+### Layer D: Security/Privacy Concerns (NEW in v6.2)
+What SECURITY or PRIVACY problems might exist?
+- Missing audit trails for state-changing operations
+- Data protection/compliance gaps
+- Authentication/authorization holes
+- Information leakage risks
+- Privacy deletion/retention issues
+
+**[MANDATORY]** Layer D must identify at least ONE concern for ANY artifact that:
+- Handles user data
+- Performs state changes
+- Has access control requirements
+- Stores or transmits sensitive information
 
 ---
 
@@ -178,6 +195,12 @@ What problems might exist in what's ASSUMED?
 | A: Content | #70, #71, #72, #73, #75, #150 | Sanity checks on content |
 | B: Structure | #79, #81, #107, #117 | Structure analysis |
 | C: Assumptions | #74, #146, #84 | Assumption excavation |
+| D: Security | #23, #35, #109 | Security/Privacy analysis |
+
+**Layer D Methods Detail:**
+- **#23 Security Audit Personas**: Think as attacker, auditor, compliance officer
+- **#35 Failure Mode Analysis**: How could security controls fail?
+- **#109 Contraposition Inversion**: What guarantees security? What breaks it?
 
 **Additional:** Select 3-6 more methods based on TYPE and CONTENT specifics.
 
@@ -199,12 +222,68 @@ What problems might exist in what's ASSUMED?
 |----|---------|--------|-------------|
 | C1 | [name] | [method/#] | [what to verify] |
 
+### Layer D: Security/Privacy
+| ID | Concern | Source | Description |
+|----|---------|--------|-------------|
+| D1 | [name] | [method/#] | [what to verify] |
+
 [P] Proceed
 [A] Add concern
 [R] Remove concern (e.g., R A2)
 ```
 
 **HALT** (G only) - waiting for choice
+
+---
+
+## Phase 2a: Category Coverage Check (NEW)
+
+**Purpose:** Ensure all mandatory error categories are checked before proceeding.
+
+**Why this matters:** EXP-2026-01-11-010 showed FC=15.8% because each run explored different categories. This gate forces consistent coverage.
+
+### Mandatory Categories
+
+Every verification MUST check each category:
+
+| Category | Code | Description |
+|----------|------|-------------|
+| Scope Drift | SCOPE | Agent reduces/changes scope |
+| Internal Conflict | CONFLICT | Contradictory elements |
+| Hidden Assumption | ASSUME | Unverified assumptions |
+| Shallow Analysis | SHALLOW | Surface-only, no depth |
+| Integration Failure | INTEGRATE | Ignores existing codebase |
+| Security Gap | SECURE | Security consideration missing |
+| Edge Case Miss | EDGE | Obvious edge case not handled |
+| Dependency Blind | DEPEND | Missing critical dependencies |
+| Performance Ignore | PERF | Performance requirements ignored |
+
+### Coverage Matrix
+
+After Phase 2, complete this matrix:
+
+| Category | Concern IDs | Covered? |
+|----------|-------------|----------|
+| SCOPE | [list] | [Y/N] |
+| CONFLICT | [list] | [Y/N] |
+| ASSUME | [list] | [Y/N] |
+| SHALLOW | [list] | [Y/N] |
+| INTEGRATE | [list] | [Y/N] |
+| SECURE | [list] | [Y/N] |
+| EDGE | [list] | [Y/N] |
+| DEPEND | [list] | [Y/N] |
+| PERF | [list] | [Y/N] |
+
+### Gate Rule
+
+```
+IF any category has Covered = N:
+  - ADD at least one concern for that category
+  - Re-display Coverage Matrix
+  - REPEAT until all Covered = Y
+
+ONLY proceed to Phase 3 when ALL categories show Y
+```
 
 ---
 
@@ -218,6 +297,7 @@ What problems might exist in what's ASSUMED?
 1. **Minimum 5 methods per concern**
 2. **Category diversity:** Each concern must have methods from at least 3 different categories
 3. **Attack method:** Each concern must have at least 2 methods that ATTACKS (challenge, risk, anti-bias, meta-check)
+4. **Security method (NEW):** Layer D concerns must include #23 Security Audit Personas
 
 
 ```
@@ -228,6 +308,7 @@ What problems might exist in what's ASSUMED?
 | A1 | #73, #56, #110 | sanity, challenge, exploration | #110 |
 | B1 | #79, #107, #65 | coherence, exploration, meta-check | #65 |
 | C1 | #74, #146, #51 | sanity, exploration, anti-bias | #51 |
+| D1 | #23, #35, #109, #51 | security, risk, challenge, anti-bias | #109, #51 |
 
 [P] Proceed to verification
 [A] Add method (by ID or description)
@@ -261,7 +342,13 @@ What problems might exist in what's ASSUMED?
 - What assumption allows this problem to exist?
 - Is the assumption valid?
 
-**Step 4: 5 Whys to Root Cause**
+**Step 4: Security Check (NEW - for Layer D concerns)**
+- What security/privacy implications exist?
+- Who could exploit this? (attacker persona)
+- What compliance requirements apply? (auditor persona)
+- What data protection gaps exist? (privacy officer persona)
+
+**Step 5: 5 Whys to Root Cause**
 ```
 Problem: [what was found]
 WHY 1: Why does this exist? → [answer]
@@ -274,14 +361,16 @@ WHY 5: Why [answer 4]? → [ROOT CAUSE]
 ### Finding Format
 
 ```
-### [N] 🔴|🟠|🟡 [DEPTH] Title
+### [N] [SEV] [DEPTH] Title
 
 Depth: SYMPTOM | CAUSE | STRUCTURE | ASSUMPTION | ROOT_CAUSE
 Type: Problem (P) | Gap (G)
+Category: SCOPE | ASSUME | SKIP | SHALLOW | CONFLICT | INTEGRATE | EDGE | DEPEND | PERF | SECURE
 
 Surface: [what is visible]
 Structure: [how organization contributes]
 Assumption: [what's assumed that allows this]
+Security: [security/privacy implications - MANDATORY for SECURE category]
 Root Cause: [fundamental reason from 5 Whys]
 
 Evidence: "[quote]" - [location]
@@ -296,6 +385,8 @@ Fix: [action - specify if fixes symptom vs root cause]
 - "Intentional" without proof of intention AND benefit
 - Accepting redundancy without questioning necessity
 - Analyzing only content, ignoring structure/assumptions
+- **Skipping Layer D for artifacts with security implications** (NEW)
+- **"No security concerns" without explicit security analysis** (NEW)
 
 ---
 
@@ -350,14 +441,16 @@ Phases completed: 0-5
 
 ### Findings by Depth
 
-| ID | Concern | Sev | Depth | Finding | Root Cause |
-|----|---------|-----|-------|---------|------------|
-| 1 | A1 | 🔴 | ROOT | [what] | [why] |
-| 2 | B1 | 🟠 | STRUCTURE | [what] | [why] |
+| ID | Concern | Sev | Depth | Category | Finding | Root Cause |
+|----|---------|-----|-------|----------|---------|------------|
+| 1 | A1 | CRIT | ROOT | CONFLICT | [what] | [why] |
+| 2 | B1 | IMP | STRUCTURE | ASSUME | [what] | [why] |
+| 3 | D1 | IMP | CAUSE | SECURE | [what] | [why] |
 
 Depth legend: SYMPTOM → CAUSE → STRUCTURE → ASSUMPTION → ROOT_CAUSE
+Category: SCOPE, ASSUME, SKIP, SHALLOW, CONFLICT, INTEGRATE, EDGE, DEPEND, PERF, SECURE
 
-Status: 🔴 N / 🟠 N / 🟡 N
+Status: CRITICAL N / IMPORTANT N / MINOR N
 
 ---
 
@@ -416,6 +509,46 @@ Status: 🔴 N / 🟠 N / 🟡 N
    ```
 
 → Return to Phase 6 Results after user decision
+
+---
+
+## Phase 6a: Consolidation (Multi-Run Only) (NEW)
+
+**Purpose:** For multi-run experiments, consolidate findings across runs for consistency measurement.
+
+**When to use:** Only execute this phase if running multiple verification passes on the same artifact.
+
+### Cross-Run Finding Matrix
+
+| Finding Description | Run 1 | Run 2 | Run 3 | Appearances | Confidence |
+|--------------------|-------|-------|-------|-------------|------------|
+| [description] | [ID/N] | [ID/N] | [ID/N] | [1/2/3] | [LOW/MED/HIGH] |
+
+### Confidence Rules
+
+| Appearances | Confidence | Report As |
+|-------------|------------|-----------|
+| 3/3 runs | HIGH | CONFIRMED |
+| 2/3 runs | MEDIUM | LIKELY |
+| 1/3 runs | LOW | POSSIBLE (flag for review) |
+
+### Consolidated Output
+
+- **CONFIRMED**: Report as primary findings
+- **LIKELY**: Report as secondary findings
+- **POSSIBLE**: Appendix only (may be false positive or random exploration)
+
+### Consistency Metrics
+
+```
+Finding Consistency (FC) = (Findings in 2+ runs) / (Total unique findings) × 100%
+
+TARGET: FC > 60%
+v6 baseline: FC = 15.8%
+v6.2 target: FC > 60%
+```
+
+**If FC < 40%:** Workflow has consistency problem. Review Phase 2a coverage matrix for gaps.
 
 ---
 
@@ -483,9 +616,9 @@ Status: FIXED (root cause) / PATCHED (symptom only) / FAILED
 
 | Level | Symbol | Meaning | Action |
 |-------|--------|---------|--------|
-| CRITICAL | 🔴 | Blocks usage or causes harm | Must fix root cause |
-| IMPORTANT | 🟠 | Significant issue | Should fix root cause |
-| MINOR | 🟡 | Small issue | Can defer or patch |
+| CRITICAL | CRIT | Blocks usage or causes harm | Must fix root cause |
+| IMPORTANT | IMP | Significant issue | Should fix root cause |
+| MINOR | MIN | Small issue | Can defer or patch |
 
 ---
 
@@ -512,6 +645,7 @@ Status: FIXED (root cause) / PATCHED (symptom only) / FAILED
 | Finding doesn't survive Challenge | Revise or reject finding |
 | Fix doesn't address root cause | Return to Step 2, try different approach |
 | 5 Whys doesn't reach root cause | Continue asking Why, or accept current depth with note |
+| No Layer D concerns identified | **HALT** - security review required before proceeding |
 
 ---
 
@@ -520,12 +654,12 @@ Status: FIXED (root cause) / PATCHED (symptom only) / FAILED
 | Phase | Minimum Methods | Categories Required |
 |-------|-----------------|---------------------|
 | Phase 0 | 3 (#51, #53, #54) | anti-bias |
-| Phase 2 | 9-12 (3 per layer) | sanity, coherence, exploration |
+| Phase 2 | 12-16 (3-4 per layer) | sanity, coherence, exploration, security |
 | Phase 3 | 3 per concern | Must include 2+ categories + 1 attack |
 | Phase 5 | 3 (#110, #65, #109) | challenge, meta-check |
 | Phase 7 | 3+ | Appropriate for fix type |
 
-**Total minimum: ~25-35 methods per verification**
+**Total minimum: ~28-40 methods per verification**
 
 ---
 
@@ -534,10 +668,19 @@ Status: FIXED (root cause) / PATCHED (symptom only) / FAILED
 ```
 Phase 0: Am I being honest? (Liar's Trap, Confession, CUI BONO)
 Phase 1: What am I verifying? (TASK, CONTENT, MODE)
-Phase 2: What could be wrong? (Content, Structure, Assumptions)
+Phase 2: What could be wrong? (Content, Structure, Assumptions, Security)
 Phase 3: How will I check? (Methods with diversity)
 Phase 4: What IS wrong? (Surface → 5 Whys → Root Cause)
 Phase 5: Is it really wrong? (Reductio, Abilene, Contraposition)
 Phase 6: What will I do? (Fix Root Cause, not symptom)
 Phase 7: Did I fix the real problem? (Verify root cause addressed)
 ```
+
+---
+
+## Version History
+
+| Version | Change | Rationale |
+|---------|--------|-----------|
+| v6 | Base multi-layer workflow | - |
+| v6.2 | Added Layer D (Security/Privacy) | SECURE category 0% detection across EXP-001, EXP-002, EXP-003 |

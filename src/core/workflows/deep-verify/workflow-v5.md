@@ -16,16 +16,15 @@
 4. Agent executes verification and reports FINDINGS (problems/gaps)
 5. You decide what to fix, investigate deeper, or accept
 
+**Document type:** This is a **procedural workflow** (step-by-step instructions), not reference documentation. Sections are ordered for execution, not lookup. Key Concepts provides the single source for definitions.
+
 ---
 
 ## Quick Start (Minimum Concepts)
 
 **To use Deep Verify, you need to know only 4 things:**
-
-1. **TASK** = what you asked for
-2. **CONTENT** = what was produced
-3. **FINDING** = a problem (P) or gap (G) discovered
-4. **Severity** = 🔴 (must fix) / 🟠 (should fix) / 🟡 (can defer)
+- **TASK**, **CONTENT**, **FINDING** → see Key Concepts table below
+- **Severity** = 🔴 (must fix) / 🟠 (should fix) / 🟡 (can defer)
 
 **Everything else is internal workflow mechanics.** Just follow the prompts and choose options when asked (A/G, P/A/R, F/D/R/X, etc.).
 
@@ -88,13 +87,15 @@ num, category, method_name, description, output_pattern
 | #54 | "Who benefits - AGENT (red flag) or OUTCOME (ok)?" | Self-serving decisions |
 
 **How it works:**
-- When agent sees `[MAB: purpose]` → executes #51-#54 internally
-- Agent shows ONLY the step result (not the MAB analysis)
-- If any answer reveals problem → agent corrects before showing result
+- When agent sees `[MAB: purpose]` in workflow:
+  1. Read the "purpose" text as context (e.g., "Select methods that will find problems" tells agent WHAT to apply MAB to)
+  2. Execute #51-#54 internally, applying each question to current action
+  3. If any answer reveals shortcut/bias → STOP, correct, then proceed
+  4. Show ONLY the step result (not the MAB analysis itself)
 
 **Rule:** If AGENT benefit without justification → revise action before proceeding.
 
-**Note:** MAB is self-supervision. It reduces but cannot eliminate agent bias. For high-stakes verification, consider using a different agent or human reviewer.
+**⚠️ Self-verification limitation:** MAB is self-supervision - the same agent checking itself. This reduces but cannot eliminate bias. MAB effectiveness depends on agent honesty. For high-stakes verification, use a different agent or human reviewer.
 
 **Method Numbers:** MAB uses #51-54 (anti-bias category in methods.csv). Sanity Suite uses #70-75, #150 (sanity category). All numbers reference the same methods.csv file - different ranges are different categories.
 
@@ -125,8 +126,8 @@ Every FINDING must include:
 ## Prerequisites
 
 Before starting Deep Verify:
-1. **TASK** - Original user request must be available (spec, message, ticket)
-2. **CONTENT** - Artifact to verify must be complete (not work-in-progress)
+1. **TASK** must be available (see Key Concepts)
+2. **CONTENT** must be complete, not work-in-progress (see Key Concepts)
 3. **ENVIRONMENT** - Related files accessible if referenced
 4. **Agent capability** - Agent must execute MAB honestly (self-supervision limitation)
 
@@ -177,6 +178,8 @@ Step 0: Confirm Inputs -> Step 1: Mode -> Step 2: Generate Concerns
                                    ├─────────────── [M] Methods ────────┤
                                    │                                    │
               Step 2 ←───────────── [C] Concerns ──────────────────────┤
+                                                                        │
+Step 0 ←──────────────────────────── [O] Restart ──────────────────────┤
                                                                         │
                                                     [F]ix/[D]eeper ─────┤ Loop
                                                     [R]eject / [X] Done ┘
@@ -314,7 +317,7 @@ Agent uses methods to find concerns systematically.
 
 ### 2a: Select Discovery Methods
 
-**[MAB: Select methods that will find ALL concerns that are key for CONTENT, TASK AND , not just obvious ones]**
+**[MAB: Select methods that will find ALL concerns that are key for CONTENT and TASK, not just obvious ones]**
 
 **Purpose:** These methods will be used to DISCOVER CONCERNS (areas that need verification) - not to verify yet.
 
@@ -704,3 +707,33 @@ Fixed: [N] | Open: [N] | Rejected: [N]
 | 🟠 | N |
 | 🟡 | N |
 ```
+
+---
+
+## Design Decisions
+
+**Why these choices were made:**
+
+| Decision | Reason |
+|----------|--------|
+| Single definition source (Key Concepts) | Prevents redundancy drift; other sections reference, not redefine |
+| Procedural structure (not reference docs) | Workflow is executed step-by-step, not looked up randomly |
+| MAB inline (not Phase 0) | v5 trades depth for simplicity; v6 uses upfront self-check |
+| Evidence requirement (MSE) | Anchors findings to verifiable quotes; counters confirmation bias |
+| User confirmation for 🔴 | Mitigates self-verification circularity for critical items |
+
+**Known limitations:**
+- Agent verifies agent work (circularity cannot be fully broken)
+- MAB effectiveness depends on agent honesty
+- Symptom-level findings may miss root causes (see v6 for depth analysis)
+
+---
+
+## Feedback
+
+After using Deep Verify, consider:
+- Did verification find issues you expected?
+- Did it miss issues you later discovered?
+- Were any findings false positives?
+
+Track patterns over time to calibrate trust in Auto vs Guided mode.
