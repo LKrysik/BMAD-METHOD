@@ -660,6 +660,78 @@ src/
 
 ---
 
+## Phase 8: Meta-Analysis (Periodic)
+
+**Trigger:** After 3+ experiments OR when seeking radical improvements.
+
+**Protocol:** Use `meta-analysis-protocol.md` with exploration methods.
+
+### 8.1 Purpose
+
+Go BEYOND incremental optimization to discover:
+- Hidden patterns in test results
+- Theoretical foundations for improvement
+- Radical paradigm shifts
+- Anti-patterns and harmful combinations
+
+### 8.2 Methods Applied
+
+| Method # | Name | Purpose |
+|----------|------|---------|
+| #23 | Analogical Reasoning | Find solutions from other domains |
+| #46 | SCAMPER | Systematic innovation |
+| #102 | Cantor's Diagonal Escape | Break out of current paradigm |
+| #103 | Fourier Domain Shift | Reveal hidden patterns |
+| #109 | Contraposition Inversion | Find guaranteed failure paths |
+| #115 | Negative Space Cartography | Map unexplored options |
+| #122 | Sorites Paradox | Find essential vs decorative elements |
+| #123 | Newcomb's Paradox | Find surprising approaches |
+| #124 | Braess Paradox | Check if additions help or hurt |
+
+### 8.3 Execution
+
+```markdown
+## Meta-Analysis Execution
+
+1. Collect all experiments from experiment-log.md
+2. Track all changes between protocol versions
+3. Apply exploration methods (meta-analysis-protocol.md)
+4. Use execution template (meta-analysis-execution-template.md)
+5. Generate:
+   - DO recommendations (high confidence)
+   - TRY experiments (needs validation)
+   - AVOID anti-patterns (proven harmful)
+   - INVESTIGATE areas (research directions)
+6. Save to: src/testing/results/analysis/meta-analysis-[DATE].md
+```
+
+### 8.4 Output
+
+```markdown
+## Meta-Analysis Output
+
+### Key Patterns Discovered
+[What domain shifts revealed]
+
+### Paradigm Escape Proposal
+[N+1 approach that differs from all current]
+
+### Optimization Targets
+- CUT: [high-cost, low-value elements]
+- EXPAND: [low-cost, high-value elements]
+
+### Radical Proposals
+[Surprising approaches worth testing]
+
+### Anti-Patterns to Avoid
+[Combinations/changes proven harmful]
+
+### Theoretical Foundations
+[Research directions for deeper optimization]
+```
+
+---
+
 ## Checklist Summary
 
 ### Per Experiment (All Required)
@@ -671,3 +743,4 @@ src/
 - [ ] Phase 5: Results logged
 - [ ] Phase 6: (Optional) Cross-protocol comparison
 - [ ] Phase 7: Decision on continue/stop/evolve
+- [ ] Phase 8: (Periodic) Meta-Analysis with exploration methods

@@ -232,8 +232,6 @@ Output format: QVP Verification Report
 | **Token Profile** | Low-Medium (5k-20k) |
 | **Time Profile** | 1-4 minutes |
 
-*Note: Protocol file is currently empty - needs implementation*
-
 ---
 
 ## Token & Time Measurement Protocol

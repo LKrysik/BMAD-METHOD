@@ -1,7 +1,40 @@
 # Universal Verification Metrics
 
-**Version: 2.0**
+**Version: 2.1**
 **Purpose**: Standardized metrics for comparing ANY verification protocol.
+
+---
+
+## Division Safety Guards
+
+**CRITICAL:** Before calculating any metric with division, apply these guards:
+
+```
+GUARD 1: Total Tokens (TT)
+  IF TT == 0:
+    - Flag: "TOKEN_MEASUREMENT_MISSING"
+    - Set TT = 1 for calculation (to avoid div/0)
+    - Mark all token-based metrics as UNRELIABLE
+
+GUARD 2: Confirmed Findings
+  IF Confirmed_Findings == 0:
+    - Skip TPF (Tokens per Finding) calculation
+    - Skip TiPF (Time per Finding) calculation
+    - Report: "NO_FINDINGS_DETECTED"
+
+GUARD 3: WDS Points
+  IF WDS_Points == 0:
+    - Skip TE (Token Efficiency) calculation
+    - Skip TiE (Time Efficiency) calculation
+    - Skip OES calculation
+    - Report: "ZERO_DETECTION_SCORE"
+
+GUARD 4: Standard Deviation
+  IF StdDev == 0 AND Mean > 0:
+    - RS = 1.0 (perfect stability)
+  IF Mean == 0:
+    - RS = undefined, report "INSUFFICIENT_DATA"
+```
 
 ---
 
