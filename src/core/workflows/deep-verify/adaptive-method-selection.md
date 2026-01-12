@@ -2,21 +2,21 @@
 
 ## Problem
 
-Obecne workflow (v6.x) ma hardkodowane metody per faza:
-- Każda nowa słabość = ręczna modyfikacja workflow
-- Nie skaluje się
-- Ignoruje kontekst artefaktu
+Current workflow (v6.x) has hardcoded methods per phase:
+- Every new weakness = manual workflow modification
+- Does not scale
+- Ignores artifact context
 
-## Rozwiązanie
+## Solution
 
-Zastąpić sztywne listy metod **dynamiczną selekcją** opartą na:
-1. Analizie kontekstu artefaktu
-2. Historycznej skuteczności metod
-3. Kategorii wykrytego problemu
+Replace rigid method lists with **dynamic selection** based on:
+1. Artifact context analysis
+2. Historical method effectiveness
+3. Detected problem category
 
 ---
 
-## Architektura
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -47,42 +47,42 @@ Zastąpić sztywne listy metod **dynamiczną selekcją** opartą na:
 
 ## 1. Context Analyzer
 
-**Input:** Artefakt do weryfikacji
+**Input:** Artifact to verify
 **Output:** artifact_profile
 
-### Cechy do ekstrakcji
+### Features to Extract
 
-| Cecha | Wartości | Wpływ na selekcję |
-|-------|----------|-------------------|
-| type | code/document/plan/protocol | Kategorie metod |
-| domain | security/performance/architecture/data | Metody domenowe |
-| complexity | low/medium/high | Liczba metod |
-| has_external_deps | true/false | Metody INTEGRATE |
-| has_concurrency | true/false | Metody CONFLICT |
-| has_state | true/false | Metody EDGE |
-| size_tokens | number | Głębokość weryfikacji |
+| Feature | Values | Selection Impact |
+|---------|--------|------------------|
+| type | code/document/plan/protocol | Method categories |
+| domain | security/performance/architecture/data | Domain-specific methods |
+| complexity | low/medium/high | Number of methods |
+| has_external_deps | true/false | INTEGRATE methods |
+| has_concurrency | true/false | CONFLICT methods |
+| has_state | true/false | EDGE methods |
+| size_tokens | number | Verification depth |
 
-### Algorytm
+### Algorithm
 
 ```
 function analyze_context(artifact):
     profile = {}
 
-    # Typ artefaktu
+    # Artifact type
     if contains_code_blocks(artifact):
         profile.type = "code"
     elif contains_requirements(artifact):
         profile.type = "document"
 
-    # Domena
+    # Domain
     profile.domain = extract_domain_keywords(artifact, [
         "security", "performance", "api", "data", "ui"
     ])
 
-    # Złożoność
+    # Complexity
     profile.complexity = estimate_complexity(artifact)
 
-    # Cechy specyficzne
+    # Specific features
     profile.has_external_deps = mentions_external_files(artifact)
     profile.has_concurrency = mentions_concurrency(artifact)
     profile.has_state = mentions_state_management(artifact)
@@ -97,19 +97,19 @@ function analyze_context(artifact):
 **Input:** artifact_profile, methods.csv, method_scores.yaml
 **Output:** selected_methods[]
 
-### Reguły selekcji
+### Selection Rules
 
 ```yaml
 # method-selection-rules.yaml
 
 base_methods:
-  # Zawsze uruchamiane (minimum viable verification)
+  # Always executed (minimum viable verification)
   always:
     - 81  # Scope Integrity Audit
     - 84  # Coherence Check
     - 113 # Counterfactual Self-Incrimination
 
-  # Warunkowo - per cecha
+  # Conditional - per feature
   conditional:
     has_external_deps:
       - 127 # Bootstrap Paradox
@@ -127,7 +127,7 @@ base_methods:
       - 34  # Security Audit Personas
       - 21  # Red Team vs Blue Team
 
-# Kategorie per typ artefaktu
+# Categories per artifact type
 type_categories:
   code:
     preferred: [technical, sanity, coherence]
@@ -139,46 +139,46 @@ type_categories:
     preferred: [challenge, meta, risk]
     weight: 1.1
 
-# Limit metod per complexity
+# Method limit per complexity
 complexity_limits:
   low: 8-12
   medium: 12-18
   high: 18-25
 ```
 
-### Algorytm selekcji
+### Selection Algorithm
 
 ```
 function select_methods(profile, methods_csv, method_scores):
     selected = []
 
-    # 1. Base methods (zawsze)
+    # 1. Base methods (always)
     selected += rules.base_methods.always
 
-    # 2. Conditional methods (per cechy)
+    # 2. Conditional methods (per features)
     for feature, methods in rules.conditional:
         if profile[feature]:
             selected += methods
 
-    # 3. Kategorie preferowane per typ
+    # 3. Preferred categories per type
     preferred_categories = rules.type_categories[profile.type].preferred
 
-    # 4. Dobierz z methods.csv używając skuteczności
+    # 4. Select from methods.csv using effectiveness scores
     remaining_budget = rules.complexity_limits[profile.complexity] - len(selected)
 
     candidates = methods_csv
         .filter(m => m.category in preferred_categories)
-        .sort_by(m => method_scores[m.id] ?? 0.5)  # Prior 0.5 dla nowych
-        .take(remaining_budget * 1.5)  # Nadmiar do losowania
+        .sort_by(m => method_scores[m.id] ?? 0.5)  # Prior 0.5 for new methods
+        .take(remaining_budget * 1.5)  # Excess for sampling
 
-    # 5. Losowy wybór z ważeniem (exploration + exploitation)
+    # 5. Weighted random selection (exploration + exploitation)
     selected += weighted_sample(
         candidates,
         remaining_budget,
         weights = [score * 0.7 + random * 0.3 for each]  # 70% exploit, 30% explore
     )
 
-    # 6. Diversity check - min 3 różne kategorie
+    # 6. Diversity check - min 3 different categories
     ensure_category_diversity(selected, min_categories=3)
 
     return selected
@@ -188,36 +188,36 @@ function select_methods(profile, methods_csv, method_scores):
 
 ## 3. Depth Controller
 
-Decyduje **ile runów** i **jak głęboko** weryfikować.
+Decides **how many runs** and **how deep** to verify.
 
-### Sygnały do kontynuacji
+### Continuation Signals
 
-| Sygnał | Akcja |
-|--------|-------|
-| Znaleziono CRITICAL | +1 run, +5 metod |
-| High entropy finding | Weryfikuj inną metodą |
-| 0 findings po 1 run | Zatrzymaj wcześnie (Bayesian) |
-| INTEGRATE error | Wymuś czytanie plików |
+| Signal | Action |
+|--------|--------|
+| Found CRITICAL | +1 run, +5 methods |
+| High entropy finding | Verify with different method |
+| 0 findings after 1 run | Stop early (Bayesian) |
+| INTEGRATE error | Force file reading |
 
-### Algorytm
+### Algorithm
 
 ```
 function decide_depth(profile, current_findings, run_number):
     base_runs = 1
 
-    # Podnieś dla złożonych
+    # Increase for complex artifacts
     if profile.complexity == "high":
         base_runs = 2
 
-    # Podnieś jeśli CRITICAL
+    # Increase if CRITICAL found
     if any(f.severity == CRITICAL for f in current_findings):
         base_runs += 1
 
-    # Zatrzymaj wcześnie jeśli nic nie znaleziono
+    # Stop early if nothing found
     if run_number >= 1 and len(current_findings) == 0:
         return STOP
 
-    # Bayesian stopping (z v6.2)
+    # Bayesian stopping (from v6.2)
     if bayesian_stop_check(current_findings):
         return STOP
 
@@ -231,9 +231,9 @@ function decide_depth(profile, current_findings, run_number):
 
 ## 4. Effectiveness Tracker
 
-Uczy się które metody działają na jakie typy artefaktów.
+Learns which methods work on which artifact types.
 
-### Dane zbierane
+### Collected Data
 
 ```yaml
 # method_scores.yaml (per session)
@@ -255,7 +255,7 @@ method_results:
     severity_sum: 0
 ```
 
-### Aktualizacja scores
+### Score Update
 
 ```
 function update_scores(session_result):
@@ -275,16 +275,16 @@ function update_scores(session_result):
 
 ---
 
-## 5. Integracja z Workflow
+## 5. Workflow Integration
 
-Zamiast:
+Instead of:
 ```markdown
 ### Discovery Methods per Layer
 | Layer | Mandatory Methods | Purpose |
 | A: Content | #70, #71, #72, #73, #75, #150, #152 | Sanity checks |
 ```
 
-Nowy format:
+New format:
 ```markdown
 ### Discovery Methods per Layer
 | Layer | Selection Criteria | Purpose |
@@ -300,45 +300,45 @@ Selection delegated to: [Method Selector] with artifact_profile
 
 ## 6. Token Efficiency
 
-### Obecny model (v6.3)
-- ~42-55 metod per weryfikacja (sztywne)
-- ~15-20K tokenów per run
+### Current Model (v6.3)
+- ~42-55 methods per verification (rigid)
+- ~15-20K tokens per run
 - Token Efficiency: 0.73 pts/1K tokens
 
-### Model adaptacyjny (cel)
-- 8-25 metod per weryfikacja (zależne od complexity)
-- ~5-12K tokenów per run (redukcja 40-60%)
+### Adaptive Model (target)
+- 8-25 methods per verification (complexity-dependent)
+- ~5-12K tokens per run (40-60% reduction)
 - Target TE: 1.2+ pts/1K tokens
 
-### Oszczędności
+### Savings
 
-| Complexity | Obecne metody | Adaptacyjne | Redukcja tokenów |
-|------------|---------------|-------------|------------------|
+| Complexity | Current Methods | Adaptive | Token Reduction |
+|------------|-----------------|----------|-----------------|
 | Low | 42 | 8-12 | ~70% |
 | Medium | 42 | 12-18 | ~50% |
 | High | 42 | 18-25 | ~30% |
 
 ---
 
-## 7. Migracja z v6.3
+## 7. Migration from v6.3
 
-### Krok 1: Ekstrakcja reguł
-- Przeanalizuj które metody w v6.3 działały (z experiment-log)
-- Zapisz jako initial method_scores.yaml
+### Step 1: Rule Extraction
+- Analyze which methods in v6.3 worked (from experiment-log)
+- Save as initial method_scores.yaml
 
-### Krok 2: Parametryzacja workflow
-- Zamień hardkodowane listy na selection criteria
-- Dodaj Context Analyzer przed Phase 1
+### Step 2: Workflow Parameterization
+- Replace hardcoded lists with selection criteria
+- Add Context Analyzer before Phase 1
 
-### Krok 3: Feedback loop
-- Po każdej weryfikacji aktualizuj method_scores
-- Monitoruj drift w skuteczności
+### Step 3: Feedback Loop
+- Update method_scores after each verification
+- Monitor effectiveness drift
 
 ---
 
-## 8. Przykład działania
+## 8. Example Run
 
-**Artefakt:** Design document dla API authentication
+**Artifact:** Design document for API authentication
 
 **Context Analysis:**
 ```yaml
@@ -372,7 +372,7 @@ Categories: sanity(3), challenge(2), risk(2), technical(2), epistemology(2), exp
 Diversity check: 7 categories ✓
 ```
 
-**Result:** 13 metod zamiast 42, fokus na security/integration
+**Result:** 13 methods instead of 42, focus on security/integration
 
 ---
 
@@ -387,9 +387,9 @@ Diversity check: 7 categories ✓
 
 ---
 
-## Powiązane zadania
+## Related Tasks
 
 - **T12 (Incremental Method Effectiveness Learning)** - feedback loop
 - **T15 (NL to Method Mapping)** - intent→method mapping
 
-Ironicznie, rozwiązanie problemu adaptacyjności jest opisane w zadaniach testowych.
+Ironically, the solution to the adaptability problem is described in the test tasks.
