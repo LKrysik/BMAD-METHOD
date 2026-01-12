@@ -1,0 +1,221 @@
+# Method Effectiveness Scores
+# Updated by Phase 7.5 Learning Extraction
+# Format: method_id: { artifact_type: score }
+# Score range: 0.0 (never effective) to 1.0 (always effective)
+
+last_updated: 2026-01-12
+total_sessions: 3
+version: "1.1"
+
+# Updated with v6.4 testing on T15 (3 runs)
+# Priors from v6.3 testing (EXP-2026-01-12-V63-T12T15)
+scores:
+  # === HIGH CONFIDENCE (>0.80) ===
+  # These consistently found issues in v6.3 testing
+
+  127:  # Bootstrap Paradox - excellent for INTEGRATE
+    document: 0.93
+    code: 0.87
+    plan: 0.82
+    protocol: 0.77
+    _notes: "100% INTEGRATE detection in v6.3+v6.4 (6/6 runs)"
+
+  81:  # Scope Integrity Audit
+    document: 0.84
+    code: 0.80
+    plan: 0.87
+    protocol: 0.82
+    _notes: "Core sanity check, 2-3 findings/run in v6.4"
+
+  113:  # Counterfactual Self-Incrimination
+    document: 0.75
+    code: 0.70
+    plan: 0.72
+    protocol: 0.78
+    _notes: "Catches self-deception, Phase 0 essential"
+
+  # === MEDIUM-HIGH CONFIDENCE (0.70-0.80) ===
+
+  84:  # Coherence Check
+    document: 0.78
+    code: 0.75
+    plan: 0.72
+    protocol: 0.80
+
+  119:  # Ground Truth Demand
+    document: 0.75
+    code: 0.68
+    plan: 0.70
+    protocol: 0.72
+
+  151:  # Semantic Entropy Validation
+    document: 0.72
+    code: 0.65
+    plan: 0.68
+    protocol: 0.70
+
+  # === MEDIUM CONFIDENCE (0.60-0.70) ===
+
+  152:  # Socratic Decomposition
+    document: 0.68
+    code: 0.65
+    plan: 0.70
+    protocol: 0.65
+
+  62:  # Failure Mode Analysis
+    document: 0.65
+    code: 0.72
+    plan: 0.60
+    protocol: 0.68
+    _notes: "Better for code/protocol with state"
+
+  67:  # Stability Basin Analysis
+    document: 0.58
+    code: 0.70
+    plan: 0.55
+    protocol: 0.65
+    _notes: "Effective for concurrency"
+
+  116:  # Strange Loop Detection
+    document: 0.62
+    code: 0.60
+    plan: 0.65
+    protocol: 0.70
+
+  131:  # Observer Paradox
+    document: 0.65
+    code: 0.60
+    plan: 0.62
+    protocol: 0.68
+
+  132:  # Goodhart's Law Check
+    document: 0.60
+    code: 0.55
+    plan: 0.72
+    protocol: 0.65
+    _notes: "Especially useful for metrics-focused artifacts"
+
+  # === CONDITIONAL METHODS ===
+  # These are effective ONLY when conditions match
+
+  34:  # Security Audit Personas
+    document: 0.75
+    code: 0.82
+    plan: 0.60
+    protocol: 0.78
+    _condition: has_security_aspect
+    _notes: "Only use when security relevant"
+
+  21:  # Red Team vs Blue Team
+    document: 0.70
+    code: 0.80
+    plan: 0.55
+    protocol: 0.75
+    _condition: has_security_aspect
+
+  90:  # Dependency Topology Mapping
+    document: 0.72
+    code: 0.78
+    plan: 0.65
+    protocol: 0.70
+    _condition: has_external_deps
+
+  39:  # Chaos Engineering
+    document: 0.50
+    code: 0.75
+    plan: 0.45
+    protocol: 0.68
+    _condition: has_state
+
+  68:  # Critical Path Severance
+    document: 0.55
+    code: 0.72
+    plan: 0.50
+    protocol: 0.65
+    _condition: has_concurrency
+
+  # === CHALLENGE METHODS ===
+  # Used in Phase 5, generally high value
+
+  63:  # Challenge from Critical Perspective
+    document: 0.72
+    code: 0.70
+    plan: 0.75
+    protocol: 0.72
+
+  133:  # Abilene Paradox Check
+    document: 0.65
+    code: 0.58
+    plan: 0.68
+    protocol: 0.62
+
+  109:  # Contraposition Inversion
+    document: 0.70
+    code: 0.68
+    plan: 0.72
+    protocol: 0.70
+
+  128:  # Theseus Paradox
+    document: 0.68
+    code: 0.65
+    plan: 0.72
+    protocol: 0.68
+
+  # === LOWER CONFIDENCE (0.50-0.60) ===
+  # May need more data to validate
+
+  93:  # DNA Inheritance Check
+    document: 0.55
+    code: 0.62
+    plan: 0.50
+    protocol: 0.58
+
+  91:  # Camouflage Test
+    document: 0.52
+    code: 0.60
+    plan: 0.48
+    protocol: 0.55
+
+  136:  # Kernel Paradox
+    document: 0.58
+    code: 0.55
+    plan: 0.60
+    protocol: 0.62
+    _notes: "Always useful for handoff but doesn't find issues"
+
+# Default score for methods not listed
+_default: 0.50
+
+# Category effectiveness (for category-based selection)
+category_scores:
+  sanity: 0.75
+  core: 0.70
+  coherence: 0.60
+  epistemology: 0.68
+  challenge: 0.70
+  meta: 0.62
+  risk: 0.72
+  technical: 0.70
+  exploration: 0.58
+  protocol: 0.65
+
+# Update rules
+update_config:
+  decay_factor: 0.9      # Weight toward recent sessions
+  learning_rate: 0.1     # Contribution of new session
+  min_sessions: 3        # Before trusting score
+  exploration_bonus: 0.1 # Boost for under-used methods
+
+# V6.4 Testing Results (T15, 3 runs)
+v64_test_results:
+  task: T15
+  runs: 3
+  avg_methods: 15.7
+  avg_findings: 11.3
+  avg_tokens: 6100
+  efficiency: 0.93  # findings per method
+  comparison_vs_v63:
+    token_reduction: "67%"
+    method_reduction: "65%"
+    findings_change: "+15%"
+    efficiency_improvement: "365%"

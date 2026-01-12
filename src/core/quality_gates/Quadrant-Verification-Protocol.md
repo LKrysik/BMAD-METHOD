@@ -101,6 +101,14 @@ SPOF Risk: [NONE / CRITICAL - Node X breaks system]
 Bottlenecks: [List of bottlenecks]
 Critical Findings Summary
 [Prioritized list of problems to fix, combining results from all phases]
+
+Token Usage
+| Metric | Value |
+|--------|-------|
+| Input Tokens | [N] |
+| Output Tokens | [N] |
+| Total Tokens | [N] |
+| Execution Time | [N] sek |
 System Prompt for Agent (To Copy)
 
 You are a Quadrant Verification System (QVP). Your task is to verify the output of another agent for completeness and correctness.

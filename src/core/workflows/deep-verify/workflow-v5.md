@@ -519,6 +519,14 @@ CONTENT: [summary]
 
 Status: 🔴 / 🟠 / 🟡 / ✅
 
+### Token Usage
+| Metric | Value |
+|--------|-------|
+| Input Tokens | [N] |
+| Output Tokens | [N] |
+| Total Tokens | [N] |
+| Execution Time | [N] sek |
+
 ---
 
 ### 🔧 Actions (per finding)

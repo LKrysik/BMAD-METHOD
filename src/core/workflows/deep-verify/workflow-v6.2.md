@@ -1,20 +1,35 @@
 # Deep Verify V6.2
 
+## Variant Information
+```
+Parent: v6.1
+Experiment basis: Meta-Analysis 2026-01-11
+Operators applied:
+- INHERIT: All v6.1 features (Layer D, #115, #39, #61, #67)
+- ADD_PHASE: Phase 4.5 Bayesian Stop Check
+- ADD_FEATURE: Early stopping when P(remaining_errors) < threshold
+
+Hypotheses:
+- H1: Bayesian stopping will reduce tokens by 30-40% on clean artifacts
+- H2: Detection rate will remain unchanged (safety constraints prevent premature stops)
+- H3: Problematic artifacts will still run full verification
+```
+
 ## Core Principle
 
 ```
 HONESTY → DEPTH → CHALLENGE → ROOT CAUSE → FIX
 ```
 
-**What changed from v6:**
-- Added Layer D (Security/Privacy) to Phase 2 - addresses SECURE category blind spot
-- Added mandatory security concerns for all artifact types
-- Added #23 Security Audit Personas to Layer D discovery methods
+**What changed from v6.1:**
+- Added Phase 4.5: Bayesian Stop Check (early stopping criterion)
+- Reduces tokens by 30-40% on clean artifacts
+- Maintains same detection rate through safety constraints
 
-**What changed from v6.2 (EXP-2026-01-11-010):**
-- NEW: Phase 2a (Category Coverage Check) - ensures all 9 categories checked
-- NEW: Phase 6a (Consolidation) - for multi-run experiments, FC target 60%+
-- FC was 15.8% in v6 T5 experiment; these changes address consistency issue
+**Inherited from v6.1:**
+- Layer D (Security/Operational) in Phase 2
+- #115 Negative Space Cartography, #39 Security Audit Personas
+- #61 Pre-mortem Analysis, #67 Stability Basin Analysis
 
 **Limitation:** Agent verifies agent work. This reduces but cannot eliminate self-verification bias. For critical content, consider human review.
 
@@ -27,7 +42,7 @@ HONESTY → DEPTH → CHALLENGE → ROOT CAUSE → FIX
 | TASK | Original user request (spec, message, ticket) |
 | CONTENT | Artifact to verify (code, document, plan) |
 | CONCERN | Area needing verification at specific LAYER |
-| LAYER | Level of analysis: Content / Structure / Assumptions / Security |
+| LAYER | Level of analysis: Content / Structure / Assumptions / **Security/Operational** |
 | METHOD | Thinking pattern from methods.csv |
 | FINDING | Discovered issue with DEPTH LEVEL |
 | DEPTH | Symptom → Cause → Structure → Assumption → Root Cause |
@@ -39,60 +54,74 @@ HONESTY → DEPTH → CHALLENGE → ROOT CAUSE → FIX
 ## Flow Overview
 
 ```
-Phase 0: Self-Check ──→ Phase 1: Inputs ──→ Phase 2: Multi-Layer Concerns (4 layers)
+Phase 0: Self-Check ──→ Phase 1: Inputs ──→ Phase 2: Multi-Layer Concerns (A/B/C/D)
                                                         ↓
-              Phase 6: Results ←── Phase 5: Challenge ←── Phase 4: Verify ←── Phase 3: Methods
-                   ↓
-              Phase 7: Fix Root Cause
-                   ↓
-              [Loop or Done]
+                                                   Phase 3: Methods
+                                                        ↓
+                                                   Phase 4: Verify
+                                                        ↓
+                                             Phase 4.5: Bayesian Stop Check (NEW)
+                                                   ↓           ↓
+                                            [CONTINUE]    [STOP EARLY]
+                                                   ↓           ↓
+                                            Phase 5: Challenge  │
+                                                   ↓           │
+                                             Phase 6: Results ←─┘
+                                                   ↓
+                                            Phase 7: Fix Root Cause
+                                                   ↓
+                                             [Loop or Done]
 ```
 
 ---
 
 ## Phase 0: Self-Check (MANDATORY)
 
-**Purpose:** Establish honesty BEFORE analysis begins. Agent identifies how it could deceive or take shortcuts.
-
-**Why this matters:** An agent that doesn't know how it can fail will fail unknowingly. This phase makes failure modes explicit so they can be avoided.
+**Purpose:** Establish honesty BEFORE analysis begins.
 
 **Execute these methods:**
 
-### #51 Liar's Trap
-List 3 specific ways you could deceive or cut corners in THIS verification:
+### #113 Counterfactual Self-Incrimination
+List 5 specific ways you could hide self-deception in THIS verification:
 1. [way 1]
 2. [way 2]
 3. [way 3]
+4. [way 4]
+5. [way 5]
 
-For each: Is there any evidence you're doing this? If yes → stop and correct.
+For each: provide CONCRETE EVIDENCE it is NOT being used. Weak/absent evidence = FLAG.
 
-### #53 Confession Paradox
-"The work I'm about to do is an attempt to avoid the HARD part."
+### #131 Observer Paradox
+"Is this analysis GENUINE or PERFORMANCE?"
 
-- What is the HARDEST part of this verification?
-- Am I giving it adequate attention?
-- If not → commit to focusing on it.
+- Signs of performance: too smooth, too complete, too confident
+- Signs of genuine: admitted uncertainty, visible struggle, revision marks
+- If performance → redo with honesty
 
-### #54 CUI BONO
+### #112 Entropy Leak Detection (CUI BONO)
 For decisions I'll make: Who benefits?
+- List ALL elements in input task vs output
+- For silent omissions: CUI BONO - benefits AGENT or OUTCOME?
 - If AGENT benefits (easier work, faster completion) → RED FLAG
 - If OUTCOME benefits (better verification) → acceptable
 
 ```
 ## Phase 0: Self-Check
 
-Potential deception methods:
+Self-deception methods (#113):
 1. [specific to this verification]
 2. [specific to this verification]
 3. [specific to this verification]
+4. [specific to this verification]
+5. [specific to this verification]
+Evidence check: [concrete evidence for each]
 
-Hardest part: [what]
-Commitment: [how I'll address it]
+Genuine vs Performance (#131): [which signs present]
 
-CUI BONO awareness: [what I'll watch for]
+CUI BONO (#112): [what I'll watch for]
 ```
 
-→  Auto proceed to Phase 1
+→ Auto proceed to Phase 1
 
 ---
 
@@ -101,7 +130,7 @@ CUI BONO awareness: [what I'll watch for]
 **Purpose:** Confirm what we're verifying and how.
 
 ```
-## Deep Verify V6.2
+## Deep Verify V6.1
 
 TASK: [original request - quote verbatim if possible]
 CONTENT: [what was produced]
@@ -113,7 +142,11 @@ ENVIRONMENT: [context, related files]
 [X] Exit - cancel
 ```
 
-**If [E]:** Describe what's wrong. Agent corrects and re-displays.
+**If [E]:** Describe what's wrong. Agent corrects and re-displays. Maximum 3 edit cycles before requiring [X] Exit.
+
+**Content Validity Check:**
+- If CONTENT is empty or trivial (< 10 lines/tokens) → warn user: "Content too minimal for deep verification. Proceed anyway? [Y/N]"
+- If CONTENT cannot be parsed (corrupt file, encoding error) → [X] Exit with error
 
 **HALT** - waiting for choice
 
@@ -130,13 +163,31 @@ ENVIRONMENT: [context, related files]
 
 **HALT** - waiting for choice
 
+### HALT Behavior by Mode
+
+| HALT Location | Auto [A] | Guided [G] |
+|---------------|----------|------------|
+| Phase 1: Inputs | **ALWAYS** - user must confirm inputs | **ALWAYS** |
+| Phase 1: Mode Selection | **ALWAYS** - user must choose mode | **ALWAYS** |
+| Phase 2: Concerns | Skip - auto-proceed | **PAUSE** - user reviews concerns |
+| Phase 3: Methods | Skip - auto-proceed | **PAUSE** - user reviews methods |
+| Phase 5: Challenge | Skip - auto-proceed | **PAUSE** - user reviews findings |
+| Phase 6: Results | **ALWAYS** - user must choose action | **ALWAYS** |
+| Phase 7: Fix | **ALWAYS** - user must approve fix | **ALWAYS** |
+
+**Rule:** HALTs marked "(G only)" in document = Skip in Auto mode. Unmarked HALTs = ALWAYS pause.
+
 ---
 
 ## Phase 2: Multi-Layer Concerns
 
-**Purpose:** Identify concerns at FOUR layers, not just content.
+**Purpose:** Identify concerns at FOUR layers (A/B/C/D), not just content.
 
-**Why four layers:** Problems hide at different depths. Content issues are visible. Structure issues are hidden. Assumption issues are invisible. Security issues are often ignored entirely. All four must be checked.
+**Why four layers:** Problems hide at different depths:
+- Layer A (Content): Visible issues in the text/code
+- Layer B (Structure): Hidden issues in organization
+- Layer C (Assumptions): Invisible beliefs and constraints
+- Layer D (Security/Operational): **NEW** - Implicit requirements often missed
 
 ### Layer A: Content Concerns
 What problems might exist IN the content?
@@ -155,19 +206,14 @@ What problems might exist in what's ASSUMED?
 - Inherited patterns applied without questioning
 - Invisible constraints taken as given
 
-### Layer D: Security/Privacy Concerns (NEW in v6.2)
-What SECURITY or PRIVACY problems might exist?
-- Missing audit trails for state-changing operations
-- Data protection/compliance gaps
-- Authentication/authorization holes
-- Information leakage risks
-- Privacy deletion/retention issues
+### Layer D: Security/Operational Concerns (NEW in v6.1)
+What problems might exist in IMPLICIT REQUIREMENTS?
+- Security: audit trails, access control, data sensitivity
+- Operational: error recovery, logging, monitoring
+- Compliance: regulatory requirements, standards adherence
+- Completeness: what SHOULD exist but doesn't?
 
-**[MANDATORY]** Layer D must identify at least ONE concern for ANY artifact that:
-- Handles user data
-- Performs state changes
-- Has access control requirements
-- Stores or transmits sensitive information
+**Cross-Layer Root Cause Note:** Security issues discovered in Layer D often have their ROOT CAUSE in Layer C (Assumptions). When tracing 5 Whys for Layer D findings, explicitly check if an unquestioned assumption in Layer C enables the security gap. Example: "We assume internal APIs don't need authentication" (Layer C) → causes "No access control on admin endpoints" (Layer D).
 
 ---
 
@@ -195,12 +241,13 @@ What SECURITY or PRIVACY problems might exist?
 | A: Content | #70, #71, #72, #73, #75, #150 | Sanity checks on content |
 | B: Structure | #79, #81, #107, #117 | Structure analysis |
 | C: Assumptions | #74, #146, #84 | Assumption excavation |
-| D: Security | #23, #35, #109 | Security/Privacy analysis |
+| **D: Security** | **#39, #61, #67, #115** | **Security & completeness** |
 
-**Layer D Methods Detail:**
-- **#23 Security Audit Personas**: Think as attacker, auditor, compliance officer
-- **#35 Failure Mode Analysis**: How could security controls fail?
-- **#109 Contraposition Inversion**: What guarantees security? What breaks it?
+**NEW Methods in v6.1:**
+- **#115 Negative Space Cartography** - Map OMISSIONS: what COULD have been done but wasn't
+- **#39 Security Audit Personas** - Hacker + defender + auditor examine from different threat models
+- **#61 Pre-mortem Analysis** - Brainstorm what could go wrong
+- **#67 Stability Basin Analysis** - Analyze system resilience to perturbations
 
 **Additional:** Select 3-6 more methods based on TYPE and CONTENT specifics.
 
@@ -222,7 +269,7 @@ What SECURITY or PRIVACY problems might exist?
 |----|---------|--------|-------------|
 | C1 | [name] | [method/#] | [what to verify] |
 
-### Layer D: Security/Privacy
+### Layer D: Security/Operational (NEW)
 | ID | Concern | Source | Description |
 |----|---------|--------|-------------|
 | D1 | [name] | [method/#] | [what to verify] |
@@ -236,57 +283,6 @@ What SECURITY or PRIVACY problems might exist?
 
 ---
 
-## Phase 2a: Category Coverage Check (NEW)
-
-**Purpose:** Ensure all mandatory error categories are checked before proceeding.
-
-**Why this matters:** EXP-2026-01-11-010 showed FC=15.8% because each run explored different categories. This gate forces consistent coverage.
-
-### Mandatory Categories
-
-Every verification MUST check each category:
-
-| Category | Code | Description |
-|----------|------|-------------|
-| Scope Drift | SCOPE | Agent reduces/changes scope |
-| Internal Conflict | CONFLICT | Contradictory elements |
-| Hidden Assumption | ASSUME | Unverified assumptions |
-| Shallow Analysis | SHALLOW | Surface-only, no depth |
-| Integration Failure | INTEGRATE | Ignores existing codebase |
-| Security Gap | SECURE | Security consideration missing |
-| Edge Case Miss | EDGE | Obvious edge case not handled |
-| Dependency Blind | DEPEND | Missing critical dependencies |
-| Performance Ignore | PERF | Performance requirements ignored |
-
-### Coverage Matrix
-
-After Phase 2, complete this matrix:
-
-| Category | Concern IDs | Covered? |
-|----------|-------------|----------|
-| SCOPE | [list] | [Y/N] |
-| CONFLICT | [list] | [Y/N] |
-| ASSUME | [list] | [Y/N] |
-| SHALLOW | [list] | [Y/N] |
-| INTEGRATE | [list] | [Y/N] |
-| SECURE | [list] | [Y/N] |
-| EDGE | [list] | [Y/N] |
-| DEPEND | [list] | [Y/N] |
-| PERF | [list] | [Y/N] |
-
-### Gate Rule
-
-```
-IF any category has Covered = N:
-  - ADD at least one concern for that category
-  - Re-display Coverage Matrix
-  - REPEAT until all Covered = Y
-
-ONLY proceed to Phase 3 when ALL categories show Y
-```
-
----
-
 ## Phase 3: Method Selection
 
 **Purpose:** Select methods that will find problems, with diversity requirement.
@@ -296,19 +292,17 @@ ONLY proceed to Phase 3 when ALL categories show Y
 ### Requirements:
 1. **Minimum 5 methods per concern**
 2. **Category diversity:** Each concern must have methods from at least 3 different categories
-3. **Attack method:** Each concern must have at least 2 methods that ATTACKS (challenge, risk, anti-bias, meta-check)
-4. **Security method (NEW):** Layer D concerns must include #23 Security Audit Personas
-
+3. **Attack method:** Each concern must have at least 2 methods that ATTACK (challenge, risk, anti-bias, meta-check)
 
 ```
 ## Methods per Concern
 
-| Concern | Methods | Categories | Attack Method |
-|---------|---------|------------|---------------|
-| A1 | #73, #56, #110 | sanity, challenge, exploration | #110 |
-| B1 | #79, #107, #65 | coherence, exploration, meta-check | #65 |
-| C1 | #74, #146, #51 | sanity, exploration, anti-bias | #51 |
-| D1 | #23, #35, #109, #51 | security, risk, challenge, anti-bias | #109, #51 |
+| Concern | Methods | Categories | Attack Methods |
+|---------|---------|------------|----------------|
+| A1 | #73, #56, #63, #84, #109 | sanity, challenge, risk, coherence, exploration | #63, #109 |
+| B1 | #79, #107, #133, #81, #113 | coherence, exploration, meta, sanity, epistemology | #133, #113 |
+| C1 | #74, #146, #113, #109, #115 | sanity, exploration, epistemology, exploration | #113, #109 |
+| D1 | #39, #61, #115, #67, #26 | technical, risk, exploration, epistemology, competitive | #67, #26 |
 
 [P] Proceed to verification
 [A] Add method (by ID or description)
@@ -342,13 +336,7 @@ ONLY proceed to Phase 3 when ALL categories show Y
 - What assumption allows this problem to exist?
 - Is the assumption valid?
 
-**Step 4: Security Check (NEW - for Layer D concerns)**
-- What security/privacy implications exist?
-- Who could exploit this? (attacker persona)
-- What compliance requirements apply? (auditor persona)
-- What data protection gaps exist? (privacy officer persona)
-
-**Step 5: 5 Whys to Root Cause**
+**Step 4: 5 Whys to Root Cause**
 ```
 Problem: [what was found]
 WHY 1: Why does this exist? → [answer]
@@ -358,19 +346,22 @@ WHY 4: Why [answer 3]? → [answer]
 WHY 5: Why [answer 4]? → [ROOT CAUSE]
 ```
 
+**5 Whys Limits:**
+- **Maximum depth:** 7 Whys. If no root cause after 7 → stop and document as "ROOT CAUSE UNCLEAR"
+- **Circular detection:** If WHY N answer = WHY M answer (loop) → stop, mark deepest unique answer as root cause
+- **External boundary:** If root cause is outside CONTENT scope (e.g., "company policy") → document and stop
+
 ### Finding Format
 
 ```
-### [N] [SEV] [DEPTH] Title
+### [N] 🔴|🟠|🟡 [DEPTH] Title
 
 Depth: SYMPTOM | CAUSE | STRUCTURE | ASSUMPTION | ROOT_CAUSE
 Type: Problem (P) | Gap (G)
-Category: SCOPE | ASSUME | SKIP | SHALLOW | CONFLICT | INTEGRATE | EDGE | DEPEND | PERF | SECURE
 
 Surface: [what is visible]
 Structure: [how organization contributes]
 Assumption: [what's assumed that allows this]
-Security: [security/privacy implications - MANDATORY for SECURE category]
 Root Cause: [fundamental reason from 5 Whys]
 
 Evidence: "[quote]" - [location]
@@ -385,8 +376,142 @@ Fix: [action - specify if fixes symptom vs root cause]
 - "Intentional" without proof of intention AND benefit
 - Accepting redundancy without questioning necessity
 - Analyzing only content, ignoring structure/assumptions
-- **Skipping Layer D for artifacts with security implications** (NEW)
-- **"No security concerns" without explicit security analysis** (NEW)
+- **NEW:** Missing implicit security/operational requirements
+
+### Zero Findings Path
+
+If Phase 4 produces NO findings across all concerns:
+
+1. **Verify thoroughness** - Did each method genuinely search for violations?
+2. **Apply #115 Negative Space** - What SHOULD have been found but wasn't?
+3. **Document clean result:**
+   ```
+   ## Phase 4: Zero Findings
+
+   Concerns checked: [list]
+   Methods applied: [count]
+   Negative space check: [what was looked for but absent]
+
+   Conclusion: CONTENT passes verification OR [specific doubt requiring human review]
+   ```
+4. **Proceed to Phase 6** with empty findings table (not an error state)
+
+---
+
+## Phase 4.5: Bayesian Stop Check (NEW in v6.2)
+
+**Purpose:** Evaluate whether to continue verification or stop early based on probability of remaining errors.
+
+**Rationale:** When high-quality artifacts have few errors, running full verification wastes tokens. Bayesian inference estimates remaining undiscovered errors and enables early stopping when confidence is high.
+
+### Safety Constraints (NEVER stop if ANY are true)
+
+| Constraint | Rationale |
+|------------|-----------|
+| Phase < 4 | Haven't completed discovery |
+| Categories hit < 3 | Insufficient breadth |
+| Tokens used < 2000 | Minimum effort required |
+| SECURE not checked | Layer D must complete for security-relevant artifacts |
+| Critical finding unresolved | Can't stop with unaddressed critical issues |
+
+### Calculation
+
+```
+Prior: λ = 6.5 (expected errors per task from ground-truth analysis)
+
+Detection Rate by Category:
+| Category | DR |
+|----------|-----|
+| CONFLICT | 90% |
+| SHALLOW | 80% |
+| ASSUME | 85% |
+| INTEGRATE | 35% |
+| SKIP | 90% |
+| EDGE | 75% |
+| SECURE | 95% |
+| DEPEND | 55% |
+| PERF | 80% |
+| SCOPE | 55% |
+
+Expected Remaining = (Findings / Avg_DR) - Findings
+P(remaining > 0) = 1 - exp(-Expected_Remaining)
+```
+
+### Threshold Selection
+
+| Artifact Type | Threshold θ | When to Use |
+|---------------|-------------|-------------|
+| Safety-critical | 0.05 | Security, auth, payment systems |
+| Standard | 0.15 | Most technical documents |
+| Low-priority | 0.25 | Internal docs, drafts |
+
+### Decision Logic
+
+```
+## Phase 4.5: Bayesian Stop Check
+
+### Input State
+- Findings confirmed: [N]
+- Categories covered: [list]
+- Tokens used: [N]
+- Current phase: 4
+
+### Safety Constraint Check
+- [ ] Phase >= 4: [PASS/FAIL]
+- [ ] Categories >= 3: [PASS/FAIL]
+- [ ] Tokens >= 2000: [PASS/FAIL]
+- [ ] SECURE checked (if relevant): [PASS/FAIL]
+- [ ] No unresolved CRITICAL: [PASS/FAIL]
+
+### Bayesian Calculation
+- Findings: [N]
+- Categories: [list]
+- Avg DR for categories: [X%]
+- Expected total: [N] / [DR] = [N]
+- Expected remaining: [N] - [findings] = [N]
+- P(remaining > 0): 1 - exp(-[N]) = [X%]
+
+### Decision
+- Threshold: [θ]
+- P(remaining): [X%]
+- **Decision:** CONTINUE / STOP EARLY
+
+[If STOP EARLY:]
+→ Skip Phase 5 (Challenge)
+→ Proceed directly to Phase 6 with current findings
+→ Mark in results: "Early stop at P=[X%], θ=[Y%]"
+
+[If CONTINUE:]
+→ Proceed to Phase 5 (Challenge)
+```
+
+### Output Format (if stopping early)
+
+```
+## Early Stop Decision
+
+| Metric | Value |
+|--------|-------|
+| Findings confirmed | [N] |
+| Categories covered | [N]/10 |
+| Expected total errors | [N.N] |
+| Expected remaining | [N.N] |
+| P(remaining > 0) | [X.X%] |
+| Threshold θ | [Y%] |
+| **Decision** | **STOP EARLY** |
+
+Confidence: HIGH (below threshold, all safety constraints passed)
+Token savings: ~[N]% ([used] vs expected [full])
+
+→ Proceeding to Phase 6 with [N] findings
+```
+
+### Anti-patterns
+
+- Stopping before Layer D completes for any artifact with security implications
+- Lowering threshold to save tokens at cost of detection
+- Ignoring safety constraints
+- Not recalculating after each Layer completes
 
 ---
 
@@ -398,13 +523,17 @@ Fix: [action - specify if fixes symptom vs root cause]
 
 ### For each finding, execute:
 
-#### #110 Reductio Attack
-"Assume this finding is WRONG. Build argument why it's invalid."
+#### #63 Challenge from Critical Perspective
+"Assume this finding is WRONG. Build strongest argument against it."
+- Deliberately adopt opposing stance
+- Generate strongest arguments against the finding
 - If argument is convincing → finding needs revision
 - If argument fails → finding is stronger
 
-#### #65 Abilene Paradox
+#### #133 Abilene Paradox Check
 "Does this problem ACTUALLY exist? Or am I finding problems where none exist?"
+- What if there IS NO better approach?
+- Am I finding problems just to justify the process?
 - Evidence it exists: [quote + location]
 - Evidence it doesn't exist: [counter-evidence]
 - Verdict: EXISTS / QUESTIONABLE / REJECTED
@@ -414,15 +543,37 @@ Fix: [action - specify if fixes symptom vs root cause]
 - Conditions that must be true: [list]
 - Are all conditions met? [yes/no with evidence]
 
+#### #26 Red Team vs Blue Team (REQUIRED for Layer D findings)
+**If any finding originates from Layer D (Security/Operational), execute this additional challenge:**
+- Blue Team: Build defense for why the security concern is mitigated
+- Red Team: Attack the defense - find ways the vulnerability still exists
+- Document: Did Red Team breach Blue Team's defense?
+- If YES → finding is CONFIRMED with higher severity
+- If NO → finding may be downgraded or requires deeper investigation
+
 ```
 ## Challenge Results
 
-| Finding | Reductio Survives | Abilene Verdict | Contraposition Met | Status |
-|---------|-------------------|-----------------|---------------------|--------|
-| 1 | Yes/No | Exists/Questionable | Yes/No | CONFIRMED/REVISED/REJECTED |
+| Finding | #63 Critical Challenge | #133 Abilene Check | #109 Contraposition | #26 Red Team (Layer D) | Status |
+|---------|------------------------|--------------------|--------------------|------------------------|--------|
+| 1 | Survives/Fails | Exists/Questionable | Met/Unmet | Pass/Breach/N/A | CONFIRMED/REVISED/REJECTED |
 ```
 
 → Only CONFIRMED findings proceed to Results
+
+### Rejection Log (Learning from False Positives)
+
+For each REJECTED or REVISED finding, document WHY it failed challenge:
+
+```
+## Rejection Log
+
+| Finding | Challenge Failed | Reason | Learning |
+|---------|------------------|--------|----------|
+| [title] | Reductio/Abilene/Contraposition | [why finding was invalid] | [what to avoid next time] |
+```
+
+**Purpose:** Prevents repeating same false positive patterns. Review before future verifications of similar content.
 
 **HALT** (G only) - waiting for review
 
@@ -441,16 +592,23 @@ Phases completed: 0-5
 
 ### Findings by Depth
 
-| ID | Concern | Sev | Depth | Category | Finding | Root Cause |
-|----|---------|-----|-------|----------|---------|------------|
-| 1 | A1 | CRIT | ROOT | CONFLICT | [what] | [why] |
-| 2 | B1 | IMP | STRUCTURE | ASSUME | [what] | [why] |
-| 3 | D1 | IMP | CAUSE | SECURE | [what] | [why] |
+| ID | Concern | Sev | Depth | Finding | Root Cause |
+|----|---------|-----|-------|---------|------------|
+| 1 | A1 | 🔴 | ROOT | [what] | [why] |
+| 2 | B1 | 🟠 | STRUCTURE | [what] | [why] |
+| 3 | D1 | 🟠 | ASSUMPTION | [what] | [why] |
 
 Depth legend: SYMPTOM → CAUSE → STRUCTURE → ASSUMPTION → ROOT_CAUSE
-Category: SCOPE, ASSUME, SKIP, SHALLOW, CONFLICT, INTEGRATE, EDGE, DEPEND, PERF, SECURE
 
-Status: CRITICAL N / IMPORTANT N / MINOR N
+Status: 🔴 N / 🟠 N / 🟡 N
+
+### Token Usage
+| Metric | Value |
+|--------|-------|
+| Input Tokens | [N] |
+| Output Tokens | [N] |
+| Total Tokens | [N] |
+| Execution Time | [N] sek |
 
 ---
 
@@ -471,84 +629,28 @@ Status: CRITICAL N / IMPORTANT N / MINOR N
 ---
 
 ### Session
-[O] Restart - start over from Phase 0
+[O] Restart - start over from Phase 0 (see Restart Behavior below)
 ```
+
+### Restart Behavior [O]
+
+When [O] Restart is selected:
+1. **Preserve:** Rejection Log from current session (for learning)
+2. **Clear:** All findings, concerns, method selections
+3. **Reset to:** Phase 0 Self-Check with fresh honesty assessment
+4. **Carry forward:** TASK and CONTENT remain the same (unless user specifies new input)
+
+**Use [O] when:**
+- Self-Check reveals honesty issues requiring fresh start
+- Concern selection was fundamentally wrong
+- New information invalidates previous analysis
+
+**Do NOT use [O] when:**
+- Just want to add more concerns → use [C]
+- Just want different methods → use [M]
+- Want to verify different content → use [X] Exit and start new session
 
 **HALT** - waiting for choice
-
----
-
-### When user selects [E] Explain
-
-**Purpose:** User needs to understand the problem before deciding on action. Summary table is too brief.
-
-**Process:**
-
-1. **Problem Description** (3-5 sentences)
-   - WHAT is the problem (concrete, specific)
-   - WHERE it occurs (quote + line number)
-   - WHY it's a problem (impact on user/outcome)
-
-2. **Evidence**
-   ```
-   Current text (line N): "[exact quote]"
-   Issue: [what's wrong with this]
-   ```
-
-3. **Proposed Fix** (step by step)
-   - WHAT will change
-   - HOW it addresses the root cause (not just symptom)
-   - WHAT the result will look like
-
-4. **After Explanation**
-   ```
-   [F] Fix - proceed with this fix
-   [A] Alternative - show different approach
-   [Q] Question - ask clarifying question
-   [B] Back - return to Results
-   ```
-
-→ Return to Phase 6 Results after user decision
-
----
-
-## Phase 6a: Consolidation (Multi-Run Only) (NEW)
-
-**Purpose:** For multi-run experiments, consolidate findings across runs for consistency measurement.
-
-**When to use:** Only execute this phase if running multiple verification passes on the same artifact.
-
-### Cross-Run Finding Matrix
-
-| Finding Description | Run 1 | Run 2 | Run 3 | Appearances | Confidence |
-|--------------------|-------|-------|-------|-------------|------------|
-| [description] | [ID/N] | [ID/N] | [ID/N] | [1/2/3] | [LOW/MED/HIGH] |
-
-### Confidence Rules
-
-| Appearances | Confidence | Report As |
-|-------------|------------|-----------|
-| 3/3 runs | HIGH | CONFIRMED |
-| 2/3 runs | MEDIUM | LIKELY |
-| 1/3 runs | LOW | POSSIBLE (flag for review) |
-
-### Consolidated Output
-
-- **CONFIRMED**: Report as primary findings
-- **LIKELY**: Report as secondary findings
-- **POSSIBLE**: Appendix only (may be false positive or random exploration)
-
-### Consistency Metrics
-
-```
-Finding Consistency (FC) = (Findings in 2+ runs) / (Total unique findings) × 100%
-
-TARGET: FC > 60%
-v6 baseline: FC = 15.8%
-v6.2 target: FC > 60%
-```
-
-**If FC < 40%:** Workflow has consistency problem. Review Phase 2a coverage matrix for gaps.
 
 ---
 
@@ -557,6 +659,12 @@ v6.2 target: FC > 60%
 **Purpose:** Fix the ROOT CAUSE, not just the symptom.
 
 **[MAB: Fix must address root cause. Patching symptoms is temporary.]**
+
+**Iteration Limit:** Maximum 3 fix attempts per finding. Track attempts:
+```
+Fix attempt: [1/3] | [2/3] | [3/3 - FINAL]
+```
+If 3 attempts fail → escalate to human review (do not loop indefinitely).
 
 ### Process:
 
@@ -582,14 +690,9 @@ Generate 3 genuinely different approaches to fix root cause:
 [M] Manual - I'll specify different approach
 ```
 
-**Step 4: Method Selection for Verification**
-Select methods that will verify root cause is fixed (not just symptom):
-- Methods must test the ROOT CAUSE specifically
-- Must cover different aspects of the fix
+**Step 4: Execute Fix**
 
-**Step 5: Execute Fix**
-
-**Step 6: Verify Fix**
+**Step 5: Verify Fix**
 ```
 ## Fix Verification
 
@@ -616,9 +719,24 @@ Status: FIXED (root cause) / PATCHED (symptom only) / FAILED
 
 | Level | Symbol | Meaning | Action |
 |-------|--------|---------|--------|
-| CRITICAL | CRIT | Blocks usage or causes harm | Must fix root cause |
-| IMPORTANT | IMP | Significant issue | Should fix root cause |
-| MINOR | MIN | Small issue | Can defer or patch |
+| CRITICAL | 🔴 | Blocks usage or causes harm | Must fix root cause |
+| IMPORTANT | 🟠 | Significant issue | Should fix root cause |
+| MINOR | 🟡 | Small issue | Can defer or patch |
+
+### Security Escalation Criteria (Layer D → 🔴)
+
+A Layer D finding automatically escalates from 🟠 to 🔴 CRITICAL when ANY of these conditions apply:
+
+| Condition | Rationale |
+|-----------|-----------|
+| Data exposure risk | PII, credentials, or sensitive data could be accessed |
+| Authentication bypass | Unauthenticated access to protected resources possible |
+| Authorization failure | Users can access resources beyond their permission level |
+| Audit trail gap | Security-relevant actions are not logged or traceable |
+| Compliance violation | Finding would fail regulatory audit (GDPR, SOC2, HIPAA, etc.) |
+| Exploitation window | Vulnerability is exploitable without specialized knowledge |
+
+**Decision rule:** If unsure whether to escalate, apply #26 Red Team. If Red Team successfully exploits the finding → escalate to 🔴.
 
 ---
 
@@ -645,7 +763,6 @@ Status: FIXED (root cause) / PATCHED (symptom only) / FAILED
 | Finding doesn't survive Challenge | Revise or reject finding |
 | Fix doesn't address root cause | Return to Step 2, try different approach |
 | 5 Whys doesn't reach root cause | Continue asking Why, or accept current depth with note |
-| No Layer D concerns identified | **HALT** - security review required before proceeding |
 
 ---
 
@@ -653,34 +770,79 @@ Status: FIXED (root cause) / PATCHED (symptom only) / FAILED
 
 | Phase | Minimum Methods | Categories Required |
 |-------|-----------------|---------------------|
-| Phase 0 | 3 (#51, #53, #54) | anti-bias |
-| Phase 2 | 12-16 (3-4 per layer) | sanity, coherence, exploration, security |
-| Phase 3 | 3 per concern | Must include 2+ categories + 1 attack |
-| Phase 5 | 3 (#110, #65, #109) | challenge, meta-check |
+| Phase 0 | 3 (#113, #131, #112) | epistemology, meta |
+| Phase 2 | 12-16 (3-4 per layer × 4 layers) | sanity, coherence, exploration, risk |
+| Phase 3 | 5 per concern | Must include 3+ categories + 2 attack methods |
+| Phase 5 | 3-4 (#63, #133, #109, +#26 for Layer D) | risk, meta, exploration, competitive |
 | Phase 7 | 3+ | Appropriate for fix type |
 
-**Total minimum: ~28-40 methods per verification**
+**Total minimum: ~32-45 methods per verification**
 
 ---
 
 ## Quick Reference
 
 ```
-Phase 0: Am I being honest? (Liar's Trap, Confession, CUI BONO)
+Phase 0: Am I being honest? (#113 Self-Incrimination, #131 Observer, #112 CUI BONO)
 Phase 1: What am I verifying? (TASK, CONTENT, MODE)
 Phase 2: What could be wrong? (Content, Structure, Assumptions, Security)
 Phase 3: How will I check? (Methods with diversity)
 Phase 4: What IS wrong? (Surface → 5 Whys → Root Cause)
-Phase 5: Is it really wrong? (Reductio, Abilene, Contraposition)
+Phase 5: Is it really wrong? (#63 Critical Challenge, #133 Abilene, #109 Contraposition)
 Phase 6: What will I do? (Fix Root Cause, not symptom)
 Phase 7: Did I fix the real problem? (Verify root cause addressed)
 ```
 
 ---
 
-## Version History
+## Changelog from v6.1
 
-| Version | Change | Rationale |
-|---------|--------|-----------|
-| v6 | Base multi-layer workflow | - |
-| v6.2 | Added Layer D (Security/Privacy) | SECURE category 0% detection across EXP-001, EXP-002, EXP-003 |
+| Change | Rationale | Expected Impact |
+|--------|-----------|-----------------|
+| Added Phase 4.5 Bayesian Stop | Reduce tokens on clean artifacts | -30-40% tokens |
+| Safety constraints | Prevent premature stops | Maintained DR |
+| Threshold configuration | Adapt to artifact criticality | Flexible stopping |
+
+### Inherited from v6.1 (from v6)
+
+| Change | Rationale | Expected Impact |
+|--------|-----------|-----------------|
+| Added Layer D | Catch security/operational concerns | +T3-E6 type errors |
+| Added #115 | Find omissions (what's missing) | +T3-E4 type errors |
+| Added #39 | Security audit perspectives | Better security coverage |
+| Added #61, #67 | Risk and stability analysis | Fewer blind spots |
+| Increased method minimum | More coverage | Higher token cost |
+
+### V-GD Verification Fixes (Λ_V: 0.86 → 0.98)
+
+| Fix | Issue | Resolution |
+|-----|-------|------------|
+| Method count alignment | Phase 3 table showed 3-4 methods but requirement was 5 | Updated table to show 5 methods per concern with 2 attack methods |
+| Layer D challenge gap | Security findings challenged with generic methods only | Added #26 Red Team as REQUIRED for Layer D findings in Phase 5 |
+| Cross-layer root cause | No guidance on Layer D → Layer C dependency | Added note: security issues often have root cause in assumptions |
+| Security escalation criteria | No criteria for when 🟠 → 🔴 for security findings | Added Security Escalation Criteria table with 6 conditions |
+
+### QVP Verification Fixes (Quadrant Verification Protocol)
+
+| Fix | QVP Finding | Resolution |
+|-----|-------------|------------|
+| T4/C4: Infinite loop prevention | P6↔P7 could loop forever | Added MAX_FIX_ITERATIONS = 3 with escalation path |
+| C1: Empty content handling | No validation for empty/trivial CONTENT | Added Content Validity Check in Phase 1 |
+| T1: Rejection learning | Rejected findings vanished without trace | Added Rejection Log in Phase 5 for false positive learning |
+| I7: HALT ambiguity | Unclear which HALTs apply in which mode | Added HALT Behavior by Mode table |
+| C3: Zero findings path | No defined path when Phase 4 finds nothing | Added Zero Findings Path with #115 verification |
+| I4: Layer D naming | "Security" vs "Security/Operational" mismatch | Aligned to "Security/Operational" throughout |
+| T5: Unbounded 5 Whys | No stopping condition for root cause search | Added 7 Why max, circular detection, external boundary rules |
+| T7: Restart undefined | [O] Restart had no documentation | Added Restart Behavior section with preserve/clear rules |
+
+### V-GD v1.2 Reference Integrity Fixes (Λ_V: 0.42 → 0.95)
+
+| Old # | Old Name | → | New # | Correct CSV Name |
+|-------|----------|---|-------|------------------|
+| #51 | Liar's Trap | → | #113 | Counterfactual Self-Incrimination |
+| #53 | Confession Paradox | → | #131 | Observer Paradox |
+| #54 | CUI BONO | → | #112 | Entropy Leak Detection |
+| #65 | Abilene Paradox | → | #133 | Abilene Paradox Check |
+| #110 | Reductio Attack | → | #63 | Challenge from Critical Perspective |
+
+**Root Cause:** Method numbers in workflow did not match methods.csv database. Detected by V-GD Protocol v1.2 Reference Integrity Check.

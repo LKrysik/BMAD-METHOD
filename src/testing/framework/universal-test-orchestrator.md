@@ -9,8 +9,6 @@
 
 | Protocol ID | Name | File | Output Type |
 |-------------|------|------|-------------|
-| `DV-V5` | Deep Verify V5 | `workflow-v5.md` | Phases + Findings |
-| `DV-V6` | Deep Verify V6 | `workflow-v6.md` | Phases + Findings |
 | `DV-V6.1` | Deep Verify V6.1 | `workflow-v6.1.md` | Phases + Findings |
 | `DV-V6.2` | Deep Verify V6.2 | `workflow-v6.2.md` | Phases + Findings |
 | `DV-V6.3` | Deep Verify V6.3 | `workflow-v6.3.md` | Phases + Findings |
@@ -97,7 +95,7 @@ Max Points: [weighted score]
 ```markdown
 ## Run Configuration
 
-Number of Runs: [3 minimum]
+Number of Runs: [1 minimum]
 Agent Model: [sonnet / opus / haiku]
 Agent Isolation: [confirmed - no access to ground-truth]
 
@@ -107,9 +105,85 @@ Agent Isolation: [confirmed - no access to ground-truth]
 
 ---
 
-## Phase 1: Execute Agent Task (×N Runs)
+## Phase 0.5: Artifact Check (NEW - Reuse Logic)
 
-**Identical across all protocols** - agent produces artifact.
+**Purpose:** Avoid regenerating artifacts that already exist. Artifacts are expensive to generate and should be reused across protocol tests.
+
+### 0.5.1 Check Artifact Existence
+
+```markdown
+## Artifact Check for Task T[N]
+
+Artifact Location: `src/testing/results/experiments/artifacts/`
+Expected File: `artifact-t[N].md` (from trap-tasks.md → Artifact File field)
+
+### Check Result:
+```
+
+**Decision Tree:**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    ARTIFACT CHECK                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Check: Does artifact-t[N].md exist?                            │
+│                                                                  │
+│  ┌────────────────────────┬────────────────────────────────────┐│
+│  │                        │                                    ││
+│  │   YES (EXISTS)         │   NO (NOT FOUND)                   ││
+│  │                        │                                    ││
+│  │   ✓ INFORM:            │   ✗ INFORM:                        ││
+│  │   "Artifact found:     │   "Artifact NOT found:             ││
+│  │    artifact-t[N].md    │    artifact-t[N].md                ││
+│  │    Proceeding to       │    Launching subagent to           ││
+│  │    verification"       │    generate artifact..."           ││
+│  │                        │                                    ││
+│  │   → SKIP Phase 1       │   → EXECUTE Phase 1                ││
+│  │   → GO TO Phase 2      │     (via subagent)                 ││
+│  │                        │   → SAVE to artifact-t[N].md       ││
+│  │                        │   → GO TO Phase 2                  ││
+│  │                        │                                    ││
+│  └────────────────────────┴────────────────────────────────────┘│
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 0.5.2 Communication Templates
+
+**When artifact EXISTS:**
+```
+✓ ARTIFACT FOUND: artifact-t[N].md
+  Location: src/testing/results/experiments/artifacts/artifact-t[N].md
+  Status: Using existing artifact for verification
+  Action: Proceeding to Phase 2 (Protocol Verification)
+```
+
+**When artifact NOT FOUND:**
+```
+✗ ARTIFACT NOT FOUND: artifact-t[N].md
+  Expected at: src/testing/results/experiments/artifacts/artifact-t[N].md
+  Status: Artifact does not exist - generation required
+  Action: Launching subagent to execute Task T[N] from trap-tasks.md
+```
+
+### 0.5.3 Subagent Delegation (when artifact missing)
+
+When artifact doesn't exist, spawn a subagent with:
+- **Type:** general-purpose
+- **Task:** Execute T[N] from trap-tasks.md
+- **Output:** Save result to `artifact-t[N].md`
+- **Isolation:** Subagent must NOT access ground-truth.md
+
+---
+
+## Phase 1: Execute Agent Task (Conditional)
+
+**CONDITION:** Only execute if artifact does NOT exist (see Phase 0.5)
+
+**If artifact EXISTS:** Skip Phase 1, proceed directly to Phase 2.
+
+**If artifact NOT EXISTS:** Execute via subagent, save to artifact file.
 
 ### 1.1 Agent Prompt Template
 

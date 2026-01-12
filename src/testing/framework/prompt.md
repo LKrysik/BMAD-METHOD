@@ -73,12 +73,9 @@ KROK 4 - Zapisz wyniki:
 
 | Proces | Ścieżka | Opis |
 |--------|---------|------|
-| Deep Verify V5 | `src/core/workflows/deep-verify/workflow-v5.md` | Podstawowy |
-| Deep Verify V6 | `src/core/workflows/deep-verify/workflow-v6.md` | + Concern layers A/B/C |
 | Deep Verify V6.1 | `src/core/workflows/deep-verify/workflow-v6.1.md` | + Layer D (Security) |
-| **Deep Verify V6.2** | `src/core/workflows/deep-verify/workflow-v6.2.md` | **+ Bayesian Stopping** |
-| ~~Deep Verify V6.3~~ | ~~`src/core/workflows/deep-verify/workflow-v6.3.md`~~ | ⚠️ RESERVED - NOT IMPLEMENTED |
-| Deep Verify Lite | `src/core/workflows/deep-verify/workflow-v6-lite.md` | Szybki |
+| Deep Verify V6.2 | `src/core/workflows/deep-verify/workflow-v6.2.md` | + Bayesian Stopping |
+| **Deep Verify V6.3** | `src/core/workflows/deep-verify/workflow-v6.3.md` | **+ Integration Check + 8 nowych metod** |
 | Tensor V-GD | `src/core/quality_gates/Tensor-Based-Verification-Protocol.md` | Matematyczny |
 | Quadrant QVP | `src/core/quality_gates/Quadrant-Verification-Protocol.md` | 4-wymiarowy |
 | Universal UAQG | `src/core/quality_gates/Universal-Agent-Quality-Gate-Protocol.md` | 6-bramkowy |

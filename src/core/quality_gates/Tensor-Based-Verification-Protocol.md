@@ -126,6 +126,14 @@ Survived Attacks: [List of attack methods that failed to breach system]
 Quality Eigenvalue Lambda V: [NUMERIC VALUE]
 Status: [VERIFIED / ACCEPTABLE / FAILED]
 
+**6. Token Usage**
+| Metric | Value |
+|--------|-------|
+| Input Tokens | [N] |
+| Output Tokens | [N] |
+| Total Tokens | [N] |
+| Execution Time | [N] sek |
+
 
 # SYSTEM PROMPT
 Copy the text below as the instruction for the Agent:

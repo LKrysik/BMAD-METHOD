@@ -509,3 +509,272 @@ Based on identified weaknesses:
 
 If v6.1 exceeds 60% on V2 tasks → better than expected
 If v6.1 below 30% on any V2 task → critical weakness confirmed
+
+---
+
+# V3 Tasks: Expert Difficulty Ground Truth
+
+> V3 tasks test theoretical impossibilities and deep domain knowledge.
+> Expected DR for v6.4: 30-50%
+> Required for 70%+ DR: Domain-specific methods, theorem awareness
+
+---
+
+## New Error Categories for V3
+
+| Code | Category | Description |
+|------|----------|-------------|
+| THEORY | Theoretical Impossibility | Violates fundamental CS/math theorem |
+| DOMAIN | Domain Knowledge Gap | Requires deep expertise to detect |
+| COMPOSE | Composition Failure | Works alone, fails when combined |
+| METRIC | Metric Gaming | Optimizes wrong thing |
+| BUZZWORD | Empty Buzzword | Uses term without understanding |
+
+---
+
+## Task 16: Cryptographic Key Management with Recovery
+
+### Trap Design (Theoretical + Domain)
+
+**Primary Trap: PFS ⊕ Recovery Impossibility**
+- Perfect Forward Secrecy BY DEFINITION means past sessions cannot be decrypted
+- Key Recovery BY DEFINITION means past sessions CAN be decrypted
+- These are mutually exclusive - no cryptographic construction can provide both
+
+**Secondary Traps:**
+- "Homomorphic key operations" is nonsensical (homomorphic encryption operates on ciphertexts)
+- RSA-4096 is NOT quantum-resistant (broken by Shor's algorithm)
+- Zero-knowledge proof of derivation + recovery = information leak
+
+### Expected Errors
+
+| ID | Category | Severity | Expected Error | Detection Signal |
+|----|----------|----------|----------------|------------------|
+| T16-E1 | THEORY | CRITICAL | PFS and key recovery are mutually exclusive by definition | Claims to provide both simultaneously |
+| T16-E2 | DOMAIN | CRITICAL | "Homomorphic key operations" is cryptographically meaningless | Uses term without explaining what operation is homomorphic |
+| T16-E3 | COMPOSE | CRITICAL | RSA-4096 + "quantum-resistant" contradiction | Uses RSA while claiming quantum resistance |
+| T16-E4 | DOMAIN | IMPORTANT | ZK proof of derivation leaks derivation path info | Claims ZK while supporting recovery |
+| T16-E5 | THEORY | IMPORTANT | "Immediate" revocation in distributed system impossible without synchrony | Claims instant revocation across async agents |
+| T16-E6 | SHALLOW | MINOR | Shamir's 3-of-5 threshold math not analyzed | No discussion of reconstruction security |
+
+### Detection Requirements
+- Method that knows PFS definition
+- Method that understands homomorphic encryption
+- Method that knows post-quantum crypto (RSA vulnerable)
+
+---
+
+## Task 17: Byzantine-Fault-Tolerant Consensus
+
+### Trap Design (Theoretical)
+
+**Primary Trap: FLP Impossibility**
+- FLP theorem (1985): Deterministic consensus is IMPOSSIBLE in asynchronous networks with even ONE crash failure
+- Requirements ask for async (5) + liveness (4) = impossible combination
+
+**Secondary Traps:**
+- BFT requires f < N/3, NOT f < N/2 (requirement states wrong bound)
+- O(N) message complexity for BFT is impossible (lower bound is Ω(N²))
+- "Detect minority partition" requires synchrony assumptions
+
+### Expected Errors
+
+| ID | Category | Severity | Expected Error | Detection Signal |
+|----|----------|----------|----------------|------------------|
+| T17-E1 | THEORY | CRITICAL | FLP impossibility: async + consensus + failures = impossible | Claims liveness guarantee in async network |
+| T17-E2 | THEORY | CRITICAL | Byzantine tolerance requires f < N/3, not f < N/2 | Uses wrong fault tolerance bound |
+| T17-E3 | THEORY | CRITICAL | O(N) message complexity for BFT is impossible | Claims linear message complexity |
+| T17-E4 | COMPOSE | IMPORTANT | Partition detection requires synchrony | Claims partition detection in async |
+| T17-E5 | COMPOSE | IMPORTANT | "Optimistic fast path" + Byzantine tolerance incompatible | Claims 1-round consensus with BFT |
+| T17-E6 | SHALLOW | MINOR | "3 rounds" claim has no proof | No formal round complexity analysis |
+
+### Detection Requirements
+- Method that knows FLP impossibility theorem
+- Method that knows BFT bounds (f < N/3)
+- Method that knows message complexity lower bounds
+
+---
+
+## Task 18: Formal Verification of Self-Modifying Code
+
+### Trap Design (Theoretical - Multiple)
+
+**Primary Trap: Halting Problem**
+- Proving termination for ALL executions of self-modifying code is undecidable
+- This is a direct application of the halting problem
+
+**Secondary Traps:**
+- Rice's theorem: All non-trivial semantic properties are undecidable
+- Gödel's incompleteness: A system cannot fully verify itself
+- Model checking is PSPACE-complete, not polynomial
+
+### Expected Errors
+
+| ID | Category | Severity | Expected Error | Detection Signal |
+|----|----------|----------|----------------|------------------|
+| T18-E1 | THEORY | CRITICAL | Halting problem: Cannot prove termination for all inputs | Claims to prove all executions terminate |
+| T18-E2 | THEORY | CRITICAL | Rice's theorem: Safety invariant preservation undecidable | Claims to verify semantic properties |
+| T18-E3 | THEORY | CRITICAL | Gödel incompleteness: Meta-verification leads to incompleteness | Claims system can verify itself completely |
+| T18-E4 | COMPOSE | IMPORTANT | Model checking is PSPACE-complete, not polynomial | Claims polynomial time verification |
+| T18-E5 | COMPOSE | IMPORTANT | "Infinite state space" + "exhaustive exploration" incompatible | Claims exhaustive search of infinite space |
+| T18-E6 | DOMAIN | MINOR | Learning convergence to "optimal" undefined | Claims convergence without defining optimality |
+
+### Detection Requirements
+- Method that knows halting problem
+- Method that knows Rice's theorem
+- Method that knows computational complexity classes
+
+---
+
+## Task 19: Multi-Agent Verification Auction
+
+### Trap Design (Mechanism Design Theory)
+
+**Primary Trap: Myerson-Satterthwaite Impossibility**
+- No mechanism can simultaneously be:
+  - Strategyproof (truthful)
+  - Individually rational
+  - Efficient (welfare maximizing)
+  - Budget-balanced
+- Requirements ask for all four = impossible
+
+**Secondary Traps:**
+- VCG achieves 3/4 but requires external subsidy (not budget-balanced)
+- Combinatorial auctions are NP-hard (not <10ms solvable)
+- Perfect collusion resistance impossible in repeated games
+
+### Expected Errors
+
+| ID | Category | Severity | Expected Error | Detection Signal |
+|----|----------|----------|----------------|------------------|
+| T19-E1 | THEORY | CRITICAL | Myerson-Satterthwaite: Cannot have SP+IR+EFF+BB simultaneously | Claims all four properties |
+| T19-E2 | THEORY | CRITICAL | VCG requires external subsidy, violates budget balance | Uses VCG while claiming budget balance |
+| T19-E3 | COMPOSE | CRITICAL | Combinatorial auction is NP-hard, not solvable in <10ms | Claims real-time combinatorial allocation |
+| T19-E4 | THEORY | IMPORTANT | "Fairness" often contradicts "efficiency" | Claims both without acknowledging tradeoff |
+| T19-E5 | DOMAIN | IMPORTANT | Online mechanisms have unavoidable competitive ratio loss | Claims same guarantees as offline |
+| T19-E6 | THEORY | MINOR | Perfect collusion resistance impossible in repeated games | Claims no collusion vulnerability |
+
+### Detection Requirements
+- Method that knows Myerson-Satterthwaite theorem
+- Method that knows VCG mechanism properties
+- Method that knows NP-hardness of combinatorial auctions
+
+---
+
+## Task 20: Quantum-Inspired Method Selection Optimizer
+
+### Trap Design (Quantum Computing Misconceptions)
+
+**Primary Trap: No Proven Quantum Speedup for Optimization**
+- Quantum annealing has NO proven exponential speedup over classical algorithms
+- QAOA similarly has no proven advantage for combinatorial optimization
+- "Quantum advantage" for optimization is an open research question
+
+**Secondary Traps:**
+- Classical simulation negates quantum advantage
+- Quantum error correction overhead >> 100ms latency
+- 150 methods with pairwise interactions needs ~22,500 qubits (D-Wave has ~5000)
+
+### Expected Errors
+
+| ID | Category | Severity | Expected Error | Detection Signal |
+|----|----------|----------|----------------|------------------|
+| T20-E1 | THEORY | CRITICAL | No proven exponential speedup for quantum optimization | Claims proven quantum advantage |
+| T20-E2 | BUZZWORD | CRITICAL | "Provable quantum advantage over ALL classical" is open problem | Claims solved problem |
+| T20-E3 | COMPOSE | CRITICAL | Classical simulation negates quantum advantage claim | Claims quantum + classical fallback |
+| T20-E4 | THEORY | IMPORTANT | Global optimum with >99% for NP-hard is impossible (quantum or classical) | Claims guaranteed global optimum |
+| T20-E5 | DOMAIN | IMPORTANT | QEC overhead makes <100ms impossible with current tech | Claims real-time with error correction |
+| T20-E6 | DOMAIN | MINOR | 22,500 interaction terms exceeds current qubit counts | No qubit requirement analysis |
+
+### Detection Requirements
+- Method that knows quantum computing limitations
+- Method that knows NP-hardness is preserved for quantum
+- Method that knows current quantum hardware limitations
+
+---
+
+## Task 21: DSL Compiler for Verification Rules
+
+### Trap Design (Programming Language Theory)
+
+**Primary Trap: Termination vs Recursion**
+- General recursion + guaranteed termination is impossible for Turing-complete languages
+- You must choose: expressive recursion OR termination guarantee
+
+**Secondary Traps:**
+- Complete type inference is undecidable for dependent types
+- Gradual typing + soundness is contradictory ("well-typed programs can go wrong")
+- LLVM + dependent types is unusual and complex
+
+### Expected Errors
+
+| ID | Category | Severity | Expected Error | Detection Signal |
+|----|----------|----------|----------------|------------------|
+| T21-E1 | THEORY | CRITICAL | Recursion + guaranteed termination impossible for TC languages | Claims both general recursion and termination |
+| T21-E2 | THEORY | CRITICAL | Complete type inference undecidable for dependent types | Claims full inference with dependent types |
+| T21-E3 | COMPOSE | CRITICAL | Gradual typing + soundness contradictory | Claims sound gradual typing |
+| T21-E4 | COMPOSE | IMPORTANT | Higher-order + termination needs sophisticated checker | No termination analysis approach |
+| T21-E5 | DOMAIN | IMPORTANT | Dependent types + LLVM needs runtime type representations | No discussion of runtime types |
+| T21-E6 | THEORY | MINOR | Rule composition + termination requires solving halting problem | Claims composable terminating rules |
+
+### Detection Requirements
+- Method that knows undecidability of type inference
+- Method that knows termination analysis limits
+- Method that knows gradual typing properties
+
+---
+
+## V3 Scoring Summary
+
+| Task | CRITICAL (3pts) | IMPORTANT (2pts) | MINOR (1pt) | Max Score |
+|------|-----------------|------------------|-------------|-----------|
+| T16 | 3 (9pts) | 2 (4pts) | 1 (1pt) | 14 |
+| T17 | 3 (9pts) | 2 (4pts) | 1 (1pt) | 14 |
+| T18 | 3 (9pts) | 2 (4pts) | 1 (1pt) | 14 |
+| T19 | 3 (9pts) | 2 (4pts) | 1 (1pt) | 14 |
+| T20 | 3 (9pts) | 2 (4pts) | 1 (1pt) | 14 |
+| T21 | 3 (9pts) | 2 (4pts) | 1 (1pt) | 14 |
+
+---
+
+## V3 Weakness Categories Tested
+
+| Task | Primary Theorem | Secondary Trap | Detection Difficulty |
+|------|-----------------|----------------|---------------------|
+| T16 | PFS definition | Homomorphic keys | Domain (Crypto) |
+| T17 | FLP impossibility | BFT bounds | Theoretical (Distributed) |
+| T18 | Halting problem | Rice/Gödel | Theoretical (Computability) |
+| T19 | Myerson-Satterthwaite | VCG properties | Theoretical (Game Theory) |
+| T20 | No quantum speedup | QEC latency | Domain (Quantum) |
+| T21 | Inference undecidability | Gradual soundness | Theoretical (PL Theory) |
+
+---
+
+## Expected Performance on V3
+
+| Workflow Version | Expected DR | Rationale |
+|------------------|-------------|-----------|
+| v6.3 | 15-25% | No theoretical impossibility awareness |
+| v6.4 | 30-50% | Adaptive selection may help, but needs domain methods |
+| v6.5+ (theoretical) | 50-70% | Would need theorem-aware methods |
+| Human expert | 80-95% | Deep domain knowledge required |
+
+### Required New Methods for V3
+
+1. **#160 Theoretical Impossibility Check** - Check against known impossibility theorems (FLP, CAP, Halting, Rice, Gödel, Myerson-Satterthwaite)
+2. **#161 Contradiction Detector** - Find requirements that are definitionally mutually exclusive
+3. **#162 Buzzword Verifier** - Check if technical terms are used correctly (homomorphic, quantum advantage, etc.)
+4. **#163 Domain Expert Personas** - Activate expert knowledge for specific domains (crypto, distributed, PL theory, mechanism design)
+
+---
+
+## V3 Ground Truth Summary Table
+
+| Task | E1 | E2 | E3 | E4 | E5 | E6 |
+|------|----|----|----|----|----|----|
+| T16 | PFS⊕Recovery | Homomorphic keys | RSA+quantum | ZK leak | Instant revoke | Shamir math |
+| T17 | FLP | f<N/3 not N/2 | O(N) impossible | Partition detect | Fast path+BFT | 3 rounds |
+| T18 | Halting | Rice theorem | Gödel | PSPACE | Infinite+exhaustive | Convergence |
+| T19 | M-S theorem | VCG subsidy | NP-hard+10ms | Fair≠Efficient | Online loss | Collusion |
+| T20 | No speedup | Provable advantage | Simulation negates | Global NP-hard | QEC latency | Qubit count |
+| T21 | Recurse+terminate | Inference undecid. | Gradual+sound | HO+terminate | Dep types+LLVM | Compose+halt |

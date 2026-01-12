@@ -133,18 +133,149 @@ Mode: [G] Guided - for detailed phase tracking
 
 ---
 
-### DV-V6.3: Deep Verify V6.3 (RESERVED)
+### DV-V6.3: Deep Verify with Integration Check & Enhanced Methods
 
 | Property | Value |
 |----------|-------|
 | **ID** | `DV-V6.3` |
 | **File** | `src/core/workflows/deep-verify/workflow-v6.3.md` |
 | **Parent** | V6.2 |
-| **Status** | ⚠️ **RESERVED - NOT YET IMPLEMENTED** |
+| **Status** | ✅ **ACTIVE** |
+| **Key Features** | Phase 1.5 Integration Check, 8 new methods, Phase 6.5 Kernel Handoff |
+| **Token Profile** | Medium-High (15k-45k) |
+| **Time Profile** | 3-8 minutes |
+| **Best For** | Artifacts with external dependencies, integration-heavy designs |
 
-> **NOTE:** This version slot is reserved for future development. Do not use in experiments until status changes to ACTIVE.
->
-> When implementing, define unique features that differentiate from V6.2 (e.g., new methods, different phase structure, or novel optimization).
+#### New Features in V6.3
+
+**Phase 1.5: Integration Check (MANDATORY)**
+- Forces reading of external references before verification
+- Uses #127 Bootstrap Paradox for circular dependency detection
+- Addresses INTEGRATE weakness (T11-E1 type errors)
+
+**New Methods:**
+| # | Name | Category | Purpose |
+|---|------|----------|---------|
+| #127 | Bootstrap Paradox | challenge | Circular dependency detection |
+| #128 | Theseus Paradox | challenge | Core problem alignment |
+| #116 | Strange Loop Detection | epistemology | Reasoning cycle detection |
+| #119 | Ground Truth Demand | epistemology | Claim verifiability |
+| #132 | Goodhart's Law Check | meta | Metric vs goal alignment |
+| #136 | Kernel Paradox | meta | Self-evaluation limits |
+| #151 | Semantic Entropy Validation | epistemology | Confabulation detection |
+| #152 | Socratic Decomposition | core | Targeted 5 Whys |
+
+**Phase 6.5: Kernel Paradox Handoff**
+- Explicitly identifies what agent CANNOT verify
+- Provides user verification checklist
+- Improves human-agent collaboration
+
+#### Invocation Template
+```markdown
+## Deep Verify V6.3
+
+TASK: [task_verbatim]
+CONTENT: [artifact]
+TYPE: Document
+ENVIRONMENT: BMAD-METHOD project
+ARTIFACT_CRITICALITY: [Safety-critical / Standard / Low-priority]
+INTEGRATION_CONTEXT: [List of related files/modules that should be checked]
+
+Mode: [G] Guided - for detailed phase tracking
+```
+
+#### Output Extraction Rules
+- **All DV-V6.2 rules apply**
+- **Additional**: Check Phase 1.5 Integration Check results
+- **Additional**: Extract Kernel Handoff items from Phase 6.5
+- **Entropy column**: Extract from findings (LOW/MEDIUM/HIGH)
+
+#### Expected Performance vs V6.2
+| Metric | V6.2 | V6.3 Expected |
+|--------|------|---------------|
+| INTEGRATE DR | 35% | 55% |
+| Overall DR | 42.9% | 55-60% |
+| False Positive Rate | ~65% | ~45% |
+
+---
+
+### DV-V6.4: Deep Verify with Adaptive Method Selection
+
+| Property | Value |
+|----------|-------|
+| **ID** | `DV-V6.4` |
+| **File** | `src/core/workflows/deep-verify/workflow-v6.4.md` |
+| **Parent** | V6.3 |
+| **Status** | ✅ **ACTIVE** |
+| **Key Features** | Phase 0.5 Context Analysis, Adaptive Method Selection, Phase 7.5 Learning Extraction |
+| **Token Profile** | Low-Medium (5k-15k) - **66% reduction vs V6.3** |
+| **Time Profile** | 2-5 minutes |
+| **Best For** | All artifact types - adapts method selection to context |
+
+#### Key Innovations in V6.4
+
+**Phase 0.5: Context Analysis (NEW)**
+- Extracts artifact features: type, domain, complexity, has_external_deps, has_concurrency, has_state, has_security_aspect
+- Sets method budget based on complexity:
+  - Low: 8-12 methods
+  - Medium: 12-18 methods
+  - High: 18-25 methods
+
+**Adaptive Method Selection**
+- Methods selected based on:
+  - Artifact features (conditional inclusion)
+  - Method effectiveness scores (from method_scores.yaml)
+  - Category diversity (min 3 categories)
+- Base methods always included: #81, #84, #113
+- Conditional methods triggered by features:
+  - has_external_deps → #127, #90
+  - has_concurrency → #67, #68
+  - has_state → #62, #39
+  - has_security_aspect → #34, #21
+
+**Phase 7.5: Learning Extraction (NEW)**
+- Tracks method effectiveness per session
+- Updates method_scores.yaml with findings data
+- Formula: `new_score = old_score * 0.9 + session_precision * 0.1`
+
+#### Supporting Files
+- **Workflow**: `src/core/workflows/deep-verify/workflow-v6.4.md`
+- **Scores**: `src/core/workflows/deep-verify/method_scores.yaml`
+
+#### Invocation Template
+```markdown
+## Deep Verify V6.4
+
+TASK: [task_verbatim]
+CONTENT: [artifact]
+TYPE: Document
+ENVIRONMENT: BMAD-METHOD project
+
+Mode: [G] Guided - for detailed phase tracking
+```
+
+#### Output Extraction Rules
+- **All DV-V6.3 rules apply**
+- **Additional**: Extract Context Analysis from Phase 0.5
+- **Additional**: Extract Method Budget and selected methods
+- **Additional**: Extract Learning Data from Phase 7.5
+- **Efficiency metric**: findings / methods_used
+
+#### Performance vs V6.3
+
+| Metric | V6.3 | V6.4 | Improvement |
+|--------|------|------|-------------|
+| Tokens (avg) | ~15-18K | ~5-6K | **-66%** |
+| Methods used | 42-55 | 13-16 | **-70%** |
+| Findings | 8-11 | 9-11 | Maintained |
+| Efficiency (f/m) | 0.20 | 0.64-0.74 | **+220%** |
+| INTEGRATE DR | 100% | 100% | Maintained |
+
+#### Validated On
+- T12: Predictive User Intent Engine ✅
+- T13: Cross-Agent Memory Sync ✅
+- T14: Self-Modifying Workflow ✅
+- T15: NL to Method Mapping ✅
 
 ---
 

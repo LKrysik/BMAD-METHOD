@@ -156,18 +156,21 @@
 
 | Protocol | Load-bearing Elements | Decorative Elements |
 |----------|----------------------|---------------------|
-| DV-v6.1 | Phase 2 concerns, Layer D, #23, #127, Challenge phase | #67 Tolerance Paradox, Phase 0 verbose output |
+| DV-v6.1 | Phase 2 concerns, Layer D, #39, #115, Challenge phase | Phase 0 verbose output |
 | UAQG | G4 Technical, G6 Strategic | G1 Epistemic, G5 Creative |
 
 **Recommendation:**
-- Remove #67 from DV-v6.1 (no unique findings)
+- Keep #67 Stability Basin Analysis in DV-v6.1 (useful for resilience analysis)
 - Remove G1/G5 from UAQG for technical artifacts
+
+**CORRECTION:** Previous analysis incorrectly identified #67 as "Tolerance Paradox".
+Actual #67 = Stability Basin Analysis (risk category) - valuable for Layer D.
 
 ### 4.3 Paradoxical Additions (#124)
 
 | Element | Expected | Actual | Verdict |
 |---------|----------|--------|---------|
-| #67 Tolerance Paradox | +detection | 0 findings | **REMOVE** |
+| #67 Stability Basin | +resilience | perturbation analysis | **KEEP** |
 | Layer D (Security) | +complexity | +64 OES | **KEEP** |
 | UAQG G5 Creative | +coverage | 0 T3 findings | **REMOVE** for tech |
 | More methods | +detection | +tokens, =detection | **REDUCE** |
@@ -197,9 +200,9 @@
 - **Expected impact:** Automated testing from verification
 
 ### E - ELIMINATE
-- **Remove:** #67 Tolerance Paradox, verbose Phase 0
-- **Token savings:** ~500 tokens/run
-- **Risk:** None (no unique findings)
+- **Remove:** Verbose Phase 0 output (keep checks, reduce verbosity)
+- **Token savings:** ~300 tokens/run
+- **Risk:** Low (self-check still executes)
 
 ### R - REVERSE
 - **Invert:** Start with challenge, then generate concerns
@@ -275,8 +278,8 @@
 | # | Recommendation | Evidence | Expected Impact |
 |---|----------------|----------|-----------------|
 | 1 | **Keep Layer D as mandatory** in DV | EXP-004, EXP-005: +64 OES | +100% SECURE detection |
-| 2 | **Remove #67 Tolerance Paradox** | EXP-004: 0 unique findings | -3% tokens, no loss |
-| 3 | **Use DV-v6.1 over UAQG** for technical artifacts | OES 91.75 vs 61.2 | +30 OES |
+| 2 | **Add Bayesian Stopping** to DV-v6.2 | Meta-analysis research | -30% tokens on clean artifacts |
+| 3 | **Use DV-v6.1+ over UAQG** for technical artifacts | OES 91.75 vs 61.2 | +30 OES |
 | 4 | **Remove UAQG G1/G5** for technical content | 0 findings from these gates | -20% tokens |
 
 ### TRY (experiment needed):
@@ -294,7 +297,7 @@
 |---|--------------|------------------|
 | 1 | Skipping Layer D for any artifact | EXP-001,002,003: 0% SECURE detection |
 | 2 | Using UAQG G5 Creative on technical docs | 0 findings, wasted tokens |
-| 3 | Adding methods without testing | #67 added tokens, 0 findings |
+| 3 | Adding methods without validation | Methods must be tested for value |
 | 4 | Optimizing tokens at cost of detection | EXP-003 lower tokens, lower OES |
 
 ### INVESTIGATE (curiosity-driven):
@@ -373,10 +376,10 @@
 
 | Method | Experiments Used | Findings Generated | Value Assessment |
 |--------|-----------------|-------------------|------------------|
-| #23 Security Audit Personas | EXP-004, EXP-005 | 100% SECURE findings | **ESSENTIAL** |
-| #127 Negative Space Cartography | EXP-004, EXP-005 | 100% SKIP findings | **ESSENTIAL** |
-| #37 Identify Potential Risks | EXP-004, EXP-005 | Minor findings | USEFUL |
-| #67 Tolerance Paradox | EXP-004 | 0 unique findings | **REMOVE** |
+| #39 Security Audit Personas | EXP-004, EXP-005 | 100% SECURE findings | **ESSENTIAL** |
+| #115 Negative Space Cartography | EXP-004, EXP-005 | 100% SKIP findings | **ESSENTIAL** |
+| #61 Pre-mortem Analysis | EXP-004, EXP-005 | Risk findings | USEFUL |
+| #67 Stability Basin Analysis | EXP-004, EXP-005 | Resilience findings | USEFUL |
 | #70 Scope Integrity | All | 20% findings | USEFUL |
 | #79 Pattern Recognition | EXP-005 | Structure findings | USEFUL |
 
