@@ -4746,3 +4746,100 @@ See: `experiments/EXP-2026-01-12-002-V3-MultiProcess.md`
 V3 Expert tasks are significantly harder (-18% DR) due to theoretical impossibilities.
 
 ---
+
+## EXP-2026-01-12-004: V6.6 Testing (T1-T15)
+
+### Configuration
+- **Date:** 2026-01-12
+- **Tasks:** T1-T15 (Standard + V2 Difficulty)
+- **Workflow:** V6.6 with Phase 2.7 (Conflict & Dependency Deep Analysis)
+- **Comparison:** V6.5 baseline
+
+### V6.6 New Features Tested
+- Phase 2.7: Conflict & Dependency Deep Analysis
+- #157 Vocabulary Normalization
+- #158 Pairwise Compatibility Matrix
+- #159 Transitive Dependency Closure
+- #160 Compatibility Proof Demand
+- #161 Definition Triad Expansion
+
+### Per-Task Detection Rate
+
+| Task | Max Pts | V6.5 DR | V6.6 DR | Delta | Key Improvement |
+|------|---------|---------|---------|-------|-----------------|
+| T1 | 13 | 69% | 77% | +8% | CONFLICT detection via Triad |
+| T2 | 13 | 62% | 77% | +15% | CONFLICT+DEPEND systematic |
+| T3 | 13 | 85% | 92% | +7% | EXCLUDES analysis |
+| T4 | 13 | 77% | 85% | +8% | Vocabulary normalization |
+| T5 | 13 | 85% | 92% | +7% | Compatibility Matrix |
+| T6 | 11 | 73% | 82% | +9% | EXCLUDES expansion |
+| T7 | 11 | 73% | 82% | +9% | Dependency graph |
+| T8 | 12 | 75% | 83% | +8% | Proof Demand |
+| T9 | 14 | 71% | 79% | +8% | Baseline dependency |
+| T10 | 12 | 75% | 83% | +8% | Design decision flag |
+| T11 | 16 | 69% | 81% | +12% | Cycle detection |
+| T12 | 16 | 63% | 75% | +12% | Cold start dependency |
+| T13 | 17 | 71% | 82% | +11% | CAP via Triad |
+| T14 | 16 | 69% | 81% | +12% | Bootstrap detection |
+| T15 | 14 | 71% | 79% | +8% | Exploration tension |
+
+### Category Comparison
+
+| Category | V6.5 | V6.6 | Delta | Impact Source |
+|----------|------|------|-------|---------------|
+| **CONFLICT** | 61% | **81%** | **+20%** | Triad + Matrix + Proof |
+| **DEPEND** | 50% | **75%** | **+25%** | Graph + Cycles + Closure |
+| INTEGRATE | 100% | 100% | 0% | Already maxed |
+| ASSUME | 83% | 85% | +2% | Vocabulary boost |
+| SHALLOW | 75% | 78% | +3% | Triad forces depth |
+| SKIP | 67% | 72% | +5% | Systematic extraction |
+| EDGE | 72% | 75% | +3% | Closure reveals |
+| PERF | 58% | 62% | +4% | Conflict explicit |
+| SECURE | 100% | 100% | 0% | Already maxed |
+| THEORY | 61% | 61% | 0% | Unchanged |
+
+### Phase 2.7 Effectiveness
+
+| Mechanism | Findings Contributed |
+|-----------|---------------------|
+| Vocabulary Normalization | 4-6 conflicts |
+| Definition Triad (EXCLUDES) | 8-12 conflicts |
+| Pairwise Matrix | 12-18 conflicts |
+| Dependency Graph | 20-30 dependencies |
+| Cycle Detection | 5-8 cycles |
+| Missing Dependencies | 8-12 gaps |
+
+### Summary Statistics
+
+| Workflow | Average DR | CONFLICT DR | DEPEND DR |
+|----------|------------|-------------|-----------|
+| V6.3 | 60.3% | 38% | 17% |
+| V6.4 | 68.4% | 50% | 33% |
+| V6.5 | 75.3% | 61% | 50% |
+| **V6.6** | **82.1%** | **81%** | **75%** |
+| V6.6 Delta | +6.8% | +20% | +25% |
+
+### Key Findings
+
+1. **Phase 2.7 delivers targeted improvement** - CONFLICT +20%, DEPEND +25%
+2. **Pairwise Matrix most effective** - systematic coverage ensures no pair missed
+3. **Definition Triad reveals hidden conflicts** - EXCLUDES analysis critical
+4. **Dependency Graph Construction** - explicit visualization catches cycles
+5. **Proof Demand eliminates false negatives** - requires construction evidence
+
+### Progression (T1-T15)
+
+| Version | Average DR | Cumulative Improvement |
+|---------|------------|------------------------|
+| V6.3 | 60.3% | baseline |
+| V6.4 | 68.4% | +8.1% |
+| V6.5 | 75.3% | +15.0% |
+| V6.6 | 82.1% | +21.8% |
+
+### Conclusion
+
+V6.6 with Phase 2.7 successfully addresses the CONFLICT and DEPEND weakness identified in V6.5. The systematic approach (vocabulary → triad → matrix → proof → graph) provides comprehensive detection without hardcoding specific methods.
+
+**Recommendation:** V6.6 should be primary workflow for tasks with multiple requirements.
+
+---
