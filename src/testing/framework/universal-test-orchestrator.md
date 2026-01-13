@@ -198,11 +198,19 @@ The orchestrating agent MUST maintain this registry throughout the experiment:
 - Experiment ID: EXP-[YYYY-MM-DD]-[NNN]
 
 ### Agent Registry Table
-| Entry | Process | Task | Run# | Agent ID | Slug | Log File | Status |
-|-------|---------|------|------|----------|------|----------|--------|
-| 1 | [process.md] | T[N] | 1 | [pending] | [pending] | [pending] | PLANNED |
-| 2 | [process.md] | T[N] | 2 | [pending] | [pending] | [pending] | PLANNED |
-| ... | ... | ... | ... | ... | ... | ... | ... |
+| Entry | Test ID | Process | Task | Run# | Agent ID | Slug | Input | Output | Cache | Total | Cost USD | Status |
+|-------|---------|---------|------|------|----------|------|-------|--------|-------|-------|----------|--------|
+| 1 | WF[ver]-T[N]-R1 | [process.md] | T[N] | 1 | [pending] | [pending] | - | - | - | - | - | PLANNED |
+| 2 | WF[ver]-T[N]-R2 | [process.md] | T[N] | 2 | [pending] | [pending] | - | - | - | - | - | PLANNED |
+| ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
+
+**Test ID Format:** `WF[version]-T[N]-R[run#]` (e.g., `WFv7.0-T10-R1`)
+
+**Column Definitions:**
+- `Test ID`: Unique identifier for process-task-run combination
+- `Input/Output/Cache`: Token counts from session_usage_analyzer.py
+- `Total`: Sum of Input + Output + Cache (cost tokens)
+- `Cost USD`: Calculated using Claude Opus 4.5 pricing
 ```
 
 ### 0.6.2 Tracking Protocol (MANDATORY)
@@ -292,7 +300,26 @@ Tokens collected from agent-[id].jsonl:
 | Missing tokens | Status not "TOKENS_COLLECTED" | Read JSONL file manually |
 | Wrong process mapping | Process column empty | Check pre-spawn registration |
 
-### 0.6.5 Verification Checkpoint
+### 0.6.6 ONE SUBAGENT = ONE TEST (CRITICAL RULE)
+
+**MANDATORY CONSTRAINT:**
+- Each subagent MUST execute exactly ONE process for exactly ONE task
+- Subagent for `workflow-v6.6` + `T10` CANNOT also test `T11` or `workflow-v7.0`
+- Violation detection: If same Agent ID appears with different Process or Task → INVALID
+
+**Rationale:** Enables accurate cost attribution per process-task combination. Token costs from `session_usage_analyzer.py` are per-agent, so each agent must map to exactly one test.
+
+**Enforcement:**
+1. **Before spawning:** Verify no duplicate Process+Task+Run# combination in registry
+2. **After completion:** Verify agent produced output for ONLY the assigned Process+Task
+3. **During token collection:** Each Agent ID maps to exactly one row in registry
+
+**Violation Handling:**
+- If agent tested multiple processes/tasks → INVALIDATE results
+- Re-run with proper isolation (separate subagent per test)
+- Flag in experiment log as "ISOLATION_VIOLATION"
+
+### 0.6.7 Verification Checkpoint
 
 Before proceeding to Phase 1, confirm:
 - [ ] Registry created with Session ID
@@ -483,6 +510,85 @@ Before moving to Phase 2, verify:
 ✗ Tokens: ~50,000  ← approximation with ~
 ✗ Slug: unknown  ← not captured
 ```
+
+### 1.5 Integrated Token Collection via session_usage_analyzer.py
+
+**MANDATORY**: After all subagent executions complete, orchestrator MUST run the session analyzer to get accurate token data for all subagents at once.
+
+#### 1.5.1 Execution Command
+
+```bash
+# Windows
+python src/core/usage/session_usage_analyzer.py [SESSION_ID] --base-dir "C:\Users\[user]\.claude\projects\[encoded-project-path]"
+
+# Linux/Mac
+python src/core/usage/session_usage_analyzer.py [SESSION_ID] --base-dir ~/.claude/projects/[encoded-project-path]
+```
+
+Where:
+- `SESSION_ID`: UUID of current session (e.g., `be18c6d0-46c0-4530-bde9-f535ad152abe`)
+- `encoded-project-path`: Project path with slashes as dashes (e.g., `C--Users-lukasz-krysik-Desktop-BMAD-MY-REPO-BMAD-METHOD`)
+
+#### 1.5.2 Parse Output and Map to Registry
+
+The script outputs per-subagent data:
+```
+[SUBAGENTS] (36 agents)
+Agent ID         Messages    Input      Output     Total
+a0c5fe1         3           51,800     9,989      61,789
+a0e4381         3           76,458     11,111     87,569
+...
+```
+
+**Mapping Algorithm:**
+1. For each `agent_id` in script output
+2. Find matching entry in SUBAGENT TRACKING REGISTRY (by Agent ID column)
+3. Update entry with exact token values: Input, Output, Total
+4. Calculate Cost USD using pricing formula (see 1.5.3)
+5. Update Status to `TOKENS_COLLECTED`
+
+**Registry Update Example:**
+```markdown
+| Entry | Test ID | Process | Task | Run# | Agent ID | Slug | Input | Output | Cache | Total | Cost USD | Status |
+|-------|---------|---------|------|------|----------|------|-------|--------|-------|-------|----------|--------|
+| 1 | WFv7.0-T1-R1 | workflow-v7.0.md | T1 | 1 | a0c5fe1 | witty-red-book | 51800 | 9989 | 0 | 61789 | $1.22 | TOKENS_COLLECTED |
+```
+
+#### 1.5.3 USD Cost Calculation (Claude Opus 4.5 Pricing)
+
+```
+COST_USD = (input_tokens × $15/1M) + (output_tokens × $75/1M) + (cache_creation × $18.75/1M) + (cache_read × $1.50/1M)
+
+Simplified per-token multipliers:
+- Input: × 0.000015
+- Output: × 0.000075
+- Cache creation: × 0.00001875
+- Cache read: × 0.0000015
+
+Example:
+  Input: 51,800 × $0.000015 = $0.777
+  Output: 9,989 × $0.000075 = $0.749
+  Cache creation: 0 × $0.00001875 = $0
+  TOTAL COST: $1.53
+```
+
+#### 1.5.4 Fallback if Analyzer Unavailable
+
+If Python script fails or is unavailable:
+1. Read JSONL files directly from: `[CLAUDE_PROJECTS_PATH]/[SESSION_ID]/subagents/agent-[id].jsonl`
+2. Sum tokens manually using token_extractor.py script (see 1.3)
+3. Flag result as `MANUAL_EXTRACTION` in Status column
+
+**Note:** Manual extraction is less reliable - prefer session_usage_analyzer.py when available.
+
+#### 1.5.5 Token Collection Completion Checkpoint
+
+Before proceeding to Phase 2:
+- [ ] session_usage_analyzer.py executed successfully
+- [ ] All subagent IDs from output mapped to registry
+- [ ] All Input/Output/Total columns populated with integers
+- [ ] All Cost USD calculated
+- [ ] All Status updated to TOKENS_COLLECTED
 
 ---
 
@@ -822,6 +928,79 @@ Confidence: [HIGH / MEDIUM / LOW]
 ### Recommendations
 [Suggestions for protocol improvement]
 ```
+
+### 5.1 Generate Summary File
+
+After completing Phase 5 logging, create a standardized summary file for quick reference and cross-experiment comparison.
+
+#### 5.1.1 Summary File Location
+
+```
+src/testing/results/summaries/YYYYMMDD-HHMM_results.md
+```
+
+Example: `20260113-1430_results.md` = January 13, 2026 at 14:30
+
+#### 5.1.2 Summary File Format
+
+```markdown
+# Test Results Summary - [YYYY-MM-DD HH:MM]
+
+## Session Info
+- Session ID: [UUID from session_usage_analyzer.py]
+- Experiment ID: EXP-[YYYY-MM-DD]-[NNN]
+- Duration: [start time - end time]
+- Total Subagents: [count]
+
+## Results Matrix
+
+| Process | Task | WDS | DR | P | DQ | OES | Tokens | Cost USD | TE_econ | CPF | Traps Detected | Efficiency |
+|---------|------|-----|-----|---|-----|-----|--------|----------|---------|-----|----------------|------------|
+| workflow-v7.0 | T1 | 85.2 | 80% | 0.92 | 3.5 | 78.4 | 45230 | $0.89 | 18.8 | 3769 | 12/15 | 0.027 |
+| workflow-v6.6 | T1 | 72.1 | 70% | 0.88 | 3.2 | 65.3 | 38400 | $0.75 | 18.8 | 3200 | 10/15 | 0.026 |
+
+## Token Usage by Subagent
+
+| Agent ID | Slug | Process | Task | Input | Output | Cache | Total | Cost USD |
+|----------|------|---------|------|-------|--------|-------|-------|----------|
+| a1b2c3d | witty-red-book | workflow-v7.0 | T1 | 15230 | 8420 | 21580 | 45230 | $0.89 |
+| e4f5g6h | calm-blue-tree | workflow-v6.6 | T1 | 12100 | 7200 | 19100 | 38400 | $0.75 |
+
+## Efficiency Analysis
+
+| Process | Traps/Token | Cost/Trap | Trap Detection Rate | TTE | ROI |
+|---------|-------------|-----------|---------------------|-----|-----|
+| workflow-v7.0 | 0.00027 | $0.074 | 80% | 0.27 | 1148 |
+| workflow-v6.6 | 0.00026 | $0.075 | 67% | 0.26 | 962 |
+
+## Key Findings
+- [Summary of most important findings]
+- [Critical traps missed by any process]
+- [Unexpected discoveries]
+
+## Recommendations
+- [Based on metrics analysis]
+- [Suggested process improvements]
+```
+
+#### 5.1.3 Efficiency Calculations
+
+```
+Efficiency (Traps/Token) = Traps_Detected / Total_Tokens
+Cost_Per_Trap = Cost_USD / Traps_Detected
+TTE (Token-Trap Efficiency) = Traps_Detected / Total_Tokens × 1000
+ROI = (WDS × Traps_Detected) / Cost_USD
+```
+
+#### 5.1.4 Update experiment-log.md Dashboard
+
+After creating summary file, add ONE row to experiment-log.md Summary Dashboard:
+
+```markdown
+| EXP-[YYYY-MM-DD]-[NNN] | [date] | [workflow] | [task] | [DR] | [WDS] | [OES] | [tokens] | [$cost] | [summaries/YYYYMMDD-HHMM_results.md](summaries/YYYYMMDD-HHMM_results.md) |
+```
+
+**IMPORTANT:** DO NOT add full experiment details to experiment-log.md - those go in summaries/ file. Experiment-log.md is now primarily a dashboard with links.
 
 ---
 
@@ -1166,3 +1345,148 @@ Meta-Analysis Output → Protocol Evolution Input
 | Agent fails to generate artifact | Repeat run | `AGENT_FAILURE` |
 | Token collection fails | Check JSONL exists | `TOKEN_COLLECTION_FAILED` |
 | Measurement missing | Document reason | `MEASUREMENT_MISSING` |
+
+---
+
+## Appendix A: Session Usage Analyzer Integration
+
+This appendix provides complete instructions for integrating `session_usage_analyzer.py` into the test orchestration workflow.
+
+### A.1 Prerequisites
+
+- Python 3.8+ installed and accessible from command line
+- Script location: `src/core/usage/session_usage_analyzer.py`
+- Access to Claude projects directory: `~/.claude/projects/`
+
+### A.2 Finding Session ID
+
+Session ID is the UUID of your Claude Code session. Find it by:
+
+1. **Check directory listing:**
+   ```bash
+   # Windows
+   dir /O-D "C:\Users\[user]\.claude\projects\[encoded-project-path]\"
+
+   # Linux/Mac
+   ls -lt ~/.claude/projects/[encoded-project-path]/ | head -5
+   ```
+
+2. **Current session** is the most recently modified directory with UUID format
+
+3. **UUID format:** `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` (e.g., `be18c6d0-46c0-4530-bde9-f535ad152abe`)
+
+### A.3 Execution
+
+```bash
+# Windows
+python src/core/usage/session_usage_analyzer.py [SESSION_UUID] --base-dir "C:\Users\[user]\.claude\projects\[encoded-path]"
+
+# Linux/Mac
+python src/core/usage/session_usage_analyzer.py [SESSION_UUID] --base-dir ~/.claude/projects/[encoded-path]
+
+# Example (Windows)
+python src/core/usage/session_usage_analyzer.py be18c6d0-46c0-4530-bde9-f535ad152abe --base-dir "C:\Users\lukasz.krysik\.claude\projects\C--Users-lukasz-krysik-Desktop-BMAD-MY-REPO-BMAD-METHOD"
+```
+
+### A.4 Output Format
+
+The script outputs structured data:
+
+```
+============================================================
+SESSION USAGE REPORT: be18c6d0-46c0-4530-bde9-f535ad152abe
+============================================================
+
+[MAIN SESSION]
+Input Tokens:        55,898
+Output Tokens:       64,591
+Cache Creation:      882,699
+Cache Read:          18,919,525
+-----------------------------
+Total Input:         19,858,122
+Total Tokens:        19,922,713
+Messages:            227
+
+[SUBAGENTS] (36 agents)
+----------------------------------------
+Agent ID         Messages    Input      Output     Total
+------------------------------------------------------------------
+a0c5fe1         3           51,800     9,989      61,789
+a0e4381         3           76,458     11,111     87,569
+...
+
+[ESTIMATED COST] (Claude Opus 4.5 pricing)
+Base input:    $5.7718
+Cache write:   $48.9102
+Cache read:    $32.0787
+Output:        $39.8384
+-----------------------------
+TOTAL:         $126.5990
+```
+
+### A.5 Mapping Output to Registry
+
+For each agent in the `[SUBAGENTS]` section:
+
+1. **Extract Agent ID** (first column, e.g., `a0c5fe1`)
+2. **Find matching row** in SUBAGENT TRACKING REGISTRY by Agent ID column
+3. **Update columns:**
+   - Input: from `Input` column
+   - Output: from `Output` column
+   - Total: from `Total` column
+   - Cache: calculate from Total - Input - Output (or use JSONL directly)
+4. **Calculate Cost USD** using formula from A.6
+5. **Update Status** to `TOKENS_COLLECTED`
+
+### A.6 Cost Formula (Claude Opus 4.5)
+
+```
+Cost USD = (input × $15/1M) + (output × $75/1M) + (cache_creation × $18.75/1M) + (cache_read × $1.50/1M)
+
+Per-token multipliers:
+- Input tokens: × $0.000015
+- Output tokens: × $0.000075
+- Cache creation tokens: × $0.00001875
+- Cache read tokens: × $0.0000015
+
+Example:
+  Input: 51,800 tokens × $0.000015 = $0.777
+  Output: 9,989 tokens × $0.000075 = $0.749
+  Cache creation: 0 tokens = $0.000
+  Cache read: 0 tokens = $0.000
+  TOTAL COST: $1.526 ≈ $1.53
+```
+
+### A.7 Metrics Calculation Reference
+
+After collecting all token data, calculate these metrics:
+
+| Metric | Formula | Good Value | Interpretation |
+|--------|---------|------------|----------------|
+| **TE_econ** | WDS_Points / Total_Tokens × 10000 | > 20 | Token Economy - higher is better |
+| **CPF** | Total_Tokens / Confirmed_Findings | < 3000 | Cost Per Finding - lower is better |
+| **CPT_USD** | Total_Cost / Traps_Detected | < $0.10 | Cost Per Trap - lower is better |
+| **TTE** | Traps_Detected / Total_Tokens × 1000 | > 0.2 | Token-Trap Efficiency - higher is better |
+| **ROI** | (WDS × Traps) / Cost_USD | > 500 | Return on Investment - higher is better |
+| **PES** | (OES × 100) / log10(Total_Tokens) | > 15 | Protocol Economy Score |
+
+### A.8 Troubleshooting
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| `No subagents found` | Wrong session ID or path | Verify session UUID and base-dir path |
+| `Permission denied` | File access issue | Run with appropriate permissions |
+| `Agent ID not in registry` | Unregistered subagent | Check if agent was spawned for this experiment |
+| `Token count mismatch` | Multiple JSONL messages | Verify all messages were summed |
+
+### A.9 Integration Checklist
+
+Before finalizing token collection:
+
+- [ ] session_usage_analyzer.py executed without errors
+- [ ] All expected Agent IDs appear in output
+- [ ] Each Agent ID mapped to exactly one registry row
+- [ ] All token columns populated with integers (no approximations)
+- [ ] Cost USD calculated for each agent
+- [ ] Total tokens match sum of individual agents
+- [ ] Summary file created in summaries/ directory

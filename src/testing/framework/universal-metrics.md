@@ -86,6 +86,26 @@ GUARD 8: Subagent Token Completeness (NEW)
     - REJECT run from metrics calculation
     - Report: "INCOMPLETE_TOKEN_DATA"
     - Action: Read JSONL file for missing fields
+
+GUARD 9: Session Analyzer Requirement (NEW)
+  Token data MUST come from session_usage_analyzer.py output, not manual JSONL reading.
+
+  Validation checks:
+    - Tokens are integers (no ~ prefix, no K/M suffixes)
+    - All agents from analyzer output are mapped to registry
+    - Total tokens match sum of per-agent totals
+    - Each Agent ID maps to exactly ONE registry row (1:1 rule)
+
+  IF session_usage_analyzer.py unavailable:
+    - Fall back to manual JSONL extraction
+    - Flag result as "MANUAL_EXTRACTION" in Status
+    - Use token_extractor.py script from orchestrator
+
+  Rejection criteria:
+    - Token value contains ~ (approximate)
+    - Token value uses K, M suffixes (5K, 1.2M)
+    - Agent ID appears in multiple rows with different Process/Task
+    - Total mismatch > 1% between analyzer sum and manual sum
 ```
 
 ---
@@ -434,6 +454,106 @@ Interpretation:
 
 ---
 
+## USD Cost Metrics (NEW)
+
+These metrics express costs in actual USD values using Claude Opus 4.5 pricing.
+
+### Total Cost (TC_USD)
+
+```
+TC_USD = Σ(COST_USD per subagent)
+
+Where COST_USD per agent:
+= (input_tokens × $0.000015) + (output_tokens × $0.000075)
++ (cache_creation × $0.00001875) + (cache_read × $0.0000015)
+
+Pricing breakdown (Claude Opus 4.5):
+- Input tokens: $15 per 1M tokens ($0.000015 per token)
+- Output tokens: $75 per 1M tokens ($0.000075 per token)
+- Cache creation: $18.75 per 1M tokens ($0.00001875 per token)
+- Cache read: $1.50 per 1M tokens ($0.0000015 per token)
+
+Example:
+  Agent 1: Input=51800, Output=9989, Cache=21580
+  Cost = (51800 × 0.000015) + (9989 × 0.000075) + (21580 × 0.00001875)
+       = $0.777 + $0.749 + $0.405
+       = $1.93
+```
+
+### Cost per Trap (CPT_USD)
+
+```
+CPT_USD = TC_USD / Traps_Detected
+
+How much does it cost to detect one trap?
+Lower = Better
+
+Interpretation:
+- CPT_USD < $0.05: Excellent value (very cheap per trap)
+- CPT_USD $0.05-0.15: Good value
+- CPT_USD $0.15-0.30: Moderate value
+- CPT_USD > $0.30: Expensive (consider optimization)
+
+Example:
+  TC_USD = $1.93, Traps = 12
+  CPT_USD = $1.93 / 12 = $0.16 (Moderate value)
+```
+
+### Token-Trap Efficiency (TTE)
+
+```
+TTE = Traps_Detected / Total_Tokens × 1000
+
+How many traps detected per 1000 tokens spent?
+Higher = Better
+
+Interpretation:
+- TTE > 0.3: Excellent efficiency (1 trap per ~3K tokens)
+- TTE 0.1-0.3: Good efficiency (1 trap per 3-10K tokens)
+- TTE 0.05-0.1: Acceptable efficiency (1 trap per 10-20K tokens)
+- TTE < 0.05: Poor efficiency (1 trap per 20K+ tokens)
+
+Example:
+  Traps = 12, Tokens = 45,000
+  TTE = 12 / 45000 × 1000 = 0.267 (Good efficiency)
+```
+
+### ROI Score (Return on Investment)
+
+```
+ROI = (WDS × Traps_Detected) / TC_USD
+
+Value generated (WDS points × traps) per dollar spent.
+Higher = Better
+
+Interpretation:
+- ROI > 1000: Excellent ROI
+- ROI 500-1000: Good ROI
+- ROI 200-500: Acceptable ROI
+- ROI < 200: Poor ROI (low value for money)
+
+Example:
+  WDS = 85, Traps = 12, TC_USD = $1.93
+  ROI = (85 × 12) / 1.93 = 1020 / 1.93 = 528 (Good ROI)
+```
+
+### Efficiency Score (ES)
+
+```
+ES = Traps_Detected / Total_Tokens
+
+Raw efficiency ratio (traps per token).
+Useful for comparing processes without scaling.
+
+Note: This is TTE / 1000 for comparison convenience.
+
+Example:
+  Traps = 12, Tokens = 45,000
+  ES = 12 / 45000 = 0.000267
+```
+
+---
+
 ## Effectiveness Metrics (Cost-Effectiveness)
 
 ### Detection Effectiveness (DE)
@@ -548,6 +668,98 @@ Based on metrics, recommend process for different use cases:
 | [P1] | | | | | |
 | [P2] | | | | | |
 ```
+
+---
+
+## Test-Level Metrics (Per Process-Task Combination) (NEW)
+
+These metrics enable fair comparison between processes by normalizing for different test characteristics.
+
+### Test Effectiveness Index (TEI)
+
+```
+TEI = (DR × WDS × P) / 100
+
+Composite measure combining detection rate, weighted detection, and precision.
+Higher = Better
+
+Interpretation:
+- TEI > 60: Excellent test effectiveness
+- TEI 40-60: Good test effectiveness
+- TEI 20-40: Acceptable test effectiveness
+- TEI < 20: Poor test effectiveness
+
+Example:
+  DR = 80%, WDS = 75, P = 0.9
+  TEI = (80 × 75 × 0.9) / 100 = 5400 / 100 = 54.0 (Good)
+```
+
+### Process Comparison Index (PCI)
+
+```
+PCI = TEI / (Tokens / 10000)
+
+Normalizes effectiveness by token cost for fair process comparison.
+Higher = Better (more effectiveness per 10K tokens)
+
+Interpretation:
+- PCI > 15: Excellent process efficiency
+- PCI 8-15: Good process efficiency
+- PCI 4-8: Acceptable process efficiency
+- PCI < 4: Poor process efficiency (expensive for effectiveness)
+
+Example:
+  TEI = 54.0, Tokens = 45,000
+  PCI = 54.0 / 4.5 = 12.0 (Good efficiency)
+```
+
+### Task Complexity Adjustment (TCA)
+
+```
+TCA = Expected_Traps × Avg_Severity_Weight
+
+Accounts for task difficulty when comparing results.
+
+Severity weights:
+- CRITICAL = 3
+- IMPORTANT = 2
+- MINOR = 1
+
+Example:
+  Task T1: 5 CRITICAL, 3 IMPORTANT, 2 MINOR
+  TCA = (5 × 3) + (3 × 2) + (2 × 1) = 15 + 6 + 2 = 23
+```
+
+### Normalized Process Score (NPS)
+
+```
+NPS = (WDS / TCA) × 100
+
+Normalizes WDS by task complexity for cross-task comparison.
+Higher = Better
+
+Use case: Comparing process performance across tasks of different difficulty.
+
+Example:
+  WDS = 75, TCA = 23
+  NPS = (75 / 23) × 100 = 326 (Good for this task complexity)
+```
+
+### Process Ranking Table Template
+
+```markdown
+## Process Ranking for Task T[N]
+
+| Rank | Process | WDS | TEI | PCI | Tokens | Cost | NPS |
+|------|---------|-----|-----|-----|--------|------|-----|
+| 1 | workflow-v7.0 | 85 | 61.2 | 13.6 | 45000 | $1.93 | 370 |
+| 2 | workflow-v6.6 | 72 | 51.8 | 11.5 | 45000 | $1.85 | 313 |
+| 3 | workflow-v6.5 | 68 | 48.9 | 9.8 | 50000 | $2.10 | 296 |
+
+**Recommendation:** workflow-v7.0 for this task (best TEI and NPS)
+```
+
+---
 
 ### Division Safety Guards for Economy Metrics
 

@@ -1,4 +1,4 @@
-# Deep Verify Experiment Log (v2)
+# Deep Verify Experiment Log (v4)
 
 ## Changes from v1
 - ADDED: 3-run variance tracking
@@ -14,13 +14,26 @@
 - ADDED: cache_creation_input_tokens tracking
 - ADDED: Protocol cost comparison section
 
+## Changes in v4 (Summaries Restructure)
+- ADDED: Summary file links to `summaries/` directory
+- ADDED: Cost USD column
+- ADDED: Token data from session_usage_analyzer.py integration
+- ADDED: 1:1 rule enforcement (one subagent = one process + one task)
+- CHANGED: Full experiment details now in `summaries/YYYYMMDD-HHMM_results.md`
+- CHANGED: This file is now primarily a dashboard with links
+- KEPT: Historical experiments (before v4) remain below for reference
+
 ---
 
 ## Summary Dashboard
 
-| Exp ID | Date | Workflow | Task | Runs | DR±σ | WDS±σ | TE | P | DQ | OES±σ | ID | Stable? | TE_econ | CPF | PES |
-|--------|------|----------|------|------|------|-------|-----|-----|-----|-------|-----|---------|---------|-----|-----|
-| _template_ | _YYYY-MM-DD_ | _vX.Y_ | _TN_ | _3_ | _XX±X%_ | _XX±X%_ | _X.XX_ | _X.XX_ | _X.X_ | _XX±X_ | _±X_ | _Y/N_ | _X.X_ | _XXXX_ | _X.X_ |
+> **NOTE**: Full experiment details are now in `summaries/` directory.
+> This file contains only the Summary Dashboard and Template.
+> Historical experiments (before 2026-01-13) remain below for reference.
+
+| Exp ID | Date | Workflow | Task | DR | WDS | OES | Tokens | Cost USD | Summary File |
+|--------|------|----------|------|-----|-----|-----|--------|----------|--------------|
+| _template_ | _YYYY-MM-DD_ | _vX.Y_ | _TN_ | _XX%_ | _XX_ | _XX_ | _NNNNN_ | _$X.XX_ | [YYYYMMDD-HHMM_results.md](summaries/YYYYMMDD-HHMM_results.md) |
 
 ---
 
@@ -375,6 +388,17 @@ Track additions from BONUS_VALID findings:
 ---
 
 <!-- EXPERIMENT LOG ENTRIES START HERE -->
+
+---
+
+## Historical Experiments Archive
+
+> **Note:** These experiments were created before the v4 restructure (summaries/ directory).
+> They remain here for historical reference. New experiments should:
+> 1. Create full details in `summaries/YYYYMMDD-HHMM_results.md`
+> 2. Add only one row to the Summary Dashboard above
+> 3. Use session_usage_analyzer.py for token data
+> 4. Follow the 1:1 rule (one subagent = one process + one task)
 
 ---
 
