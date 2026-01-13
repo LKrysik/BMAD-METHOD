@@ -16,7 +16,6 @@ src/
 │   │   ├── protocol-registry.md              # Protocol definitions
 │   │   ├── universal-metrics.md              # Metrics formulas
 │   │   ├── method-matrix.md                  # Methods per action
-│   │   ├── metrics.md                        # Legacy metrics
 │   │   └── modification-operators.md         # How to evolve
 │   │
 │   ├── tasks/                         # Test tasks
@@ -54,29 +53,29 @@ src/
 ## Quick Start Command
 
 ```
-Przeprowadź eksperyment testowania protokołu weryfikacyjnego.
+Run verification protocol test.
 
-KROK 1 - Przeczytaj pliki w tej kolejności:
+STEP 1 - Read files in this order:
 1. src/testing/framework/universal-test-orchestrator.md
 2. src/testing/framework/protocol-registry.md
 3. src/testing/framework/universal-metrics.md
 4. src/testing/tasks/trap-tasks.md
-5. [PROTOCOL_FILE] - wybrany protokół do testowania
+5. [PROTOCOL_FILE] - selected protocol to test
 6. src/core/methods/methods.csv
 
-KROK 2 - Wykonaj eksperyment:
-- Wybierz protokół: [DV-V6 / VGD / QVP / ...]
-- Wybierz zadanie: T[1-15]
-- Wykonaj Phase 0-5 zgodnie z orchestratorem
-- Mierz tokeny i czas dla każdego uruchomienia
-- Zapisz wyniki do src/testing/results/experiment-log.md
+STEP 2 - Execute experiment:
+- Select protocol: [DV-V6 / VGD / QVP / ...]
+- Select task: T[1-15]
+- Execute Phase 0-5 according to orchestrator
+- Measure tokens and time for each run
+- Save results to src/testing/results/experiment-log.md
 
-KROK 3 - Zasady:
-- ZAWSZE 3 uruchomienia minimum dla variance
-- ZAWSZE blind evaluation
-- ZAWSZE mierz tokeny (input + output)
-- ZAWSZE mierz czas (start → end)
-- Ground-truth.md jest POUFNY
+STEP 3 - Rules:
+- ALWAYS 3 runs minimum for variance
+- ALWAYS blind evaluation
+- ALWAYS measure tokens (input + output)
+- ALWAYS measure time (start → end)
+- Ground-truth.md is CONFIDENTIAL
 ```
 
 ---
@@ -113,20 +112,49 @@ KROK 3 - Zasady:
 
 ## Critical Rules
 
-### 1. Token Measurement (MANDATORY)
+### 1. Token Measurement (MANDATORY - REAL VALUES ONLY)
+
+**CRITICAL: Approximate values (~) are FORBIDDEN. Use ONLY real values from JSONL.**
+
+**Each verification run MUST be a separate subagent** spawned via Task tool. After subagent completes:
+
+1. **Get Agent ID** from Task tool result (7-char hash, e.g., `a63f852`)
+2. **Read JSONL file** at: `~/.claude/projects/[encoded-path]/[session-id]/subagents/agent-[id].jsonl`
+3. **Extract REAL tokens** using Python script (see orchestrator 1.3)
 
 ```markdown
-## Token Recording
+## Token Recording - [Process] on T[N]
 
-### Agent Run [N]
-- Input tokens: [COUNT]
-- Output tokens: [COUNT]
-- Total: [INPUT + OUTPUT]
+### Subagent Verification Run
+- Agent ID: a63f852  ← REAL 7-char hash
+- Slug: shimmering-fluttering-ritchie  ← REAL 3-word name
+- Input tokens: 12  ← INTEGER from JSONL
+- Output tokens: 2434  ← INTEGER from JSONL
+- Cache creation: 47702  ← INTEGER from JSONL
+- **TOTAL (cost): 50148**  ← NO ~ approximations!
 
-### Protocol Run [N]
-- Input tokens: [COUNT]
-- Output tokens: [COUNT]
-- Total: [INPUT + OUTPUT]
+### Validation Checklist
+- [ ] Agent ID is 7-char hex (not placeholder)
+- [ ] All values are integers (no ~, no K suffix)
+- [ ] Values extracted from agent-[id].jsonl file
+```
+
+**REJECTION - DO NOT LOG these formats:**
+- `~50,000` ← approximate
+- `~5K` ← abbreviated
+- `[pending]` ← placeholder
+- `unknown` ← not captured
+
+**Python Token Extractor** (run after each subagent):
+```python
+import re, json, sys
+with open(sys.argv[1], 'r', encoding='utf-8') as f:
+    c = f.read()
+    j = json.loads(c.split('\n')[0])
+    i = sum(int(x) for x in re.findall(r'"input_tokens":(\d+)', c))
+    o = sum(int(x) for x in re.findall(r'"output_tokens":(\d+)', c))
+    cc = sum(int(x) for x in re.findall(r'"cache_creation_input_tokens":(\d+)', c))
+    print(f"Agent: {j.get('agentId')} | Slug: {j.get('slug')} | TOTAL: {i+o+cc}")
 ```
 
 ### 2. Time Measurement (MANDATORY)

@@ -1,7 +1,7 @@
 # Universal Verification Protocol Test Orchestrator
 
-**Version: 1.0**
-**Purpose**: Test ANY verification protocol against standardized trap tasks with measurable metrics.
+**Version: 2.0**
+**Purpose**: Test ANY verification protocol against standardized trap tasks with measurable metrics and full token economy tracking.
 
 ---
 
@@ -12,6 +12,9 @@
 | `DV-V6.1` | Deep Verify V6.1 | `workflow-v6.1.md` | Phases + Findings |
 | `DV-V6.2` | Deep Verify V6.2 | `workflow-v6.2.md` | Phases + Findings |
 | `DV-V6.3` | Deep Verify V6.3 | `workflow-v6.3.md` | Phases + Findings |
+| `DV-V6.4` | Deep Verify V6.3 | `workflow-v6.3.md` | Phases + Findings |
+| `DV-V6.5` | Deep Verify V6.3 | `workflow-v6.3.md` | Phases + Findings |
+| `DV-V6.6` | Deep Verify V6.3 | `workflow-v6.3.md` | Phases + Findings |
 | `DV-LITE` | Deep Verify Lite | `workflow-v6-lite.md` | Phases + Findings |
 | `VGD` | Tensor V-GD Protocol | `quality_gates/Tensor-Based-Verification-Protocol.md` | Lambda V + Gradient Hotspots |
 | `QVP` | Quadrant Verification | `quality_gates/Quadrant-Verification-Protocol.md` | 4 Scans + SPOF |
@@ -83,7 +86,7 @@ Protocol Version: [version]
 ```markdown
 ## Task Selection
 
-Task ID: T[1-15]
+Task ID: T[1-21]
 Task Name: [from trap-tasks.md]
 Difficulty: [Standard / Advanced]
 Expected Errors: [count from ground-truth.md]
@@ -177,6 +180,126 @@ When artifact doesn't exist, spawn a subagent with:
 
 ---
 
+## Phase 0.6: Subagent Tracking Registry (CRITICAL)
+
+**Purpose**: Main orchestrator MUST maintain a registry linking each subagent to its process, task, and token usage. This enables accurate cost and effectiveness analysis per process.
+
+### 0.6.1 Registry Structure
+
+The orchestrating agent MUST maintain this registry throughout the experiment:
+
+```markdown
+## SUBAGENT TRACKING REGISTRY
+
+### Session Information
+- Session ID: [from ~/.claude session]
+- Session Path: ~/.claude/projects/[project]/[session-id]/
+- Experiment ID: EXP-[YYYY-MM-DD]-[NNN]
+
+### Agent Registry Table
+| Entry | Process | Task | Run# | Agent ID | Slug | Log File | Status |
+|-------|---------|------|------|----------|------|----------|--------|
+| 1 | [process.md] | T[N] | 1 | [pending] | [pending] | [pending] | PLANNED |
+| 2 | [process.md] | T[N] | 2 | [pending] | [pending] | [pending] | PLANNED |
+| ... | ... | ... | ... | ... | ... | ... | ... |
+```
+
+### 0.6.2 Tracking Protocol (MANDATORY)
+
+**BEFORE spawning each subagent:**
+
+```markdown
+## Pre-Spawn Registration - Entry [N]
+
+Registering planned subagent:
+- Process: [exact filename, e.g., workflow-v6.5.md]
+- Task: T[N]
+- Run Number: [1/2/3]
+- Purpose: [artifact generation / protocol verification]
+- Status: PLANNED
+- Timestamp: [ISO 8601]
+```
+
+**IMMEDIATELY AFTER subagent returns:**
+
+```markdown
+## Post-Spawn Update - Entry [N]
+
+Subagent completed:
+- Agent ID: [7-char hash from Task tool result]
+- Agent Slug: [three-word-name from Task tool result]
+- Log File: ~/.claude/projects/[project]/[session]/subagents/agent-[id].jsonl
+- Status: COMPLETED
+- Completion Time: [ISO 8601]
+```
+
+**AFTER collecting tokens from JSONL:**
+
+```markdown
+## Token Collection - Entry [N]
+
+Tokens collected from agent-[id].jsonl:
+- Input Tokens: [sum]
+- Output Tokens: [sum]
+- Cache Created: [sum]
+- **Total Tokens**: [grand total]
+- Status: TOKENS_COLLECTED
+```
+
+### 0.6.3 Complete Registry Example
+
+```markdown
+## SUBAGENT TRACKING REGISTRY
+
+### Session Information
+- Session ID: d68903dc-3331-4b11-8693-72a038b61a9f
+- Session Path: ~/.claude/projects/BMAD-METHOD/d68903dc.../
+- Experiment ID: EXP-2025-01-12-001
+
+### Agent Registry Table
+| Entry | Process | Task | Run# | Agent ID | Slug | Total Tokens | Status |
+|-------|---------|------|------|----------|------|--------------|--------|
+| 1 | workflow-v6.5.md | T3 | 1 | a1b2c3d | witty-red-book | 45,230 | TOKENS_COLLECTED |
+| 2 | workflow-v6.5.md | T3 | 2 | e4f5g6h | calm-blue-tree | 42,100 | TOKENS_COLLECTED |
+| 3 | workflow-v6.5.md | T3 | 3 | i7j8k9l | swift-green-star | 48,500 | TOKENS_COLLECTED |
+| 4 | workflow-v6.6.md | T3 | 1 | m0n1o2p | quiet-yellow-moon | 38,200 | TOKENS_COLLECTED |
+| 5 | workflow-v6.6.md | T3 | 2 | q3r4s5t | bright-orange-wave | 39,800 | TOKENS_COLLECTED |
+| 6 | workflow-v6.6.md | T3 | 3 | u6v7w8x | deep-purple-cloud | 41,100 | TOKENS_COLLECTED |
+
+### Token Summary by Process
+| Process | Task | Runs | Total Tokens | Avg Tokens | Findings | Avg CPF |
+|---------|------|------|--------------|------------|----------|---------|
+| workflow-v6.5.md | T3 | 3 | 135,830 | 45,277 | 12 | 11,319 |
+| workflow-v6.6.md | T3 | 3 | 119,100 | 39,700 | 15 | 7,940 |
+```
+
+### 0.6.4 Enforcement Rules
+
+**CRITICAL - Orchestrator MUST:**
+
+1. ✅ Create registry BEFORE first subagent spawn
+2. ✅ Register each planned subagent with Process + Task BEFORE spawning
+3. ✅ Update registry with Agent ID + Slug IMMEDIATELY after spawn
+4. ✅ Collect tokens from JSONL and update registry BEFORE moving to next phase
+5. ✅ Include complete registry in experiment-log.md
+
+**FAILURE MODES:**
+
+| Failure | Detection | Recovery |
+|---------|-----------|----------|
+| Missing Agent ID | Registry shows "PLANNED" after completion | Re-check Task tool output |
+| Missing tokens | Status not "TOKENS_COLLECTED" | Read JSONL file manually |
+| Wrong process mapping | Process column empty | Check pre-spawn registration |
+
+### 0.6.5 Verification Checkpoint
+
+Before proceeding to Phase 1, confirm:
+- [ ] Registry created with Session ID
+- [ ] All planned runs registered with Process + Task
+- [ ] Registry format matches template
+
+---
+
 ## Phase 1: Execute Agent Task (Conditional)
 
 **CONDITION:** Only execute if artifact does NOT exist (see Phase 0.5)
@@ -221,6 +344,143 @@ Provide your solution as a structured design document.
 - Input: [N]
 - Output: [N]
 - Total: [N]
+```
+
+### 1.3 Subagent Token Collection (MANDATORY)
+
+**Purpose**: Extract REAL token usage from subagent JSONL log files. **APPROXIMATE VALUES (~) ARE FORBIDDEN.**
+
+**Log File Location (EXACT PATH):**
+```
+Windows: C:\Users\[user]\.claude\projects\[encoded-project-path]\[session-id]\subagents\agent-[id].jsonl
+Linux/Mac: ~/.claude/projects/[encoded-project-path]/[session-id]/subagents/agent-[id].jsonl
+
+Where:
+- [encoded-project-path] = project path with slashes replaced by dashes (e.g., C--Users-john-project)
+- [session-id] = UUID of main orchestrator session (e.g., f6d43ed5-d9da-4528-b794-daf55cef9dd9)
+- [id] = 7-character agent hash (e.g., a63f852)
+
+Example (Windows):
+C:\Users\lukasz.krysik\.claude\projects\C--Users-lukasz-krysik-Desktop-BMAD-MY-REPO-BMAD-METHOD\f6d43ed5-d9da-4528-b794-daf55cef9dd9\subagents\agent-a63f852.jsonl
+```
+
+**JSONL Structure:**
+```json
+{
+  "agentId": "a63f852",
+  "slug": "shimmering-fluttering-ritchie",
+  "message": {
+    "usage": {
+      "input_tokens": 3,
+      "output_tokens": 2434,
+      "cache_creation_input_tokens": 47702,
+      "cache_read_input_tokens": 89599
+    }
+  }
+}
+```
+
+**Token Calculation Formula:**
+```
+COST_TOKENS = Σ(input_tokens + output_tokens + cache_creation_input_tokens)
+
+Note: cache_read_input_tokens are FREE cache reads - exclude from cost.
+```
+
+**MANDATORY: Python Script for Token Extraction**
+
+Run this script to extract REAL tokens (works on Windows/Linux/Mac):
+
+```python
+# token_extractor.py - Run: python token_extractor.py <jsonl_file>
+import re
+import sys
+import json
+
+with open(sys.argv[1], 'r', encoding='utf-8') as f:
+    content = f.read()
+    first_line = content.split('\n')[0]
+    j = json.loads(first_line)
+    agent_id = j.get('agentId', 'unknown')
+    slug = j.get('slug', 'unknown')
+
+    input_t = sum(int(x) for x in re.findall(r'"input_tokens":(\d+)', content))
+    output_t = sum(int(x) for x in re.findall(r'"output_tokens":(\d+)', content))
+    cache_c = sum(int(x) for x in re.findall(r'"cache_creation_input_tokens":(\d+)', content))
+
+    print(f'Agent ID: {agent_id}')
+    print(f'Slug: {slug}')
+    print(f'Input tokens: {input_t}')
+    print(f'Output tokens: {output_t}')
+    print(f'Cache creation: {cache_c}')
+    print(f'TOTAL (cost): {input_t + output_t + cache_c}')
+```
+
+**Example Real Output:**
+```
+Agent ID: a63f852
+Slug: shimmering-fluttering-ritchie
+Input tokens: 12
+Output tokens: 2434
+Cache creation: 47702
+TOTAL (cost): 50148
+```
+
+**Token Collection Template:**
+```markdown
+## Subagent Token Report - [Process] on T[N]
+
+### Agent Identification
+- Agent ID: a63f852  ← MUST be real 7-char hash
+- Agent Slug: shimmering-fluttering-ritchie  ← MUST be real slug
+- Log File: agent-a63f852.jsonl
+- Session: f6d43ed5-d9da-4528-b794-daf55cef9dd9
+
+### Token Breakdown (REAL VALUES ONLY)
+| Metric | Value |
+|--------|-------|
+| Input tokens | 12 |
+| Output tokens | 2434 |
+| Cache creation | 47702 |
+| **TOTAL (cost)** | **50148** |
+
+### Validation
+- [ ] Agent ID is 7-char hash (not placeholder)
+- [ ] Tokens are integers (no ~ approximations)
+- [ ] Values extracted from JSONL file (not estimated)
+```
+
+### 1.4 TOKEN VALIDATION GATE (BLOCKING)
+
+**CRITICAL: DO NOT PROCEED without real token data.**
+
+Before moving to Phase 2, verify:
+
+| Check | Required | Failure Action |
+|-------|----------|----------------|
+| Agent ID format | 7-char hex hash | Re-check Task tool output |
+| Token values | Integer (no ~) | Run Python extractor |
+| JSONL file exists | Yes | Check session path |
+| Slug captured | 3-word name | Re-read first line of JSONL |
+
+**REJECTION CRITERIA - If ANY of these, STOP and fix:**
+- Token value contains `~` (approximate)
+- Agent ID is placeholder like `[pending]` or `abc1234`
+- Slug is `unknown` or placeholder
+- Total tokens is estimated like `~5000` or `5K`
+
+**Valid Example:**
+```
+✓ Agent ID: a63f852
+✓ Tokens: 50148 (integer, no ~)
+✓ Slug: shimmering-fluttering-ritchie
+```
+
+**INVALID Example (MUST FIX):**
+```
+✗ Agent ID: [pending]  ← placeholder
+✗ Tokens: ~50,000  ← approximation with ~
+✗ Slug: unknown  ← not captured
 ```
 
 ---
@@ -516,6 +776,23 @@ Confidence: [HIGH / MEDIUM / LOW]
 | OES | [value] | |
 | RS | [value] | [Stable/Moderate/Unstable] |
 
+### Token Economy Results (NEW)
+
+#### Subagent Token Breakdown
+| Run | Agent ID | Slug | Input | Output | Cache Created | Total |
+|-----|----------|------|-------|--------|---------------|-------|
+| 1 | [id] | [slug] | [N] | [N] | [N] | [N] |
+| 2 | [id] | [slug] | [N] | [N] | [N] | [N] |
+| 3 | [id] | [slug] | [N] | [N] | [N] | [N] |
+| **Sum** | - | - | [sum] | [sum] | [sum] | **[total]** |
+
+#### Economy Metrics
+| Metric | Run 1 | Run 2 | Run 3 | Mean | StdDev | Interpretation |
+|--------|-------|-------|-------|------|--------|----------------|
+| TE_econ | | | | | | [Excellent/Good/Acceptable/Poor] |
+| CPF | | | | | | [Very Economical/Economical/Moderate/Expensive] |
+| PES | | | | | | [Excellent/Good/Acceptable/Needs Optimization] |
+
 ### Protocol-Specific Results
 [Protocol-specific metrics and observations]
 
@@ -564,6 +841,14 @@ Confidence: [HIGH / MEDIUM / LOW]
 | DQ | | | | |
 | OES | | | | |
 | Tokens (total) | | | | |
+
+### Token Economy Comparison (NEW)
+| Protocol | Avg Tokens | TE_econ | CPF | PES | Economy Rank |
+|----------|------------|---------|-----|-----|--------------|
+| DV-V6 | | | | | |
+| V-GD | | | | | |
+| QVP | | | | | |
+| **Best** | | | | | |
 
 ### Unique Strengths
 - DV-V6: [what it catches that others miss]
@@ -691,7 +976,7 @@ After all tasks:
 src/
 ├── testing/                                    # ALL TESTING FILES
 │   ├── framework/                              # Testing framework
-│   │   ├── prompt.md                          # Test prompt template (START HERE)
+│   │   ├── prompt.md                          # Test prompts (START HERE)
 │   │   ├── universal-test-orchestrator.md     # This file - main orchestrator
 │   │   ├── protocol-registry.md               # Protocol definitions & invocation
 │   │   ├── universal-metrics.md               # Metrics formulas & guards
@@ -699,10 +984,7 @@ src/
 │   │   ├── meta-analysis-execution-template.md # Meta-analysis template
 │   │   ├── AGENT-INSTRUCTIONS-UNIVERSAL.md    # Quick start for agents
 │   │   ├── method-matrix.md                   # Methods per action (reference)
-│   │   ├── modification-operators.md          # How to evolve protocols (reference)
-│   │   ├── [LEGACY] metrics.md                # Deprecated - use universal-metrics.md
-│   │   ├── [LEGACY] test-orchestrator-legacy.md # Deprecated - use this file
-│   │   └── [LEGACY] AGENT-INSTRUCTIONS-legacy.md # Deprecated
+│   │   └── modification-operators.md          # How to evolve protocols (reference)
 │   │
 │   ├── tasks/                                  # Test tasks
 │   │   ├── trap-tasks.md                      # Standard tasks T1-T10
@@ -850,3 +1132,36 @@ Meta-Analysis Output → Protocol Evolution Input
 - [ ] Phase 6: (Optional) Cross-protocol comparison
 - [ ] Phase 7: Decision on continue/stop/evolve
 - [ ] Phase 8: (Periodic) Meta-Analysis with exploration methods
+
+### Detailed Measurement Checklist
+
+**Token Measurements (per subagent):**
+- [ ] Agent Run 1: agentId=___ input=___ output=___ cache=___ total=___
+- [ ] Agent Run 2: agentId=___ input=___ output=___ cache=___ total=___
+- [ ] Agent Run 3: agentId=___ input=___ output=___ cache=___ total=___
+- [ ] Protocol Run 1: agentId=___ input=___ output=___ cache=___ total=___
+- [ ] Protocol Run 2: agentId=___ input=___ output=___ cache=___ total=___
+- [ ] Protocol Run 3: agentId=___ input=___ output=___ cache=___ total=___
+
+**Time Measurements:**
+- [ ] Agent Run 1-3 Time: ___sec, ___sec, ___sec
+- [ ] Protocol Run 1-3 Time: ___sec, ___sec, ___sec
+
+**Validation:**
+- [ ] Agent Isolation: confirmed no access to ground-truth.md
+- [ ] Blind evaluation: findings described BEFORE opening ground-truth.md
+- [ ] Results saved to experiment-log.md
+
+**Token Economy:**
+- [ ] Process Token Total = ___
+- [ ] TE_econ, CPF, PES calculated
+
+### Edge Cases
+
+| Situation | Action | Log As |
+|-----------|--------|--------|
+| Protocol detects 0 findings | Continue (may be valid) | `ZERO_FINDINGS` |
+| WDS = 0 | Skip TE, TiE, OES, TE_econ | `WDS_ZERO` |
+| Agent fails to generate artifact | Repeat run | `AGENT_FAILURE` |
+| Token collection fails | Check JSONL exists | `TOKEN_COLLECTION_FAILED` |
+| Measurement missing | Document reason | `MEASUREMENT_MISSING` |

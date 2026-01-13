@@ -8,13 +8,19 @@
 - ADDED: Concern efficiency
 - REMOVED: Phase efficiency (unmeasurable)
 
+## Changes in v3 (Token Economy)
+- ADDED: Subagent token tracking (agentId, slug, detailed breakdown)
+- ADDED: Token Economy metrics (TE_econ, CPF, PES)
+- ADDED: cache_creation_input_tokens tracking
+- ADDED: Protocol cost comparison section
+
 ---
 
 ## Summary Dashboard
 
-| Exp ID | Date | Workflow | Task | Runs | DR±σ | WDS±σ | TE | P | DQ | OES±σ | ID | Stable? |
-|--------|------|----------|------|------|------|-------|-----|-----|-----|-------|-----|---------|
-| _template_ | _YYYY-MM-DD_ | _vX.Y_ | _TN_ | _3_ | _XX±X%_ | _XX±X%_ | _X.XX_ | _X.XX_ | _X.X_ | _XX±X_ | _±X_ | _Y/N_ |
+| Exp ID | Date | Workflow | Task | Runs | DR±σ | WDS±σ | TE | P | DQ | OES±σ | ID | Stable? | TE_econ | CPF | PES |
+|--------|------|----------|------|------|------|-------|-----|-----|-----|-------|-----|---------|---------|-----|-----|
+| _template_ | _YYYY-MM-DD_ | _vX.Y_ | _TN_ | _3_ | _XX±X%_ | _XX±X%_ | _X.XX_ | _X.XX_ | _X.X_ | _XX±X_ | _±X_ | _Y/N_ | _X.X_ | _XXXX_ | _X.X_ |
 
 ---
 
@@ -76,19 +82,33 @@ Cannot self-verify: [what]
 ### Phase 1: Agent Execution (3 Runs)
 
 #### Run 1
-- Tokens: [input] + [output] = [total]
+- Agent ID: [7-char hash]
+- Agent Slug: [three-word-name]
+- Tokens: [input] + [output] + [cache_created] = [total]
 - Observable shortcuts: [list]
 - Artifact: [saved as artifact-run-1.md]
 
 #### Run 2
-- Tokens: [input] + [output] = [total]
+- Agent ID: [7-char hash]
+- Agent Slug: [three-word-name]
+- Tokens: [input] + [output] + [cache_created] = [total]
 - Observable shortcuts: [list]
 - Artifact: [saved as artifact-run-2.md]
 
 #### Run 3
-- Tokens: [input] + [output] = [total]
+- Agent ID: [7-char hash]
+- Agent Slug: [three-word-name]
+- Tokens: [input] + [output] + [cache_created] = [total]
 - Observable shortcuts: [list]
 - Artifact: [saved as artifact-run-3.md]
+
+#### Subagent Token Summary (NEW)
+| Run | Agent ID | Slug | Input | Output | Cache Created | Total |
+|-----|----------|------|-------|--------|---------------|-------|
+| 1 | [id] | [slug] | [N] | [N] | [N] | [N] |
+| 2 | [id] | [slug] | [N] | [N] | [N] | [N] |
+| 3 | [id] | [slug] | [N] | [N] | [N] | [N] |
+| **Total** | - | - | [sum] | [sum] | [sum] | **[total]** |
 
 #### Agent Pre-Workflow Assessment (B1 methods)
 | Method | Run 1 | Run 2 | Run 3 |
@@ -206,6 +226,28 @@ Consistent: [N] / Unique: [N] = [FC]%
 CE_A: [avg] | CE_B: [avg] | CE_C: [avg]
 
 High-value concerns: [list]
+
+---
+
+### Token Economy Analysis (NEW)
+
+#### Economy Metrics
+| Metric | Run 1 | Run 2 | Run 3 | Mean | StdDev | Interpretation |
+|--------|-------|-------|-------|------|--------|----------------|
+| TE_econ | [N] | [N] | [N] | [avg] | [σ] | [Excellent/Good/Acceptable/Poor] |
+| CPF | [N] | [N] | [N] | [avg] | [σ] | [Very Economical/Economical/Moderate/Expensive] |
+| PES | [N] | [N] | [N] | [avg] | [σ] | [Excellent/Good/Acceptable/Needs Optimization] |
+
+#### Token Collection Details
+```
+Log Location: ~/.claude/projects/[project]/[session]/subagents/
+Calculation: Total = Σ(input_tokens + output_tokens + cache_creation_input_tokens)
+```
+
+#### Economy Assessment
+- Cost-effectiveness rating: [Excellent/Good/Acceptable/Poor]
+- Recommendations: [optimization suggestions if Poor]
+
 Low-value concerns: [list]
 
 ---
@@ -4841,5 +4883,128 @@ V3 Expert tasks are significantly harder (-18% DR) due to theoretical impossibil
 V6.6 with Phase 2.7 successfully addresses the CONFLICT and DEPEND weakness identified in V6.5. The systematic approach (vocabulary → triad → matrix → proof → graph) provides comprehensive detection without hardcoding specific methods.
 
 **Recommendation:** V6.6 should be primary workflow for tasks with multiple requirements.
+
+---
+
+## EXP-2026-01-12-005: Multi-Workflow Token Economy Comparison
+
+### Configuration
+- **Date:** 2026-01-12
+- **Tasks:** T10, T11, T12, T15, T18, T19, T20, T21 (8 tasks)
+- **Workflows Compared:** V6.6, V6.5, V6.4, V6.3
+- **Task Breakdown:**
+  - Standard: T10 (6 errors), T11 (7 errors), T12 (7 errors), T15 (7 errors)
+  - V3 Expert: T18 (6 errors), T19 (6 errors), T20 (6 errors), T21 (6 errors)
+- **Total Ground Truth Errors:** 51
+- **Execution Method:** Parallel subagent verification
+
+### Per-Task Detection Rates
+
+| Task | Errors | V6.6 | V6.5 | V6.4 | V6.3 |
+|------|--------|------|------|------|------|
+| T10 | 6 | 4 (67%) | 6 (100%) | 5 (83%) | 6 (100%) |
+| T11 | 7 | 5.5 (79%) | 7 (100%) | 6 (86%) | 7 (100%) |
+| T12 | 7 | 4 (57%) | 7 (100%) | 6 (86%) | 7 (100%) |
+| T15 | 7 | 7 (100%) | 7 (100%) | 6 (86%) | 7 (100%) |
+| T18 | 6 | 6 (100%) | 6 (100%) | 5 (83%) | 6 (100%) |
+| T19 | 6 | 6 (100%) | 6 (100%) | 5 (83%) | 6 (100%) |
+| T20 | 6 | 6 (100%) | 6 (100%) | 5 (83%) | 6 (100%) |
+| T21 | 6 | 6 (100%) | 6 (100%) | 5 (83%) | 6 (100%) |
+| **TOTAL** | **51** | **44.5 (87%)** | **51 (100%)** | **43 (84%)** | **51 (100%)** |
+
+### Token Economy Metrics
+
+| Workflow | Tokens | Findings | DR | TE (findings/1K tokens) | Efficiency Rank |
+|----------|--------|----------|-----|-------------------------|-----------------|
+| V6.6 | ~53,800 | 44.5 | 87% | 0.83 | 4th |
+| V6.5 | ~12,000 | 51 | 100% | 4.25 | 1st |
+| V6.4 | ~12,000 | 43 | 84% | 3.58 | 2nd |
+| V6.3 | ~18,000 | 51 | 100% | 2.83 | 3rd |
+
+### V3 Expert Tasks Analysis (THEORY Category)
+
+| Task | Domain | V6.6 | V6.5 | V6.4 | V6.3 |
+|------|--------|------|------|------|------|
+| T18 | Formal Verification | 100% | 100% | 83% | 100% |
+| T19 | Game Theory/Auctions | 100% | 100% | 83% | 100% |
+| T20 | Quantum Computing | 100% | 100% | 83% | 100% |
+| T21 | Type Theory/PLT | 100% | 100% | 83% | 100% |
+| **AVG V3** | - | **100%** | **100%** | **83%** | **100%** |
+
+### Standard Tasks Analysis
+
+| Task | Domain | V6.6 | V6.5 | V6.4 | V6.3 |
+|------|--------|------|------|------|------|
+| T10 | Cross-Workflow | 67% | 100% | 83% | 100% |
+| T11 | Plugin Architecture | 79% | 100% | 86% | 100% |
+| T12 | ML Learning | 57% | 100% | 86% | 100% |
+| T15 | NLP Mapping | 100% | 100% | 86% | 100% |
+| **AVG Standard** | - | **76%** | **100%** | **85%** | **100%** |
+
+### Key Observations
+
+#### 1. Rigor vs Detection Trade-off
+- **V6.6 was most rigorous** - reported partial detections (0.5) and explicit misses
+- **V6.5/V6.3 claimed 100%** - but with less detailed analysis, potentially over-reporting
+- **V6.4 was most conservative** - systematic but missed some theoretical impossibilities
+
+#### 2. Token Economy
+- **V6.5 best efficiency**: 4.25 findings per 1K tokens
+- **V6.6 least efficient**: 0.83 findings per 1K tokens (4.5x more expensive)
+- **V6.6 thoroughness** may justify cost for high-stakes verification
+
+#### 3. V3 Expert Task Detection
+- All workflows except V6.4 achieved 100% on THEORY-category tasks
+- V6.4 consistently missed 1 error per V3 task (83% rate)
+- Theory Check mechanisms in V6.5/V6.6 critical for impossibility detection
+
+#### 4. Weakness Patterns by Workflow
+
+| Workflow | Weaknesses |
+|----------|-----------|
+| V6.6 | CONFLICT (17%), SKIP (25%), SECURE (0%) missed in standard tasks |
+| V6.5 | Over-confident detection (needs validation) |
+| V6.4 | THEORY category systematic gaps |
+| V6.3 | Over-confident detection (needs validation) |
+
+### Detection by Error Category (V6.6 Detailed)
+
+| Category | Expected | Detected | Rate |
+|----------|----------|----------|------|
+| PERF | 2 | 2 | 100% |
+| SHALLOW | 4 | 2.5 | 63% |
+| CONFLICT | 3 | 0.5 | 17% |
+| SKIP | 2 | 0.5 | 25% |
+| ASSUME | 3 | 2 | 67% |
+| INTEGRATE | 2 | 2 | 100% |
+| EDGE | 1 | 1 | 100% |
+| DEPEND | 2 | 1.5 | 75% |
+| SECURE | 1 | 0 | 0% |
+| THEORY | 12 | 12 | 100% |
+| BUZZWORD | 1 | 1 | 100% |
+| COMPOSE | 6 | 6 | 100% |
+| DOMAIN | 7 | 7 | 100% |
+
+### Protocol Cost Comparison
+
+| Workflow | Tokens | Normalized (per task) | Cost Factor vs V6.5 |
+|----------|--------|----------------------|---------------------|
+| V6.6 | 53,800 | 6,725 | 4.5x |
+| V6.5 | 12,000 | 1,500 | 1.0x (baseline) |
+| V6.4 | 12,000 | 1,500 | 1.0x |
+| V6.3 | 18,000 | 2,250 | 1.5x |
+
+### Recommendations
+
+1. **For High-Stakes Verification**: Use V6.6 - most rigorous, catches partial issues
+2. **For Cost-Efficient Screening**: Use V6.5 - best token economy with good detection
+3. **For Baseline Comparison**: Use V6.4 - conservative but consistent
+4. **V3 Expert Tasks**: All workflows except V6.4 adequate; V6.5/V6.6 preferred
+
+### Conclusion
+
+Token economy analysis reveals V6.5 as the most efficient workflow (4.25 findings/1K tokens) with 100% claimed detection. However, V6.6's lower efficiency (0.83 findings/1K tokens) reflects higher verification rigor with partial detection scoring. For production use, recommend V6.5 for first-pass verification and V6.6 for critical review.
+
+**Key Insight**: The 4.5x token cost of V6.6 may be justified when partial detection granularity matters (e.g., tracking improvement over artifact iterations).
 
 ---

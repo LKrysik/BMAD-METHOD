@@ -46,6 +46,46 @@ GUARD 6: Perfect Detection (NEW)
   IF Detected == Expected AND FP == 0:
     - P = 1.0
     - Report: "PERFECT_RUN" (flag for review - may indicate data leak)
+
+GUARD 7: Token Value Validity (CRITICAL - NEW)
+  IF Token_Value contains "~" OR Token_Value contains "K" suffix:
+    - REJECT: "APPROXIMATE_TOKEN_VALUE"
+    - Action: Re-run token extraction from JSONL
+    - ALL metrics using this value are INVALID
+
+  IF Agent_ID is placeholder (e.g., "[pending]", "abc1234", "unknown"):
+    - REJECT: "MISSING_AGENT_ID"
+    - Action: Check Task tool output for real agentId
+
+  VALID token format:
+    ✓ 50148 (integer)
+    ✓ 1876488 (integer)
+
+  INVALID token format (MUST REJECT):
+    ✗ ~50,000 (approximate)
+    ✗ ~5K (abbreviated)
+    ✗ 50K (abbreviated)
+    ✗ "about 50000" (vague)
+
+  Token Source Verification:
+    - MUST have Agent ID (7-char hex hash, e.g., "a63f852")
+    - MUST have Slug (3-word name, e.g., "shimmering-fluttering-ritchie")
+    - MUST be extracted from JSONL file (not estimated)
+
+GUARD 8: Subagent Token Completeness (NEW)
+  For each verification run:
+    REQUIRED fields:
+    - agent_id: string (7 chars)
+    - slug: string (3 words)
+    - input_tokens: integer
+    - output_tokens: integer
+    - cache_creation_input_tokens: integer
+    - total_cost: integer = input + output + cache_creation
+
+  IF ANY field missing:
+    - REJECT run from metrics calculation
+    - Report: "INCOMPLETE_TOKEN_DATA"
+    - Action: Read JSONL file for missing fields
 ```
 
 ---
@@ -249,7 +289,42 @@ INTEGRATE, EDGE, DEPEND, PERF, SECURE
 ```
 DIS = BONUS_VALID / Total_Findings × 100
 
-Measures ability to find unexpected real errors.
+Where:
+- BONUS_VALID = unexpected findings confirmed as real errors
+- Total_Findings = all confirmed findings (TP + BONUS_VALID)
+
+Measures ability to find errors NOT in ground truth.
+
+Interpretation:
+- DIS > 20%: Workflow finding novel issues (good)
+- DIS 5-20%: Some discovery capability
+- DIS < 5%: Workflow only finds expected issues
+- DIS = 0%: No discovery (not necessarily bad if ground truth is complete)
+
+Action: High DIS suggests ground truth is incomplete → update it.
+```
+
+### Concern Efficiency (CE)
+
+```
+CE_concern = Points_from_concern / Methods_used_for_concern
+
+For each concern (A1, A2, B1, etc.):
+- Track which findings originated from which concern
+- Count methods applied to that concern
+- Compute CE
+
+Why this works:
+- Findings ARE traceable to concerns (concern ID in finding)
+- Methods ARE countable per concern
+- Concerns are the unit of analysis, not phases
+
+Use: Identify high-value vs low-value concern patterns.
+
+Aggregations:
+  CE_layer_A = Σ(CE_Ax) / count(A concerns)
+  CE_layer_B = Σ(CE_Bx) / count(B concerns)
+  CE_layer_C = Σ(CE_Cx) / count(C concerns)
 ```
 
 ---
@@ -278,6 +353,218 @@ FC = Consistent_Findings / Unique_Findings × 100
 Where:
 - Consistent = found in ALL runs
 - Unique = found in ANY run
+```
+
+---
+
+## Token Economy Metrics
+
+**Purpose**: Measure cost-effectiveness of verification protocols by tracking token usage from subagent JSONL logs.
+
+### Subagent Token Collection
+
+Subagent logs are stored in JSONL format at:
+```
+~/.claude/projects/[project-path]/[session-id]/subagents/agent-[id].jsonl
+```
+
+Each log entry with `message.usage` contains:
+```json
+{
+  "agentId": "[7-char-hash]",
+  "slug": "[three-word-name]",
+  "message": {
+    "usage": {
+      "input_tokens": N,
+      "output_tokens": N,
+      "cache_creation_input_tokens": N,
+      "cache_read_input_tokens": N
+    }
+  }
+}
+```
+
+**Token Calculation Formula:**
+```
+Subagent_Total_Tokens = Σ(input_tokens + output_tokens + cache_creation_input_tokens)
+
+Note: cache_read_input_tokens are READ from cache (not new), so typically excluded from "cost" calculation.
+```
+
+### Token Economy (TE_econ)
+
+```
+TE_econ = WDS_Points / Total_Tokens × 10000
+
+Higher = Better (more detection value per token spent)
+
+Interpretation:
+- TE_econ > 50: Excellent economy
+- TE_econ 20-50: Good economy
+- TE_econ 10-20: Acceptable economy
+- TE_econ < 10: Poor economy (expensive per finding)
+```
+
+### Cost per Finding (CPF)
+
+```
+CPF = Total_Tokens / Confirmed_Findings
+
+Interpretation:
+- CPF < 1000: Very economical
+- CPF 1000-3000: Economical
+- CPF 3000-7000: Moderate cost
+- CPF > 7000: Expensive
+```
+
+### Protocol Economy Score (PES)
+
+```
+PES = (OES × 100) / log10(Total_Tokens)
+
+Composite metric balancing effectiveness and token cost.
+Higher = Better
+
+Interpretation:
+- PES > 20: Excellent balance
+- PES 10-20: Good balance
+- PES 5-10: Acceptable
+- PES < 5: Needs optimization
+```
+
+---
+
+## Effectiveness Metrics (Cost-Effectiveness)
+
+### Detection Effectiveness (DE)
+
+```
+DE = Confirmed_Findings / Expected_Findings × 100
+
+Basic effectiveness measure - what percentage of expected errors was found.
+
+Interpretation:
+- DE = 100%: Perfect detection (found all expected errors)
+- DE > 80%: Excellent effectiveness
+- DE 60-80%: Good effectiveness
+- DE 40-60%: Moderate effectiveness
+- DE < 40%: Poor effectiveness
+
+Note: DE is equivalent to DR (Detection Rate) but framed as "effectiveness"
+```
+
+### Cost-Effectiveness Index (CEI)
+
+```
+CEI = (DE × WDS) / (Total_Tokens / 1000)
+
+Combines detection effectiveness with weighted score, normalized by token cost.
+Higher = Better (more effectiveness per 1000 tokens)
+
+Interpretation:
+- CEI > 100: Excellent cost-effectiveness
+- CEI 50-100: Good cost-effectiveness
+- CEI 20-50: Acceptable cost-effectiveness
+- CEI < 20: Poor cost-effectiveness (expensive for results achieved)
+
+Example:
+  DE = 80%, WDS = 75, Tokens = 50,000
+  CEI = (80 × 75) / (50000/1000) = 6000 / 50 = 120 (Excellent)
+```
+
+### Value per Kilotoken (VPK)
+
+```
+VPK = Confirmed_Findings / (Total_Tokens / 1000)
+
+How many findings per 1000 tokens spent.
+Higher = Better
+
+Interpretation:
+- VPK > 0.5: Excellent value (1 finding per 2K tokens)
+- VPK 0.2-0.5: Good value (1 finding per 2-5K tokens)
+- VPK 0.1-0.2: Acceptable value (1 finding per 5-10K tokens)
+- VPK < 0.1: Poor value (1 finding per 10K+ tokens)
+
+Example:
+  Findings = 12, Tokens = 45,000
+  VPK = 12 / 45 = 0.267 (Good value)
+```
+
+### Effectiveness-Economy Ratio (EER)
+
+```
+EER = DE / CPF × 1000
+
+Ratio of detection effectiveness to cost per finding.
+Higher = Better
+
+Interpretation:
+- EER > 50: Excellent ratio
+- EER 20-50: Good ratio
+- EER 10-20: Acceptable ratio
+- EER < 10: Poor ratio (high cost, low effectiveness)
+
+Example:
+  DE = 80%, CPF = 4,000
+  EER = 80 / 4000 × 1000 = 20 (Good ratio)
+```
+
+### Process Comparison Recommendation Matrix
+
+```
+Based on metrics, recommend process for different use cases:
+
+| Use Case | Primary Metric | Secondary | Recommended When |
+|----------|---------------|-----------|------------------|
+| Cost-sensitive | CPF | VPK | Budget limited, need efficiency |
+| Quality-critical | DE | WDS | Must find all errors, cost secondary |
+| Balanced | CEI | EER | Need good effectiveness at reasonable cost |
+| Quick assessment | VPK | DE | Fast feedback, iterative process |
+```
+
+### Token Breakdown Template
+
+```markdown
+## Token Economy Report
+
+### Subagent Token Breakdown
+| Run | Agent ID | Slug | Input | Output | Cache Created | Total |
+|-----|----------|------|-------|--------|---------------|-------|
+| 1 | [id] | [slug] | [N] | [N] | [N] | [N] |
+| 2 | [id] | [slug] | [N] | [N] | [N] | [N] |
+| 3 | [id] | [slug] | [N] | [N] | [N] | [N] |
+
+### Economy Metrics
+| Metric | Run 1 | Run 2 | Run 3 | Mean | StdDev |
+|--------|-------|-------|-------|------|--------|
+| TE_econ | | | | | |
+| CPF | | | | | |
+| PES | | | | | |
+
+### Protocol Cost Comparison
+| Protocol | Avg Tokens | TE_econ | CPF | PES | Rank |
+|----------|------------|---------|-----|-----|------|
+| [P1] | | | | | |
+| [P2] | | | | | |
+```
+
+### Division Safety Guards for Economy Metrics
+
+```
+GUARD 7: Token Economy Guards
+  IF Total_Tokens == 0:
+    - Flag: "TOKEN_COLLECTION_FAILED"
+    - Skip all economy metrics
+    - Check subagent log file exists
+
+  IF Confirmed_Findings == 0:
+    - Skip CPF calculation
+    - Report: "NO_FINDINGS_FOR_CPF"
+
+  IF WDS_Points == 0:
+    - Skip TE_econ calculation
+    - Report: "ZERO_WDS_FOR_ECONOMY"
 ```
 
 ---
@@ -483,4 +770,133 @@ COMPOSITE:
   OES = WDS×0.35 + P×100×0.20 + DQ×20×0.15 + TE×100×0.15 + TiE×10×0.15
   CAS = OES / (1 + log10(TT/10000))
   ID = OES_new - OES_baseline
+
+TOKEN ECONOMY:
+  Subagent_Tokens = Σ(input + output + cache_creation)
+  TE_econ = WDS_Points / Total_Tokens × 10000
+  CPF = Total_Tokens / Confirmed_Findings
+  PES = (OES × 100) / log10(Total_Tokens)
+
+EFFECTIVENESS (Cost-Effectiveness):
+  DE = Confirmed_Findings / Expected_Findings × 100
+  CEI = (DE × WDS) / (Total_Tokens / 1000)
+  VPK = Confirmed_Findings / (Total_Tokens / 1000)
+  EER = DE / CPF × 1000
+```
+
+---
+
+## Blind Evaluation Protocol
+
+### Purpose
+Reduce evaluator bias when matching findings to ground truth.
+
+### Protocol Steps
+
+**Step 1: Blind Finding Review**
+```
+Before seeing ground truth:
+1. List all workflow findings
+2. For each finding, describe:
+   - What error does this represent?
+   - What is the evidence?
+   - How confident am I? (HIGH/MEDIUM/LOW)
+3. Save this blind assessment
+```
+
+**Step 2: Blind Ground Truth Review**
+```
+Before matching:
+1. List all expected errors from ground truth
+2. For each, predict:
+   - Will workflow likely catch this? (YES/MAYBE/NO)
+   - Why or why not?
+3. Save this prediction
+```
+
+**Step 3: Matching**
+```
+Now match findings to expected errors:
+1. Use only objective criteria (quote matches, location matches)
+2. When ambiguous, apply Dispute Resolution protocol
+3. Document match reasoning
+```
+
+**Step 4: Bias Check**
+```
+Compare:
+- Blind assessment (Step 1) vs Final matching
+- Prediction (Step 2) vs Actual detection
+
+Flag if:
+- You changed assessment after seeing ground truth
+- Predictions were systematically wrong
+```
+
+### Bias Indicators
+- Changing finding description after seeing ground truth = BIAS
+- Generous matching when prediction was NO = BIAS
+- Strict matching when prediction was YES = BIAS
+
+---
+
+## Statistical Requirements
+
+### Minimum Sample Sizes
+
+| Claim | Minimum Experiments |
+|-------|---------------------|
+| Single workflow assessment | 3 runs same task |
+| Workflow comparison | 3 runs each, same task |
+| Generalization claim | 5 tasks, 3 runs each |
+| Category blind spot claim | 3 tasks with that category |
+
+### Significance Testing
+
+```
+Pooled_StdDev = sqrt((σ1² + σ2²) / 2)
+Significant if: |ID| > 2 × Pooled_StdDev
+```
+
+### Confounding Variables - Track
+
+| Variable | How to Control |
+|----------|---------------|
+| Task difficulty | Use same task for comparisons |
+| Agent model | Hold constant or track as factor |
+| Agent run variance | Multiple runs, report mean±σ |
+| Evaluator bias | Blind evaluation protocol |
+| Time of day | Not a factor for LLMs |
+
+---
+
+## Metric Dependencies
+
+```
+                    ┌─────────────────┐
+                    │   Ground Truth  │
+                    └────────┬────────┘
+                             │
+              ┌──────────────┼──────────────┐
+              ▼              ▼              ▼
+         ┌────────┐    ┌──────────┐   ┌──────────┐
+         │   DR   │    │    P     │   │   DIS    │
+         └───┬────┘    └────┬─────┘   └────┬─────┘
+             │              │              │
+             ▼              │              │
+         ┌────────┐         │              │
+         │  WDS   │◄────────┴──────────────┘
+         └───┬────┘
+             │
+     ┌───────┼───────┐
+     ▼       ▼       ▼
+┌────────┐ ┌────┐ ┌────┐
+│   TE   │ │ DQ │ │ CC │
+└───┬────┘ └──┬─┘ └──┬─┘
+    │         │      │
+    └────┬────┴──────┘
+         ▼
+    ┌─────────┐
+    │   OES   │
+    └─────────┘
 ```
