@@ -199,6 +199,115 @@ Mode: [G] Guided - for detailed phase tracking
 
 ---
 
+### DV-V7: Deep Verify V7 - Adaptive Verification System (AVS)
+
+| Property | Value |
+|----------|-------|
+| **ID** | `DV-V7` |
+| **File** | `src/core/workflows/deep-verify/workflow-v7.md` |
+| **Parent** | V6.6 (major architecture change) |
+| **Status** | ✅ **ACTIVE - RECOMMENDED** |
+| **Key Features** | 4-layer architecture (Innate/Adaptive/Memory/Escalation), dynamic method selection, anomaly detection, learning loop, tiered execution, explicit uncertainty |
+| **Token Profile** | Variable: 10K-100K+ (based on tier/criticality) |
+| **Time Profile** | 2-15 minutes (tier-dependent) |
+| **Best For** | ALL artifacts - adapts to complexity and criticality |
+
+#### Architecture: Adaptive Verification System
+
+**4-Layer Model:**
+| Layer | Purpose | Budget | Always Runs? |
+|-------|---------|--------|--------------|
+| Layer 1: INNATE | Fast pattern detection | ~5-10K | YES |
+| Layer 2: ADAPTIVE | Deep artifact-specific analysis | ~15-30K | Tier 2+ |
+| Layer 3: MEMORY | Learning and weight updates | ~1K | YES |
+| Layer 4: ESCALATION | Human review | Variable | When triggered |
+
+**Tier System:**
+| Tier | Budget | Layers | Trigger |
+|------|--------|--------|---------|
+| 1 | 10K | 1 only | Simple + Low criticality |
+| 2 | 20K | 1 + partial 2 | Low complexity OR low criticality |
+| 3 | 40K | 1 + 2 | Medium complexity AND medium+ criticality |
+| 4 | 60K | 1 + 2 + 4 | High complexity OR high criticality |
+| 5 | 100K+ | All | Critical artifacts |
+
+#### Key Innovations in V7
+
+1. **Paradigm Shift**: From pattern-based → adaptive layered detection
+2. **Dynamic Method Selection**: Methods selected FOR EACH ARTIFACT based on relevance scoring
+3. **Anomaly Detection**: Flags unknown patterns instead of missing them
+4. **Learning Loop**: Weight updates improve future runs
+5. **Confidence Reporting**: Explicit uncertainty levels (0-100%)
+6. **Tiered Execution**: Cost proportional to artifact importance
+7. **Human Escalation**: Automatic escalation for low-confidence items
+
+#### Invocation Template
+```markdown
+## Deep Verify V7.0 - AVS
+
+TASK: [task_verbatim]
+CONTENT: [artifact]
+
+Execute Adaptive Verification System:
+1. Phase 0: Artifact Intake & Triage
+2. Layer 1 (INNATE): Fast pattern detection
+3. Layer 2 (ADAPTIVE): Deep analysis (if tier >= 2)
+4. Layer 3 (MEMORY): Learning extraction
+5. Layer 4 (ESCALATION): Human review (if triggered)
+
+Output: Verification Report with confidence levels
+```
+
+#### Output Extraction Rules
+- **Findings**: Extract from Verification Report, includes confidence %
+- **Severity**: CRITICAL / IMPORTANT / MINOR / DEFERRED
+- **Uncertainty Report**: New section showing what agent couldn't verify
+- **Learning Metrics**: Method effectiveness for tracking
+- **Tier Executed**: Which tier was applied
+
+#### Expected Performance vs V6.6
+
+| Metric | V6.6 | V7 Expected | Notes |
+|--------|------|-------------|-------|
+| Detection Rate | ~58% | 70-85% | Anomaly detection catches unknowns |
+| Token Efficiency | ~100K/run | 10-60K (tier-based) | Tiered saves on simple artifacts |
+| Adaptiveness | None | Full | Per-artifact method selection |
+| Unknown Pattern Handling | Misses | Flags as anomaly | Core V7 feature |
+| Learning | None | Continuous | Weights update each run |
+
+---
+
+### DV-V6.6: Deep Verify with Conflict & Dependency Analysis
+
+| Property | Value |
+|----------|-------|
+| **ID** | `DV-V6.6` |
+| **File** | `src/core/workflows/deep-verify/workflow-v6.6.md` |
+| **Parent** | V6.5 |
+| **Status** | ✅ ACTIVE |
+| **Key Features** | Phase 2.7 Conflict & Dependency Deep Analysis, Vocabulary Normalization, Definition Triad Expansion, Pairwise Compatibility, Dependency Graph |
+| **Token Profile** | High (40K-100K) |
+| **Time Profile** | 5-10 minutes |
+
+*See workflow-v6.6.md for full details*
+
+---
+
+### DV-V6.5: Deep Verify with Two-Pass Semantic Selection
+
+| Property | Value |
+|----------|-------|
+| **ID** | `DV-V6.5` |
+| **File** | `src/core/workflows/deep-verify/workflow-v6.5.md` |
+| **Parent** | V6.4 |
+| **Status** | ✅ ACTIVE |
+| **Key Features** | Problem Signature Extraction, Two-Pass Method Selection with Reasoning Gate, Phase 3.5 Theory Check |
+| **Token Profile** | Medium-High (30K-80K) |
+
+*See workflow-v6.5.md for full details*
+
+---
+
 ### DV-V6.4: Deep Verify with Adaptive Method Selection
 
 | Property | Value |
@@ -206,7 +315,7 @@ Mode: [G] Guided - for detailed phase tracking
 | **ID** | `DV-V6.4` |
 | **File** | `src/core/workflows/deep-verify/workflow-v6.4.md` |
 | **Parent** | V6.3 |
-| **Status** | ✅ **ACTIVE** |
+| **Status** | ✅ ACTIVE |
 | **Key Features** | Phase 0.5 Context Analysis, Adaptive Method Selection, Phase 7.5 Learning Extraction |
 | **Token Profile** | Low-Medium (5k-15k) - **66% reduction vs V6.3** |
 | **Time Profile** | 2-5 minutes |
@@ -534,12 +643,22 @@ For each protocol run, record:
 
 | Scenario | Recommended Protocol | Rationale |
 |----------|---------------------|-----------|
-| Quick sanity check | DV-LITE | Low token cost, fast |
-| Comprehensive review | DV-V6 | Best balance detection/cost |
-| Security-critical | VGD | Adversarial stress testing |
-| Architecture review | QVP | Structural analysis (Min-Cut, SPOF) |
+| **Default choice (any artifact)** | **DV-V7** | Adapts to artifact, learns over time |
+| Quick sanity check | DV-LITE or DV-V7 Tier 1 | Low token cost, fast |
+| Comprehensive review | DV-V7 Tier 4-5 | Full adaptive analysis with escalation |
+| Security-critical | DV-V7 (auto-detects criticality) | Tiered execution + anomaly detection |
+| Architecture review | QVP or DV-V7 | QVP for structural, V7 for adaptive |
 | Mathematical rigor | VGD | Tensor-based optimization |
-| Unknown artifact type | QVP | 4-dimensional coverage |
+| Unknown artifact type | DV-V7 | Anomaly detection handles unknown patterns |
+| Legacy comparison | DV-V6.x | When comparing against V6 baseline |
+
+**V7 Recommendation Matrix:**
+| Artifact Complexity | Artifact Criticality | V7 Tier | Budget |
+|---------------------|---------------------|---------|--------|
+| LOW | LOW | 1 | 10K |
+| LOW/MEDIUM | MEDIUM | 2-3 | 20-40K |
+| HIGH | HIGH | 4 | 60K |
+| ANY | CRITICAL | 5 | 100K+ |
 
 ---
 
