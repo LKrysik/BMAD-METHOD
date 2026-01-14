@@ -282,23 +282,42 @@ Tokens collected from agent-[id].jsonl:
 | workflow-v6.6.md | T3 | 3 | 119,100 | 39,700 | 15 | 7,940 |
 ```
 
-### 0.6.4 Enforcement Rules
+### 0.6.4 Enforcement Rules (BLOCKING - NO EXCEPTIONS)
 
 **CRITICAL - Orchestrator MUST:**
 
 1. ✅ Create registry BEFORE first subagent spawn
 2. ✅ Register each planned subagent with Process + Task BEFORE spawning
-3. ✅ Update registry with Agent ID + Slug IMMEDIATELY after spawn
-4. ✅ Collect tokens from JSONL and update registry BEFORE moving to next phase
-5. ✅ Include complete registry in experiment-log.md
+3. ✅ Update registry with Agent ID + Slug IMMEDIATELY after spawn (BLOCKING)
+4. ✅ Run session_usage_analyzer.py AFTER all subagents complete (NOT manual JSONL reading)
+5. ✅ Map analyzer output to registry rows by Agent ID
+6. ✅ Include complete registry in experiment-log.md
+
+**BLOCKING GATES (EXPERIMENT STOPS IF VIOLATED):**
+
+| Gate | Check | Violation = EXPERIMENT INVALID |
+|------|-------|-------------------------------|
+| GATE-1 | Agent ID recorded after each spawn | Missing Agent ID → STOP, do not spawn more |
+| GATE-2 | All Agent IDs are 7-char hex | Placeholder "[pending]" → STOP |
+| GATE-3 | Tokens from session_usage_analyzer.py only | Manual JSONL read → INVALIDATE |
+| GATE-4 | 1:1 mapping Agent ID ↔ Registry row | Duplicate/missing → INVALIDATE |
+
+**FORBIDDEN ACTIONS:**
+
+| Action | Why Forbidden |
+|--------|---------------|
+| ✗ Manual JSONL file reading | Bypasses session_usage_analyzer.py |
+| ✗ Token estimates (~5K, ~50000) | Not real data |
+| ✗ Proceeding without Agent ID | Cannot map tokens later |
+| ✗ Using token_extractor.py | DEPRECATED - use session_usage_analyzer.py |
 
 **FAILURE MODES:**
 
 | Failure | Detection | Recovery |
 |---------|-----------|----------|
-| Missing Agent ID | Registry shows "PLANNED" after completion | Re-check Task tool output |
-| Missing tokens | Status not "TOKENS_COLLECTED" | Read JSONL file manually |
-| Wrong process mapping | Process column empty | Check pre-spawn registration |
+| Missing Agent ID | Registry shows "PLANNED" after completion | STOP - check Task tool output, if missing restart |
+| session_usage_analyzer.py fails | Error message | FIX issue, re-run analyzer, DO NOT use manual extraction |
+| Wrong process mapping | Process column empty | INVALIDATE experiment, restart with proper registration |
 
 ### 0.6.6 ONE SUBAGENT = ONE TEST (CRITICAL RULE)
 
@@ -374,141 +393,106 @@ Provide your solution as a structured design document.
 - Total: [N]
 ```
 
-### 1.3 Subagent Token Collection (MANDATORY)
+### 1.3 Token Collection via session_usage_analyzer.py (MANDATORY - NO ALTERNATIVES)
 
-**Purpose**: Extract REAL token usage from subagent JSONL log files. **APPROXIMATE VALUES (~) ARE FORBIDDEN.**
+**Purpose**: Extract REAL token usage using ONLY the official session analyzer script.
 
-**Log File Location (EXACT PATH):**
-```
-Windows: C:\Users\[user]\.claude\projects\[encoded-project-path]\[session-id]\subagents\agent-[id].jsonl
-Linux/Mac: ~/.claude/projects/[encoded-project-path]/[session-id]/subagents/agent-[id].jsonl
+**⛔ FORBIDDEN METHODS (WILL INVALIDATE EXPERIMENT):**
+- ❌ Manual JSONL file reading
+- ❌ token_extractor.py script (DEPRECATED)
+- ❌ Estimating tokens (~5K, ~50,000, "about 50000")
+- ❌ Any token source other than session_usage_analyzer.py
 
-Where:
-- [encoded-project-path] = project path with slashes replaced by dashes (e.g., C--Users-john-project)
-- [session-id] = UUID of main orchestrator session (e.g., f6d43ed5-d9da-4528-b794-daf55cef9dd9)
-- [id] = 7-character agent hash (e.g., a63f852)
+**✅ REQUIRED METHOD:**
 
-Example (Windows):
-C:\Users\lukasz.krysik\.claude\projects\C--Users-lukasz-krysik-Desktop-BMAD-MY-REPO-BMAD-METHOD\f6d43ed5-d9da-4528-b794-daf55cef9dd9\subagents\agent-a63f852.jsonl
-```
+```bash
+# ONLY WAY to get token data:
+python src/core/usage/session_usage_analyzer.py <SESSION_ID> --base-dir <CLAUDE_PROJECTS_PATH>
 
-**JSONL Structure:**
-```json
-{
-  "agentId": "a63f852",
-  "slug": "shimmering-fluttering-ritchie",
-  "message": {
-    "usage": {
-      "input_tokens": 3,
-      "output_tokens": 2434,
-      "cache_creation_input_tokens": 47702,
-      "cache_read_input_tokens": 89599
-    }
-  }
-}
+# Example:
+python src/core/usage/session_usage_analyzer.py be18c6d0-46c0-4530-bde9-f535ad152abe \
+  --base-dir "C:\Users\lukasz.krysik\.claude\projects\C--Users-lukasz-krysik-Desktop-BMAD-MY-REPO-BMAD-METHOD"
 ```
 
-**Token Calculation Formula:**
+**Output Format (Parse This):**
 ```
-COST_TOKENS = Σ(input_tokens + output_tokens + cache_creation_input_tokens)
-
-Note: cache_read_input_tokens are FREE cache reads - exclude from cost.
-```
-
-**MANDATORY: Python Script for Token Extraction**
-
-Run this script to extract REAL tokens (works on Windows/Linux/Mac):
-
-```python
-# token_extractor.py - Run: python token_extractor.py <jsonl_file>
-import re
-import sys
-import json
-
-with open(sys.argv[1], 'r', encoding='utf-8') as f:
-    content = f.read()
-    first_line = content.split('\n')[0]
-    j = json.loads(first_line)
-    agent_id = j.get('agentId', 'unknown')
-    slug = j.get('slug', 'unknown')
-
-    input_t = sum(int(x) for x in re.findall(r'"input_tokens":(\d+)', content))
-    output_t = sum(int(x) for x in re.findall(r'"output_tokens":(\d+)', content))
-    cache_c = sum(int(x) for x in re.findall(r'"cache_creation_input_tokens":(\d+)', content))
-
-    print(f'Agent ID: {agent_id}')
-    print(f'Slug: {slug}')
-    print(f'Input tokens: {input_t}')
-    print(f'Output tokens: {output_t}')
-    print(f'Cache creation: {cache_c}')
-    print(f'TOTAL (cost): {input_t + output_t + cache_c}')
+[SUBAGENTS] (36 agents)
+----------------------------------------
+Agent ID         Messages    Input      Output     Total
+------------------------------------------------------------------
+a0c5fe1         3           51,800     9,989      61,789
+a0e4381         3           76,458     11,111     87,569
+...
 ```
 
-**Example Real Output:**
-```
-Agent ID: a63f852
-Slug: shimmering-fluttering-ritchie
-Input tokens: 12
-Output tokens: 2434
-Cache creation: 47702
-TOTAL (cost): 50148
-```
+**Mapping Protocol:**
+
+1. For each Agent ID in analyzer output:
+2. Find matching row in SUBAGENT TRACKING REGISTRY
+3. Update registry with Input, Output, Total from analyzer
+4. Calculate Cost USD using pricing formula
+5. Update Status to TOKENS_COLLECTED
 
 **Token Collection Template:**
 ```markdown
-## Subagent Token Report - [Process] on T[N]
+## Token Collection via session_usage_analyzer.py
 
-### Agent Identification
-- Agent ID: a63f852  ← MUST be real 7-char hash
-- Agent Slug: shimmering-fluttering-ritchie  ← MUST be real slug
-- Log File: agent-a63f852.jsonl
-- Session: f6d43ed5-d9da-4528-b794-daf55cef9dd9
+### Analyzer Execution
+- Command: python src/core/usage/session_usage_analyzer.py [SESSION_ID] --base-dir [PATH]
+- Session ID: [UUID]
+- Execution Time: [timestamp]
+- Agents Found: [count]
 
-### Token Breakdown (REAL VALUES ONLY)
-| Metric | Value |
-|--------|-------|
-| Input tokens | 12 |
-| Output tokens | 2434 |
-| Cache creation | 47702 |
-| **TOTAL (cost)** | **50148** |
+### Registry Update
+| Agent ID | Process | Task | Input | Output | Total | Cost USD | Status |
+|----------|---------|------|-------|--------|-------|----------|--------|
+| a0c5fe1 | workflow-v7.0.md | T17 | 51,800 | 9,989 | 61,789 | $1.23 | TOKENS_COLLECTED |
 
 ### Validation
-- [ ] Agent ID is 7-char hash (not placeholder)
-- [ ] Tokens are integers (no ~ approximations)
-- [ ] Values extracted from JSONL file (not estimated)
+- [ ] All Agent IDs from analyzer mapped to registry
+- [ ] No approximate values (~) in any token field
+- [ ] Total matches sum of Input + Output + Cache
 ```
 
-### 1.4 TOKEN VALIDATION GATE (BLOCKING)
+**IF session_usage_analyzer.py FAILS:**
+- ⛔ DO NOT proceed with manual extraction
+- ⛔ DO NOT use token_extractor.py
+- ✅ FIX the issue (check Python, path, session ID)
+- ✅ Re-run analyzer
+- ✅ If still fails: EXPERIMENT INVALID, restart required
 
-**CRITICAL: DO NOT PROCEED without real token data.**
+### 1.4 TOKEN VALIDATION GATE (BLOCKING - EXPERIMENT STOPS HERE IF FAILED)
+
+**CRITICAL: DO NOT PROCEED without session_usage_analyzer.py data.**
 
 Before moving to Phase 2, verify:
 
 | Check | Required | Failure Action |
 |-------|----------|----------------|
-| Agent ID format | 7-char hex hash | Re-check Task tool output |
-| Token values | Integer (no ~) | Run Python extractor |
-| JSONL file exists | Yes | Check session path |
-| Slug captured | 3-word name | Re-read first line of JSONL |
+| Agent ID recorded | 7-char hex hash for EACH subagent | STOP - cannot recover without Agent ID |
+| session_usage_analyzer.py executed | Yes | Run it now |
+| All agents mapped | Every analyzer Agent ID has registry row | Find missing mapping |
+| Token values | Integer from analyzer (no ~) | Re-run analyzer |
 
-**REJECTION CRITERIA - If ANY of these, STOP and fix:**
+**BLOCKING CRITERIA - If ANY of these, EXPERIMENT IS INVALID:**
 - Token value contains `~` (approximate)
 - Agent ID is placeholder like `[pending]` or `abc1234`
-- Slug is `unknown` or placeholder
-- Total tokens is estimated like `~5000` or `5K`
+- Token source is NOT session_usage_analyzer.py
+- Any unmapped Agent ID (analyzer output not in registry)
 
 **Valid Example:**
 ```
-✓ Agent ID: a63f852
-✓ Tokens: 50148 (integer, no ~)
-✓ Slug: shimmering-fluttering-ritchie
+✓ Agent ID: a63f852 (from Task tool result)
+✓ Tokens: 61789 (from session_usage_analyzer.py output)
+✓ Slug: purring-seeking-treasure
+✓ Registry row exists with Process + Task
 ```
 
-**INVALID Example (MUST FIX):**
+**INVALID Example (EXPERIMENT MUST BE RESTARTED):**
 ```
-✗ Agent ID: [pending]  ← placeholder
-✗ Tokens: ~50,000  ← approximation with ~
-✗ Slug: unknown  ← not captured
+✗ Agent ID: [pending]  ← not captured during spawn
+✗ Tokens: ~50,000  ← estimate, not from analyzer
+✗ Source: manual JSONL read  ← FORBIDDEN
 ```
 
 ### 1.5 Integrated Token Collection via session_usage_analyzer.py
@@ -572,14 +556,22 @@ Example:
   TOTAL COST: $1.53
 ```
 
-#### 1.5.4 Fallback if Analyzer Unavailable
+#### 1.5.4 NO FALLBACK - Analyzer Required (BLOCKING)
 
-If Python script fails or is unavailable:
-1. Read JSONL files directly from: `[CLAUDE_PROJECTS_PATH]/[SESSION_ID]/subagents/agent-[id].jsonl`
-2. Sum tokens manually using token_extractor.py script (see 1.3)
-3. Flag result as `MANUAL_EXTRACTION` in Status column
+**⛔ THERE IS NO FALLBACK. session_usage_analyzer.py IS THE ONLY ALLOWED METHOD.**
 
-**Note:** Manual extraction is less reliable - prefer session_usage_analyzer.py when available.
+If Python script fails:
+1. ⛔ DO NOT read JSONL files manually
+2. ⛔ DO NOT use token_extractor.py (DEPRECATED)
+3. ⛔ DO NOT estimate tokens
+4. ✅ FIX the issue:
+   - Check Python installation: `python --version`
+   - Check path exists: `ls [CLAUDE_PROJECTS_PATH]/[SESSION_ID]/`
+   - Check session ID is correct UUID
+5. ✅ Re-run analyzer after fixing
+6. ✅ If still fails after 3 attempts: **EXPERIMENT INVALID - RESTART REQUIRED**
+
+**Rationale:** Manual extraction is error-prone and has produced incorrect data in past experiments. Only session_usage_analyzer.py provides reliable, validated token data.
 
 #### 1.5.5 Token Collection Completion Checkpoint
 

@@ -29,6 +29,7 @@ src/testing/
 │   ├── prompt.md                 # TEST PROMPTS (START HERE)
 │   ├── universal-test-orchestrator.md  # Main orchestrator (full instructions)
 │   ├── universal-metrics.md      # All metric formulas + interpretation
+│   ├── token-collection-protocol.md  # TOKEN RULES (MANDATORY - READ THIS)
 │   ├── protocol-registry.md      # Protocol definitions
 │   ├── AGENT-INSTRUCTIONS-UNIVERSAL.md  # Agent quick reference
 │   ├── meta-analysis-protocol.md # Meta-analysis process
@@ -156,8 +157,10 @@ Each experiment includes:
 
 1. **3 runs minimum** - For variance calculation
 2. **Blind evaluation** - Describe findings BEFORE opening ground-truth.md
-3. **Token tracking** - All subagent tokens collected from JSONL logs
-4. **Process attribution** - Each token cost linked to specific process/task
+3. **Agent ID recording** - Record Agent ID IMMEDIATELY after each subagent spawn (BLOCKING)
+4. **Token source** - ONLY `session_usage_analyzer.py` allowed (NO manual JSONL reading)
+5. **Process attribution** - Each Agent ID MUST map to exactly one Process+Task
+6. **No approximations** - Token values MUST be integers from analyzer (no ~, no K/M)
 
 ---
 
@@ -168,5 +171,6 @@ Each experiment includes:
 | `prompt.md` | Test prompts to copy-paste | START HERE |
 | `universal-test-orchestrator.md` | Full instructions | Agent reads this |
 | `universal-metrics.md` | All formulas + interpretation | Agent reads this |
+| `token-collection-protocol.md` | Token collection rules | MANDATORY - read before experiment |
 | `protocol-registry.md` | Protocol definitions | Agent reads this |
 | `experiment-log.md` | Results | Check results here |

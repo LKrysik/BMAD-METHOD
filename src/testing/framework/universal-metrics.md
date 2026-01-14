@@ -87,8 +87,20 @@ GUARD 8: Subagent Token Completeness (NEW)
     - Report: "INCOMPLETE_TOKEN_DATA"
     - Action: Read JSONL file for missing fields
 
-GUARD 9: Session Analyzer Requirement (NEW)
-  Token data MUST come from session_usage_analyzer.py output, not manual JSONL reading.
+GUARD 9: Session Analyzer Requirement (MANDATORY - NO EXCEPTIONS)
+  Token data MUST come from session_usage_analyzer.py output.
+
+  **FORBIDDEN:**
+    ✗ Manual JSONL file reading for token extraction
+    ✗ Estimating tokens (~5K, ~50,000, "about 50000")
+    ✗ Using token_extractor.py script (DEPRECATED)
+    ✗ Any token value not from session_usage_analyzer.py output
+
+  **REQUIRED:**
+    ✓ Run: python session_usage_analyzer.py <SESSION_ID> --base-dir <PATH>
+    ✓ Parse output table for each Agent ID
+    ✓ Map each Agent ID to SUBAGENT TRACKING REGISTRY row
+    ✓ Use ONLY values from analyzer output
 
   Validation checks:
     - Tokens are integers (no ~ prefix, no K/M suffixes)
@@ -96,16 +108,37 @@ GUARD 9: Session Analyzer Requirement (NEW)
     - Total tokens match sum of per-agent totals
     - Each Agent ID maps to exactly ONE registry row (1:1 rule)
 
-  IF session_usage_analyzer.py unavailable:
-    - Fall back to manual JSONL extraction
-    - Flag result as "MANUAL_EXTRACTION" in Status
-    - Use token_extractor.py script from orchestrator
+  **IF session_usage_analyzer.py fails:**
+    - STOP experiment
+    - FIX the issue (check path, session ID, Python installation)
+    - DO NOT proceed with manual extraction
+    - Report: "SESSION_ANALYZER_FAILED" - experiment INVALID
 
-  Rejection criteria:
+  Rejection criteria (AUTOMATIC EXPERIMENT INVALIDATION):
     - Token value contains ~ (approximate)
     - Token value uses K, M suffixes (5K, 1.2M)
     - Agent ID appears in multiple rows with different Process/Task
-    - Total mismatch > 1% between analyzer sum and manual sum
+    - Total mismatch > 1% between analyzer sum and registry sum
+    - Any token from source other than session_usage_analyzer.py
+
+GUARD 10: Agent ID Recording (BLOCKING - NEW)
+  Every subagent spawn MUST record Agent ID in SUBAGENT TRACKING REGISTRY.
+
+  **BLOCKING RULE:**
+    - Cannot spawn next subagent until previous Agent ID is recorded
+    - Cannot proceed to token collection until ALL Agent IDs are recorded
+    - Cannot calculate ANY metrics until registry is complete
+
+  **Recording Protocol:**
+    1. BEFORE spawn: Add row to registry with Process, Task, Run#, Status=PLANNED
+    2. IMMEDIATELY after spawn: Update row with Agent ID, Slug from Task tool result
+    3. Verify: Agent ID is 7-char hex hash (e.g., "a63f852")
+    4. Verify: Slug is 3-word name (e.g., "purring-seeking-treasure")
+
+  **IF Agent ID not captured:**
+    - STOP - do not spawn more subagents
+    - Check Task tool output for agentId field
+    - If still missing: experiment INVALID, restart required
 ```
 
 ---
