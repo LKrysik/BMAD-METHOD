@@ -1,23 +1,17 @@
-# Deep Verify V7.1 - Adaptive Verification System (AVS)
+# Deep Verify V7.1 - Error Theory Enhanced AVS
 
 ## What is this?
 
-**Deep Verify V7.1** extends V7.0's Adaptive Verification System with concrete execution support. V7.1 adds Method Cards for step-by-step execution, trigger-based method selection, persistent learning storage, and knowledge management protocols.
+**Deep Verify V7.1** is the first evolutionary update to the Adaptive Verification System (AVS). It retains the 4-layer "immune system" architecture of V7.0 but integrates **Error Theory** (Systematic Classification) to guide the "Innate" and "Adaptive" layers.
 
-**V7.1 Additions over V7.0:**
-- **Phase 0.0: Library Loading** - Blocking gate ensuring all resources loaded
-- **Method Cards** - Step-by-step execution instructions for critical methods
-- **Method Triggers** - Feature-to-method mapping for fast pre-selection
-- **Method Weights Persistence** - Store learning across sessions
-- **Knowledge Management Protocol** - Handle knowledge gaps systematically
-- **Agent Quick Reference** - Single-page execution guide
+**V7.1 Architecture Evolution from V7.0:**
+- **Taxonomy Integration**: "Error Theory" categories are now scanned in Layer 1 (Innate).
+- **Seeded Adaptation**: Layer 2 (Adaptive) method selection is now weighted by the specific error types detected in Layer 1.
+- **Concrete Memory**: Layer 3 (Memory) now has a dedicated slot for "Knowledge Injection" to read optimization strategies.
+- **Explicit Limits**: The output now explicitly acknowledges fundamental verification limits (Gödel Gap).
 
-**Core Architecture (from V7.0):**
-- **4-Layer Architecture**: Innate → Adaptive → Memory → Escalation
-- **Dynamic Method Selection**: Per-artifact, not predefined
-- **Anomaly Detection**: Flags unknown patterns
-- **Learning Loop**: Improves with each verification run
-- **Tiered Execution**: Cost proportional to artifact criticality
+**Why this change?**
+V7.0 provided the correct *structure* (adaptive layers), but V8.x experiments showed that over-simplification leads to blind spots. V7.1 adds *semantic rigor* (Error Theory) to the *adaptive structure* (V7.0), ensuring that "adaptation" doesn't become "guessing".
 
 ---
 
@@ -25,136 +19,14 @@
 
 | Term | Definition |
 |------|------------|
+| ERROR THEORY | Systematic taxonomy of error types (Logic, Security, Consistency, etc.) |
+| TAXONOMY SCAN | New Layer 1 step to tag artifact with potential error categories |
+| SEEDED SELECTION | Using Taxonomy tags to boost relevance of specific methods in Layer 2 |
 | LAYER | Detection tier: INNATE (fast, pattern) / ADAPTIVE (deep, learning) / MEMORY / ESCALATION |
-| PROFILE | Artifact characteristics: domains, structure, complexity, criticality |
-| TRIAGE | Severity classification determining execution tier |
-| BUDGET | Token allocation based on triage tier |
-| RELEVANCE | Method score for THIS artifact (not global) |
-| ANOMALY | Pattern that doesn't match known categories → flagged for investigation |
-| CONFIDENCE | Certainty level (0-100%) for each finding |
-| LEARNING | Weight updates based on detection results |
-| METHOD CARD | Step-by-step execution instructions for a method |
-| TRIGGER | Feature pattern that activates specific methods |
+| LEARNING | Weight updates based on detection results AND knowledge injection |
 
 **Methods source:** `src/core/methods/methods.csv`
 **Domain knowledge:** `src/core/knowledge/domain-knowledge-base.md`
-
-### V7.1 Required Resources
-
-| Resource | Path | Purpose |
-|----------|------|---------|
-| **Agent Quick Reference** | `src/core/workflows/deep-verify/agent-quick-reference.md` | Single-page execution guide |
-| **Method Triggers** | `src/core/methods/method_triggers.yaml` | Feature → method mapping |
-| **Method Weights** | `src/core/methods/method_weights.yaml` | Historical effectiveness |
-| **Method Cards** | `src/core/methods/method_cards/MC-{N}-*.md` | Step-by-step execution |
-| **Knowledge Protocol** | `src/core/methods/knowledge-management-protocol.md` | KB handling |
-
----
-
-## Architecture Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                 ADAPTIVE VERIFICATION SYSTEM V7.1                │
-└─────────────────────────────────────────────────────────────────┘
-
-     ┌──────────────────────────────────────────────────────┐
-     │              PHASE 0.0: LIBRARY LOADING              │
-     │  ⛔ BLOCKING - Load methods, triggers, weights, KB   │
-     └────────────────────────┬─────────────────────────────┘
-                              │
-     ┌────────────────────────▼─────────────────────────────┐
-     │                  ARTIFACT INTAKE                      │
-     │  Phase 0: Profile → Triage → Budget Allocation        │
-     └────────────────────────┬─────────────────────────────┘
-                              │
-     ┌────────────────────────▼─────────────────────────────┐
-     │           LAYER 1: INNATE DETECTION                   │
-     │  Phase 1-2: Fast pattern matching (~5-10K tokens)     │
-     │  • Consistency checks                                 │
-     │  • Completeness checks                                │
-     │  • Known pattern detection                            │
-     │                                                       │
-     │  FAST PATH: Critical finding → Layer 4 (escalate)     │
-     │  FAST PATH: Simple + no findings → DONE               │
-     └────────────────────────┬─────────────────────────────┘
-                              │
-     ┌────────────────────────▼─────────────────────────────┐
-     │          LAYER 2: ADAPTIVE DETECTION                  │
-     │  Phase 3-5: Deep analysis (~15-30K tokens)            │
-     │  • Trigger-based method pre-selection                 │
-     │  • Artifact-specific method selection                 │
-     │  • Method Card execution                              │
-     │  • Anomaly detection for unknown patterns             │
-     │  • Hypothesis generation from first principles        │
-     │  • Multi-domain interaction analysis                  │
-     │  • Explicit uncertainty quantification                │
-     └────────────────────────┬─────────────────────────────┘
-                              │
-     ┌────────────────────────▼─────────────────────────────┐
-     │           LAYER 3: IMMUNE MEMORY                      │
-     │  Phase 6: Learning and weight updates                 │
-     │  • Record what found, what missed                     │
-     │  • Update method_weights.yaml                         │
-     │  • Add new patterns from findings                     │
-     │  • Retire low-ROI methods                            │
-     └────────────────────────┬─────────────────────────────┘
-                              │
-     ┌────────────────────────▼─────────────────────────────┐
-     │           LAYER 4: ESCALATION                         │
-     │  Phase 7: Human review (triggered, not default)       │
-     │  • Critical finding escalation                        │
-     │  • Low confidence escalation                          │
-     │  • Anomaly investigation                              │
-     │  • Human-in-loop decision                             │
-     └─────────────────────────────────────────────────────┘
-```
-
----
-
-## Phase 0.0: Library Loading (BLOCKING)
-
-**Purpose:** Load all required files before verification can begin.
-
-⛔ **BLOCKING GATE** - Cannot proceed without completing this phase.
-
-### Required Files Checklist
-
-```markdown
-## Library Loading
-
-| # | File | Path | Status |
-|---|------|------|--------|
-| 1 | Methods CSV | src/core/methods/methods.csv | ✅/❌ |
-| 2 | Method Triggers | src/core/methods/method_triggers.yaml | ✅/❌ |
-| 3 | Method Weights | src/core/methods/method_weights.yaml | ✅/❌ |
-| 4 | Domain KB | src/core/knowledge/domain-knowledge-base.md | ✅/❌ |
-
-### Load Summary
-- Methods loaded: [N] from methods.csv
-- Triggers loaded: [N] rules from triggers.yaml
-- Weights loaded: [N] methods with historical data
-- KB sections: [N] available
-
-### Gate Status
-[ ] ALL FILES LOADED → Proceed to Phase 0.1
-[ ] ANY FILE MISSING → HALT with error below
-
-**If HALT:**
-Missing: [list missing files]
-Action required: [what to do]
-```
-
-### Fallback Behavior
-
-| Missing File | Fallback | Impact |
-|--------------|----------|--------|
-| method_triggers.yaml | Use relevance formula only | Slower selection |
-| method_weights.yaml | Use default weights | No learning history |
-| Method Card | Use method description | Less precise execution |
-| domain-knowledge-base.md | Flag knowledge gaps | May miss theoretical issues |
-
-**Note:** methods.csv has NO fallback - it is absolutely required.
 
 ---
 
@@ -162,7 +34,7 @@ Action required: [what to do]
 
 **Purpose:** Profile artifact and allocate resources proportionally.
 
-### Step 0.1: Self-Check (Unchanged from V6)
+### Step 0.1: Self-Check (Standard)
 
 Execute #113 Counterfactual Self-Incrimination, #131 Observer Paradox, #112 Entropy Leak Detection.
 
@@ -185,7 +57,6 @@ Extract artifact characteristics for triage and method selection.
 |----------|-------|--------|
 | Type | [code/document/plan/protocol/specification] | Content structure |
 | Size | [N] tokens | Token count |
-| Sections | [N] distinct sections | Heading count |
 | Requirements | [N] explicit requirements | "must", "shall", "requires" |
 
 ### Domain Detection
@@ -202,19 +73,6 @@ Scan for domain markers. Check ALL that apply:
 | General Software | [default - no specialized domain detected] | [100 - max(others)] |
 
 Primary domain(s): [highest confidence domains]
-
-### Feature Detection (V7.1 - for trigger matching)
-Scan for trigger features:
-
-| Feature | Pattern Matched | Confidence |
-|---------|-----------------|------------|
-| domain_crypto | [matched patterns] | [0-1] |
-| domain_distributed | [matched patterns] | [0-1] |
-| claim_guarantee | [matched patterns] | [0-1] |
-| claim_both_and | [matched patterns] | [0-1] |
-| multiple_requirements | [count > 3?] | [0-1] |
-| external_deps | [matched patterns] | [0-1] |
-| circular_ref | [matched patterns] | [0-1] |
 
 ### Complexity Assessment
 | Factor | Score (1-5) | Evidence |
@@ -275,44 +133,15 @@ Criticality: [value]
 | Reserve | [N]K | Contingency |
 ```
 
-### Step 0.4: Confirmation Gate
-
-```
-## Phase 0.4: Intake Confirmation
-
-**ARTIFACT SUMMARY**
-Type: [type]
-Size: [N] tokens
-Domains: [primary domains]
-Features detected: [list from 0.2]
-Complexity: [LOW/MEDIUM/HIGH]
-Criticality: [LOW/MEDIUM/HIGH/CRITICAL]
-
-**EXECUTION PLAN**
-Tier: [1-5]
-Budget: [N]K tokens
-Layers: [1 / 1+2 / 1+2+4 / all]
-Method selection: [STATIC for Tier 1 / DYNAMIC for Tier 2+]
-Trigger methods: [list from triggers.yaml based on features]
-
-[C] Correct - proceed with this plan
-[E] Edit - change tier/budget
-[X] Exit - cancel verification
-```
-
-**HALT** - waiting for choice
-
 ---
 
 ## LAYER 1: INNATE DETECTION (Phase 1-2)
 
-**Purpose:** Fast, pattern-based detection using core methods.
+**Purpose:** Fast, pattern-based detection using core methods AND Error Theory taxonomy.
 **Budget:** ~5-10K tokens
 **Always executes:** YES (every artifact)
 
-### Phase 1: Core Pattern Checks
-
-These checks ALWAYS run regardless of tier. They are the "innate immunity" - pre-programmed, fast, broad.
+### Phase 1: Core Pattern Checks & Taxonomy Scan
 
 #### 1.1 Consistency Check (#84)
 
@@ -376,26 +205,25 @@ Original task (verbatim): "[task]"
 Scope verdict: [ALIGNED / DRIFTED with details]
 ```
 
-#### 1.4 Known Pattern Detection
+#### 1.4 Error Theory Taxonomy Scan (NEW)
 
-Apply pattern matchers for known error types:
+Instead of generic "Known Pattern Detection", scan for specific **Error Categories**.
 
 ```
-## 1.4 Known Pattern Detection
+## 1.4 Error Theory Taxonomy Scan
 
-### Pattern Library Scan
-| Pattern ID | Pattern Name | Match? | Evidence |
-|------------|--------------|--------|----------|
-| P001 | Definitional contradiction | YES/NO | [quote if YES] |
-| P002 | Circular dependency | YES/NO | [quote if YES] |
-| P003 | Missing error handling | YES/NO | [quote if YES] |
-| P004 | Unvalidated assumption | YES/NO | [quote if YES] |
-| P005 | Inconsistent terminology | YES/NO | [quote if YES] |
-| P006 | Scope creep | YES/NO | [quote if YES] |
-| P007 | Theoretical impossibility | YES/NO | [quote if YES] |
-| P008 | Domain term misuse | YES/NO | [quote if YES] |
+Scan the artifact for *indicators* of these error types. This is a heuristic scan, not a deep proof.
 
-Patterns matched: [N]
+| Category | Definition | Indicators Present? | Confidence |
+|----------|------------|---------------------|------------|
+| LOGIC | Reasoning flaws, fallacies, incorrect deductions | [list indicators] | [0-100%] |
+| SEMANTIC | Ambiguity, definitional drift, category errors | [list indicators] | [0-100%] |
+| OMISSION | Missing requirements, scenarios, or safeguards | [list indicators] | [0-100%] |
+| SECURITY | Vulnerabilities, lack of defense, trust issues | [list indicators] | [0-100%] |
+| RESOURCE | Efficiency issues, leaks, unoptimized paths | [list indicators] | [0-100%] |
+| CONCURRENCY| Race conditions, deadlocks, state inconsistency | [list indicators] | [0-100%] |
+
+**Primary Error Vectors:** [List top 2 categories with highest confidence]
 ```
 
 ### Phase 2: Layer 1 Findings & Decision
@@ -404,14 +232,9 @@ Patterns matched: [N]
 ## Phase 2: Layer 1 Summary
 
 ### Findings from Innate Detection
-| ID | Check | Severity | Description | Confidence |
-|----|-------|----------|-------------|------------|
-| L1-1 | [check] | [sev] | [finding] | [0-100%] |
-| L1-2 | [check] | [sev] | [finding] | [0-100%] |
-
-### Token Usage
-Layer 1 tokens used: [N]
-Budget remaining: [N]
+| ID | Check | Severity | Description | Category (Error Theory) |
+|----|-------|----------|-------------|-------------------------|
+| L1-1 | [check] | [sev] | [finding] | [LOGIC/SECURITY/etc.] |
 
 ### Decision Gate
 
@@ -444,46 +267,15 @@ Condition C - CONTINUE TO ADAPTIVE:
 
 ## LAYER 2: ADAPTIVE DETECTION (Phase 3-5)
 
-**Purpose:** Deep, artifact-specific analysis with anomaly detection.
+**Purpose:** Deep analysis seeded by Error Theory findings.
 **Budget:** ~15-30K tokens
 **Executes:** Tier 2+ only
 
-### Phase 3: Dynamic Method Selection
+### Phase 3: Dynamic Method Selection (Seeded)
 
-**KEY INNOVATION:** Methods selected FOR THIS ARTIFACT, not from predefined list.
-
-#### 3.0 Trigger-Based Pre-Selection (V7.1)
-
-**Before calculating RELEVANCE scores, use method_triggers.yaml for fast pre-selection:**
-
-```markdown
-## 3.0 Trigger Matching
-
-### Features Detected (from Phase 0.2)
-| Feature | Confidence | Patterns Matched |
-|---------|------------|------------------|
-| domain_crypto | [0-1] | "[patterns]" |
-| claim_both_and | [0-1] | "[patterns]" |
-| [feature] | [0-1] | "[patterns]" |
-
-### Triggered Methods (from method_triggers.yaml)
-| Trigger ID | Feature | Methods | Priority |
-|------------|---------|---------|----------|
-| T020 | domain_crypto | 153, 155, 156 | CRITICAL |
-| T030 | claim_both_and | 108, 154, 158, 160 | CRITICAL |
-| [id] | [feature] | [methods] | [priority] |
-
-### Pre-Selected Methods
-CRITICAL priority triggers: [method list]
-HIGH priority triggers: [method list]
-MEDIUM priority triggers: [method list]
-
-→ These get automatic boost in RELEVANCE scoring (+0.2 for CRITICAL, +0.1 for HIGH)
-```
+**KEY INNOVATION:** Selection is now weighted by the Error Vectors found in Phase 1.3.
 
 #### 3.1 Relevance Scoring
-
-For each method in library, calculate artifact-specific relevance:
 
 ```
 ## 3.1 Method Relevance Scoring
@@ -492,25 +284,18 @@ For each method in library, calculate artifact-specific relevance:
 For method M and artifact A:
 
 RELEVANCE(M, A) =
-  domain_match(M, A.domains) × 0.25 +
-  complexity_match(M, A.complexity) × 0.20 +
-  pattern_match(M, L1_findings) × 0.25 +
-  category_coverage(M, selected) × 0.15 +
-  historical_weight(M) × 0.15 +
-  trigger_boost(M) × [0.1-0.2 if triggered]
-
-### Load Historical Weights
-From method_weights.yaml:
-| Method | Current Weight | Baseline | Last 10 Sessions |
-|--------|----------------|----------|------------------|
-| #[N] | [weight] | [baseline] | [history] |
+  domain_match(M, A.domains) × 0.20 +
+  error_vector_match(M, A.primary_error_vectors) × 0.30 +  <-- BOOSTED
+  complexity_match(M, A.complexity) × 0.15 +
+  historical_effectiveness(M) × 0.20 +
+  category_coverage(M, selected) × 0.15
 
 ### Candidate Methods (Top 2×BUDGET)
-| Rank | Method | Category | Relevance | Triggered? | Selection Reasoning |
-|------|--------|----------|-----------|------------|---------------------|
-| 1 | #[N] [name] | [cat] | [0.XX] | YES/NO | [why relevant to THIS artifact] |
-| 2 | #[N] [name] | [cat] | [0.XX] | YES/NO | [why relevant to THIS artifact] |
-| ... | ... | ... | ... | ... | ... |
+| Rank | Method | Category | Relevance | Selection Reasoning |
+|------|--------|----------|-----------|---------------------|
+| 1 | #[N] [name] | [cat] | [0.XX] | [why relevant to THIS artifact] |
+| 2 | #[N] [name] | [cat] | [0.XX] | [why relevant to THIS artifact] |
+| ... | ... | ... | ... | ... |
 
 ### Category Distribution Check
 | Category | Count | Min Required |
@@ -543,54 +328,17 @@ Selected: [list with IDs]
 
 ### Phase 4: Adaptive Analysis
 
-#### 4.1 Method Application (with Method Cards)
-
-**For each selected method, check for Method Card first:**
-
-```markdown
-## 4.1 Method Application
-
-### Method Card Check
-| Method | Card Available | Path |
-|--------|----------------|------|
-| #71 | YES | src/core/methods/method_cards/MC-071-first-principles.md |
-| #108 | YES | src/core/methods/method_cards/MC-108-coincidentia-oppositorum.md |
-| #127 | NO | Use method description |
-
-### Available Method Cards (V7.1)
-- MC-071: First Principles Analysis
-- MC-072: 5 Whys Deep Dive
-- MC-081: Scope Integrity Audit
-- MC-083: Closure Check
-- MC-084: Coherence Check
-- MC-088: Executability Check
-- MC-108: Coincidentia Oppositorum
-- MC-122: Sorites Paradox
-- MC-128: Theseus Paradox
-- MC-153: Theoretical Impossibility Check
-
-**If Card Available:**
-1. Load Method Card from `src/core/methods/method_cards/MC-{N}-*.md`
-2. Check "When to Use" section - confirm applicable
-3. Follow "Execution Steps" exactly
-4. Use "Output Template" for results
-5. Run "Quality Checks" before finalizing
-
-**If Card NOT Available:**
-1. Use method description from methods.csv
-2. Apply based on description and output_pattern
-3. Flag for future card creation
-```
+#### 4.1 Method Application
 
 Apply selected methods with depth tracking:
 
 ```
-## Method Execution: #[N] [Name]
+## 4.1 Method Application
 
-**Card Used:** YES/NO
+### Method: #[N] [Name]
 **Applied to:** [specific artifact section/concern]
 
-**Process (from Card or Description):**
+**Process:**
 1. Surface observation: [what method reveals]
 2. Deeper analysis: [following method's pattern]
 3. Root cause (if finding): [5 Whys if applicable]
@@ -605,41 +353,12 @@ Apply selected methods with depth tracking:
 [Repeat for each method]
 ```
 
-#### 4.2 Knowledge Gap Handling (V7.1)
-
-**When encountering unknown terms or concepts:**
-
-```markdown
-## 4.2 Knowledge Gap Protocol
-
-Execute knowledge-management-protocol.md when:
-- Unknown domain term encountered
-- Claim contradicts or depends on theoretical knowledge
-- Pattern doesn't match any known category
-- Agent is uncertain about domain fact
-
-### Knowledge Gap Log
-| ID | Type | Term/Concept | Context | Status |
-|----|------|--------------|---------|--------|
-| G1 | TERM | [unknown] | "[context]" | OPEN |
-| G2 | THEOREM | [claim] | "[context]" | OPEN |
-
-### Resolution
-| Gap | KB Section | Found? | Action |
-|-----|------------|--------|--------|
-| G1 | Section 2 | YES/NO | Applied / DEFER / INFER |
-| G2 | Section 1 | YES/NO | Applied / DEFER / INFER |
-
-**If DEFER:** HALT - ask user for clarification
-**If INFER:** Continue with caveat, flag for verification
-```
-
-#### 4.3 Anomaly Detection
+#### 4.2 Anomaly Detection
 
 **Purpose:** Flag patterns that DON'T match known categories.
 
 ```
-## 4.3 Anomaly Detection
+## 4.2 Anomaly Detection
 
 ### Anomaly Scan
 Look for elements that:
@@ -661,30 +380,20 @@ Look for elements that:
 **UNKNOWN findings:** Escalate to Layer 4 if confidence < 70%
 ```
 
-#### 4.4 Hypothesis Generation
+#### 4.3 Hypothesis Generation (from Error Theory)
 
-**Purpose:** Generate detection hypotheses from first principles when patterns don't apply.
+**Refined in V7.1**: Generate hypotheses based on the *absence* of expected safeguards for the specific Error Vectors.
 
 ```
-## 4.4 Hypothesis Generation
+## 4.3 Hypothesis Generation
 
-For each UNKNOWN anomaly or uncovered area:
+For each Primary Error Vector (from 1.3):
 
-### First Principles Check
-**Question:** If this artifact were WRONG, what would be symptoms?
+**Question:** If this artifact had a [CATEGORY] error, where would it hide?
 
 | Hypothesis | Symptoms to Check | Evidence Found | Status |
 |------------|-------------------|----------------|--------|
-| H1: [hypothesis] | [symptom list] | [evidence or none] | CONFIRMED/REFUTED/UNCERTAIN |
-| H2: [hypothesis] | [symptom list] | [evidence or none] | CONFIRMED/REFUTED/UNCERTAIN |
-
-### Inversion Check (#80)
-**Question:** What would GUARANTEE this artifact fails?
-
-| Failure Path | Artifact Does This? | Finding? |
-|--------------|---------------------|----------|
-| [failure 1] | YES/NO/PARTIAL | [finding if YES] |
-| [failure 2] | YES/NO/PARTIAL | [finding if YES] |
+| H1: [hypothesis based on category] | [symptom list] | [evidence] | [status] |
 ```
 
 ### Phase 5: Confidence Assessment & Challenge
@@ -697,9 +406,9 @@ For each UNKNOWN anomaly or uncovered area:
 ### All Findings (Layer 1 + Layer 2)
 | ID | Source | Type | Severity | Description | Confidence | Root Cause |
 |----|--------|------|----------|-------------|------------|------------|
-| F1 | L1-Consistency | CONFLICT | CRITICAL | [desc] | 95% | [root cause] |
-| F2 | L2-Method #108 | THEORY | CRITICAL | [desc] | 90% | [root cause] |
-| F3 | L2-Anomaly | UNKNOWN | IMPORTANT | [desc] | 65% | [needs investigation] |
+| F1 | L1-Consistency | CONFLICT | 🔴 | [desc] | 95% | [root cause] |
+| F2 | L2-Method #108 | THEORY | 🔴 | [desc] | 90% | [root cause] |
+| F3 | L2-Anomaly | UNKNOWN | 🟠 | [desc] | 65% | [needs investigation] |
 
 ### Confidence Distribution
 | Confidence Band | Count | Action |
@@ -737,11 +446,11 @@ For each finding with confidence >= 50%:
 
 ## LAYER 3: IMMUNE MEMORY (Phase 6)
 
-**Purpose:** Learn from this verification to improve future runs.
+**Purpose:** Learn from this verification AND external knowledge.
 **Budget:** ~1K tokens (overhead)
 **Always executes:** YES
 
-### Phase 6: Learning Extraction
+### Phase 6: Learning & Knowledge Injection
 
 #### 6.1 Results Recording
 
@@ -772,79 +481,53 @@ For each finding with confidence >= 50%:
 | Hypotheses confirmed | [N] |
 ```
 
-#### 6.2 Method Effectiveness & Weight Persistence (V7.1)
+#### 6.2 Knowledge Injection (NEW)
+
+**Purpose:** Explicitly read optimization strategies to prevent stagnation.
+
+```
+## 6.2 Knowledge Injection
+
+**Action:** Read `src/core/knowledge/optimization-strategies.md` (if available).
+
+**Application:**
+1. Does this artifact violate any known optimization strategy?
+2. Does the *verification process itself* violate any strategy?
+
+| Strategy | Violation? | Recommendation |
+|----------|------------|----------------|
+| [strategy name] | YES/NO | [fix] |
+```
+
+#### 6.3 Method Effectiveness & Weight Updates
 
 ```
 ## 6.2 Method Effectiveness
 
 ### Method Performance This Run
-| Method | Relevance Score | Findings | Confirmed | Tokens | ROI |
-|--------|-----------------|----------|-----------|--------|-----|
-| #[N] | [score] | [N] | [N] | [N] | [findings/tokens] |
-| #[N] | [score] | [N] | [N] | [N] | [findings/tokens] |
-
-### Session Score Calculation
-For each method:
-score = (confirmed/claimed)*0.4 + (1-FP_rate)*0.3 + efficiency*0.2 + feedback*0.1
-
-| Method | Confirmed/Claimed | FP Rate | Efficiency | Session Score |
-|--------|-------------------|---------|------------|---------------|
-| #[N] | [N]/[N] | [0-1] | [0-1] | [0-1] |
+| Method | Relevance Score | Findings | Confirmed | ROI |
+|--------|-----------------|----------|-----------|-----|
+| #[N] | [score] | [N] | [N] | [findings/cost] |
+| #[N] | [score] | [N] | [N] | [findings/cost] |
 
 ### Weight Updates
-Formula: new_weight = old_weight × 0.9 + session_score × 0.1
+For each method used:
+new_weight = old_weight × 0.9 + session_performance × 0.1
 
-| Method | Old Weight | Session Score | New Weight |
-|--------|------------|---------------|------------|
-| #[N] | [old] | [score] | [new] |
+| Method | Old Weight | Performance | New Weight |
+|--------|------------|-------------|------------|
+| #[N] | [old] | [0-1] | [new] |
 
-### ⚠️ PERSIST TO FILE
-**SAVE to:** `src/core/methods/method_weights.yaml`
-
-Updates required:
-1. Update `methods.[N].current` field with new weight
-2. Append session score to `methods.[N].history` (keep last 10)
-3. Update `methods.[N].stats` with this session's counts
-4. Add entry to `update_log`:
-   ```yaml
-   - session_id: "[generate unique ID]"
-     timestamp: "[current ISO timestamp]"
-     methods_updated: [[method IDs]]
-     notes: "verification of [artifact name]"
-   ```
-5. Update `last_updated` timestamp
-6. Increment `session_count`
-
-### Retirement Check
-| Method | Weight | Below 0.3 for | Action |
-|--------|--------|---------------|--------|
-| #[N] | [weight] | [N] sessions | ACTIVE/FLAG/RETIRE |
-
-If any method flagged, add to `flagged_methods` for user review.
-```
-
-#### 6.3 New Pattern Learning
-
-```
-## 6.3 New Pattern Learning
-
-### Patterns Discovered
+### New Pattern Learning
 | Pattern | Source | Description | Suggested Pattern ID |
 |---------|--------|-------------|---------------------|
 | [new pattern] | Anomaly A1 | [what to match] | P00[N] |
-
-### Knowledge Base Updates (if any)
-Execute knowledge-management-protocol.md Phase 4 for any new knowledge.
-
-| Entry | Type | Status | KB Section |
-|-------|------|--------|------------|
-| [entry] | TERM/THEOREM/PATTERN | PROPOSED | Section [N] |
 ```
 
-#### 6.4 Adaptation Feedback
+#### 6.3 Adaptation Feedback
 
 ```
-## 6.4 Adaptation Feedback
+## 6.3 Adaptation Feedback
 
 ### What Worked
 | Element | Evidence | Keep/Amplify |
@@ -887,7 +570,6 @@ Execute knowledge-management-protocol.md Phase 4 for any new knowledge.
 | Unresolved anomaly | Anomaly verdict = UNKNOWN | YES/NO |
 | Theoretical impossibility | Theory check flagged violation | YES/NO |
 | Definitional conflict | Conflict with no construction proof | YES/NO |
-| Knowledge gap deferred | Any DEFER in knowledge protocol | YES/NO |
 
 ### Escalation Decision
 Triggers met: [N]
@@ -915,11 +597,6 @@ Triggers met: [N]
 | ID | Anomaly | Investigation Done | What User Should Check |
 |----|---------|-------------------|------------------------|
 | [A1] | [description] | [what agent tried] | [specific check for user] |
-
-#### Knowledge Gaps Deferred
-| ID | Gap | What Agent Needs |
-|----|-----|------------------|
-| [G1] | [unknown term/concept] | [definition or confirmation] |
 
 ### Recommended Actions
 For each escalated item:
@@ -959,7 +636,6 @@ After user decisions:
 | [F1] | [assessment] | [decision] | CORRECT/WRONG |
 
 → Update weights based on escalation accuracy
-→ If WRONG, adjust relevant method weights downward
 ```
 
 ---
@@ -974,7 +650,6 @@ After user decisions:
 |----------|-------|
 | Type | [type] |
 | Domains | [domains] |
-| Features | [detected features] |
 | Complexity | [LOW/MEDIUM/HIGH] |
 | Criticality | [LOW/MEDIUM/HIGH/CRITICAL] |
 | Tier Executed | [1-5] |
@@ -984,46 +659,39 @@ After user decisions:
 |--------|-------|
 | Budget | [N]K allocated / [N]K used |
 | Layers | [list] |
-| Methods applied | [N] (with [N] Method Cards) |
-| Triggered methods | [N] |
+| Methods applied | [N] |
 | Anomalies detected | [N] |
 | Hypotheses tested | [N] |
-| Knowledge gaps | [N] resolved / [N] deferred |
 | Escalations | [N] |
 
-### Findings
+### Findings (Categorized)
 
 #### CRITICAL (Must Fix)
-| ID | Type | Description | Confidence | Root Cause |
-|----|------|-------------|------------|------------|
-| [F1] | [type] | [desc] | [%] | [root cause] |
+| ID | Type (Error Theory) | Description | Confidence | Root Cause |
+|----|---------------------|-------------|------------|------------|
+| [F1] | [LOGIC/SEC/etc.] | [desc] | [%] | [root cause] |
 
 #### IMPORTANT (Should Fix)
-| ID | Type | Description | Confidence | Root Cause |
-|----|------|-------------|------------|------------|
-| [F2] | [type] | [desc] | [%] | [root cause] |
+| ID | Type (Error Theory) | Description | Confidence | Root Cause |
+|----|---------------------|-------------|------------|------------|
+| [F2] | [LOGIC/SEC/etc.] | [desc] | [%] | [root cause] |
 
 #### MINOR (Consider Fixing)
-| ID | Type | Description | Confidence | Root Cause |
-|----|------|-------------|------------|------------|
-| [F3] | [type] | [desc] | [%] | [root cause] |
+| ID | Type (Error Theory) | Description | Confidence | Root Cause |
+|----|---------------------|-------------|------------|------------|
+| [F3] | [LOGIC/SEC/etc.] | [desc] | [%] | [root cause] |
 
 #### DEFERRED (User Accepted Risk)
-| ID | Type | Description | User Rationale |
-|----|------|-------------|----------------|
-| [F4] | [type] | [desc] | [rationale] |
+| ID | Type (Error Theory) | Description | User Rationale |
+|----|---------------------|-------------|----------------|
+| [F4] | [LOGIC/SEC/etc.] | [desc] | [rationale] |
 
-### Uncertainty Report
-| Area | Confidence | What Agent Couldn't Verify |
-|------|------------|---------------------------|
-| [area] | [%] | [limitation] |
-
-### Knowledge Management Summary
-| Gap Type | Count | Resolved | Deferred | Inferred |
-|----------|-------|----------|----------|----------|
-| TERM | [N] | [N] | [N] | [N] |
-| THEOREM | [N] | [N] | [N] | [N] |
-| PATTERN | [N] | [N] | [N] | [N] |
+### Fundamental Limits (Gödel Gap)
+| Limit Type | Description |
+|------------|-------------|
+| Ground Truth | Verification limited by provided context/truth |
+| Semantic Gap | "Matches" are probabilistic, not absolute |
+| [Other] | [Specific limit relevant to this run] |
 
 ### Recommendations
 | Priority | Action | Addresses |
@@ -1038,14 +706,6 @@ After user decisions:
 | True positive rate | [%] | [%] |
 | False positive rate | [%] | [%] |
 | Anomaly precision | [%] | [%] |
-| Method card usage | [%] | [%] |
-
-### Weight Updates Applied
-| Method | Change | New Weight |
-|--------|--------|------------|
-| #[N] | +/- [delta] | [new] |
-
-Saved to: method_weights.yaml
 ```
 
 ---
@@ -1086,28 +746,10 @@ Saved to: method_weights.yaml
 
 ---
 
-## Appendix D: Method Selection Flowchart (V7.1)
+## Appendix D: Method Selection Flowchart
 
 ```
 START
-  │
-  ▼
-Load method_triggers.yaml ──FAIL──→ Continue without triggers
-  │ OK
-  ▼
-Match features to triggers
-  │
-  ▼
-CRITICAL triggers present? ──YES──→ Add triggered methods (+0.2 boost)
-  │ NO                                         │
-  ▼                                            ▼
-HIGH triggers present? ──YES──→ Add triggered methods (+0.1 boost)
-  │ NO                                         │
-  ▼                                            ▼
-Load method_weights.yaml
-  │
-  ▼
-Calculate RELEVANCE for all methods
   │
   ▼
 Is artifact domain-specific? ──YES──→ Include domain methods (top 3 by relevance)
@@ -1132,9 +774,6 @@ Missing categories? ──YES──┘
   │ NO
   ▼
 SELECTION COMPLETE
-  │
-  ▼
-Check Method Card availability for each selected method
 ```
 
 ---
@@ -1159,70 +798,9 @@ If weight(M) < 0.3 for 10 consecutive runs → flag for removal review
 
 ---
 
-## Appendix F: V7.1 File Reference
-
-| File | Purpose | Required |
-|------|---------|----------|
-| `src/core/methods/methods.csv` | Method definitions | YES (blocking) |
-| `src/core/methods/method_triggers.yaml` | Feature → method mapping | NO (fallback: relevance only) |
-| `src/core/methods/method_weights.yaml` | Persistent learning storage | NO (fallback: default weights) |
-| `src/core/methods/method_cards/*.md` | Step-by-step execution | NO (fallback: description) |
-| `src/core/methods/knowledge-management-protocol.md` | KB handling | NO (fallback: DEFER) |
-| `src/core/knowledge/domain-knowledge-base.md` | Domain knowledge | NO (fallback: flag gaps) |
-| `src/core/workflows/deep-verify/agent-quick-reference.md` | Single-page guide | NO (convenience) |
-
----
-
-## Appendix G: Method Cards Available (V7.1)
-
-| Card | Method | Category | Token Cost |
-|------|--------|----------|------------|
-| MC-071 | First Principles Analysis | core | ~2-3K |
-| MC-072 | 5 Whys Deep Dive | core | ~1-2K |
-| MC-081 | Scope Integrity Audit | sanity | ~1-2K |
-| MC-083 | Closure Check | sanity | ~0.5-1K |
-| MC-084 | Coherence Check | sanity | ~1-2K |
-| MC-088 | Executability Check | sanity | ~1-2K |
-| MC-108 | Coincidentia Oppositorum | exploration | ~2-3K |
-| MC-122 | Sorites Paradox | challenge | ~1-2K |
-| MC-128 | Theseus Paradox | challenge | ~1-2K |
-| MC-153 | Theoretical Impossibility Check | theory | ~2-3K |
-
----
-
 ## Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 7.1 | 2026-01-14 | Phase 0.0 Library Loading gate, Method Cards (10 critical), method_triggers.yaml, method_weights.yaml persistence, Knowledge Management Protocol, Agent Quick Reference, Feature Detection in Phase 0.2 |
-| 7.0 | 2026-01-13 | MAJOR: Adaptive Verification System architecture, 4-layer model, dynamic method selection, anomaly detection, learning loop, tiered execution |
-
----
-
-## Migration Notes from V7.0
-
-### What's New in V7.1
-
-| V7.0 | V7.1 |
-|------|------|
-| Load files implicitly | Phase 0.0 BLOCKING gate |
-| Generic method descriptions | Method Cards with steps |
-| Dynamic relevance only | Trigger-based pre-selection |
-| In-memory weights | Persistent method_weights.yaml |
-| Ad-hoc knowledge handling | Knowledge Management Protocol |
-| Full workflow reference | Agent Quick Reference available |
-
-### Backward Compatibility
-
-V7.1 is fully backward compatible with V7.0:
-- All Phase 0.0 files have fallbacks except methods.csv
-- Method Cards are optional - description fallback exists
-- Triggers provide boost, not requirement
-- Weights persist but default to baseline if file missing
-
-### Recommended Migration
-
-1. Create V7.1 support files (method_triggers.yaml, method_weights.yaml)
-2. Create Method Cards for most-used methods
-3. Run V7.1 with full file set
-4. Learning loop will calibrate weights over 5-10 runs
+| 7.1 | 2026-01-XX | EVOLUTION: Integrated Error Theory (Taxonomy Scan), Seeded Method Selection, Knowledge Injection slot, Limits Acknowledgment. |
+| 7.0 | 2026-01-13 | MAJOR: Adaptive Verification System architecture. |
