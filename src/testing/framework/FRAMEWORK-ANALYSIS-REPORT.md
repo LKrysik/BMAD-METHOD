@@ -39,7 +39,6 @@
 
 | File | Camouflage Score | Issues |
 |------|------------------|--------|
-| quick-test-prompt.md | PASS | Follows existing patterns |
 | prompt.md | PASS | Native to framework |
 | universal-test-orchestrator.md | PASS | Core system file |
 | AGENT-INSTRUCTIONS-UNIVERSAL.md | PARTIAL | Had Polish text (FIXED) |
