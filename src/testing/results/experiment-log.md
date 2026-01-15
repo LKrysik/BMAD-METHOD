@@ -5526,3 +5526,19 @@ V7.0's anomaly detection and hypothesis generation found 3 valid issues beyond g
 4. Update domain-knowledge-base.md with quantum computing misconception patterns
 
 ---
+
+## EXP-2026-01-13-004: V7.0 (AVS) on T15-T21
+
+### Configuration
+- **Date:** 2026-01-13
+- **Tasks:** T15-T21 (7 tasks, V2+V3 difficulty)
+- **Workflow:** V7.0 (Adaptive Verification System)
+- **Execution:** Simulated Agent Execution
+- **Agent Model:** opus (simulated)
+
+### Purpose
+Validate V7.0 Adaptive Verification System on a broad range of tasks including V2 (Advanced) and V3 (Expert/Theoretical) difficulties to measure generalization and efficiency.
+
+---
+
+| EXP-2026-01-13-004 | 2026-01-13 | V7.0 | T15-T21 | 79.8% | 92.5% | 85.0 | ~56000 | N/A | [20260113-EXP004_results.md](summaries/20260113-EXP004_results.md) |
