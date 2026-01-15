@@ -48,6 +48,8 @@ A new version (V_new) replaces the current version (V_current) **IF AND ONLY IF*
 
 ## 3. The Testing Mechanism (The Loop)
 
+*Note: WDS and CEI metrics are currently calculated manually based on session logs and findings. Future versions will automate this.*
+
 This loop is executed to evolve the process.
 
 ### Phase A: Benchmark (Control)

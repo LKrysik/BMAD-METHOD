@@ -205,7 +205,7 @@ For each Primary Error Vector (from 1.3):
 ```
 ## 6.2 Knowledge Injection
 
-**Action:** Read `src/core/knowledge/optimization-strategies.md` (or similar knowledge base).
+**Action:** Read `src/core/knowledge/optimization-strategies.md` (if available).
 
 **Application:**
 1. Does this artifact violate any known optimization strategy?
