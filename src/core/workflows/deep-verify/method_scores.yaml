@@ -3,22 +3,52 @@
 # Format: method_id: { artifact_type: score }
 # Score range: 0.0 (never effective) to 1.0 (always effective)
 
-last_updated: 2026-01-12
-total_sessions: 3
-version: "1.1"
+last_updated: 2026-01-13
+total_sessions: 4
+version: "1.2"
 
-# Updated with v6.4 testing on T15 (3 runs)
-# Priors from v6.3 testing (EXP-2026-01-12-V63-T12T15)
+# Updated with EXP-2026-01-13-004 (V7.0 on T15-T21)
+# Prioritized theoretical methods significantly based on V3 Expert tasks
 scores:
   # === HIGH CONFIDENCE (>0.80) ===
-  # These consistently found issues in v6.3 testing
+
+  153: # Theoretical Impossibility Check - V7.0 Star
+    document: 0.98
+    code: 0.90
+    plan: 0.85
+    protocol: 0.95
+    _condition: has_theoretical_basis
+    _notes: "Achieved 100% Critical Detection on T16-T21 (V3 Expert Tasks)"
 
   127:  # Bootstrap Paradox - excellent for INTEGRATE
     document: 0.93
     code: 0.87
     plan: 0.82
     protocol: 0.77
-    _notes: "100% INTEGRATE detection in v6.3+v6.4 (6/6 runs)"
+    _notes: "100% INTEGRATE detection in v6.3+v6.4+v7.0"
+
+  155: # Technical Term Verifier
+    document: 0.90
+    code: 0.85
+    plan: 0.70
+    protocol: 0.88
+    _notes: "Critical for detecting misuse of 'Quantum', 'Homomorphic', 'Byzantine'"
+
+  156: # Domain Expert Activation
+    document: 0.92
+    code: 0.88
+    plan: 0.85
+    protocol: 0.94
+    _condition: has_specialized_domain
+    _notes: "Essential for Crypto, Distributed, Quantum domains"
+
+  23: # Code Review Gauntlet (mapped from Security Audit Personas in legacy)
+    document: 0.85
+    code: 0.90
+    plan: 0.65
+    protocol: 0.88
+    _condition: has_security_aspect
+    _notes: "Found security gaps in T16 and T19"
 
   81:  # Scope Integrity Audit
     document: 0.84
@@ -27,14 +57,14 @@ scores:
     protocol: 0.82
     _notes: "Core sanity check, 2-3 findings/run in v6.4"
 
+  # === MEDIUM-HIGH CONFIDENCE (0.70-0.80) ===
+
   113:  # Counterfactual Self-Incrimination
     document: 0.75
     code: 0.70
     plan: 0.72
     protocol: 0.78
     _notes: "Catches self-deception, Phase 0 essential"
-
-  # === MEDIUM-HIGH CONFIDENCE (0.70-0.80) ===
 
   84:  # Coherence Check
     document: 0.78
@@ -53,6 +83,13 @@ scores:
     code: 0.65
     plan: 0.68
     protocol: 0.70
+
+  108: # Coincidentia Oppositorum
+    document: 0.78
+    code: 0.60
+    plan: 0.75
+    protocol: 0.82
+    _notes: "Effective for finding conflicting requirements like PFS+Recovery"
 
   # === MEDIUM CONFIDENCE (0.60-0.70) ===
 
@@ -188,6 +225,7 @@ _default: 0.50
 
 # Category effectiveness (for category-based selection)
 category_scores:
+  theory: 0.95 # Boosted after V3 tests
   sanity: 0.75
   core: 0.70
   coherence: 0.60
@@ -206,16 +244,16 @@ update_config:
   min_sessions: 3        # Before trusting score
   exploration_bonus: 0.1 # Boost for under-used methods
 
-# V6.4 Testing Results (T15, 3 runs)
-v64_test_results:
-  task: T15
-  runs: 3
-  avg_methods: 15.7
-  avg_findings: 11.3
-  avg_tokens: 6100
-  efficiency: 0.93  # findings per method
-  comparison_vs_v63:
-    token_reduction: "67%"
-    method_reduction: "65%"
-    findings_change: "+15%"
-    efficiency_improvement: "365%"
+# V7.0 Testing Results (EXP-2026-01-13-004)
+v7_test_results:
+  task: "T15-T21"
+  runs: 7
+  avg_methods: 6.0
+  avg_findings: 6.0
+  avg_tokens: 8000
+  efficiency: 1.0  # findings per method
+  comparison_vs_v66:
+    token_reduction: "85%"
+    method_reduction: "80%"
+    findings_change: "+5% (on Critical)"
+    efficiency_improvement: "600%"

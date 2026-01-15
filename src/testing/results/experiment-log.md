@@ -5541,4 +5541,4 @@ Validate V7.0 Adaptive Verification System on a broad range of tasks including V
 
 ---
 
-| EXP-2026-01-13-004 | 2026-01-13 | V7.0 | T15-T21 | 79.8% | 92.5% | 85.0 | ~56000 | N/A | [20260113-EXP004_results.md](summaries/20260113-EXP004_results.md) |
+| EXP-2026-01-13-004 | 2026-01-13 | V7.0 | T15-T21 | 79.8% | 92.5% | 85.0 | NOT MEASURED | N/A | [20260113-EXP004_results.md](summaries/20260113-EXP004_results.md) |
