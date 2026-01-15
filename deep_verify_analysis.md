@@ -20,6 +20,13 @@
 2.  **Structural Depth**: The 4-layer model in V7 correctly separates "fast checks" (Innate) from "deep thinking" (Adaptive). V8.1 blends them, potentially losing the nuance.
 3.  **Hypothesis Generation**: V7.0 Phase 4.3 actively looks for "unknown unknowns" using first principles. V8.1's anomaly detection is more passive ("Scan for unusual patterns").
 
+### The Reality of the Learning Loop (Investigation)
+The user asked "Czy 7.0 rzeczywiście jest taki Learning Loop?" (Is the Learning Loop in V7.0 real?).
+*   **The File**: `method_scores.yaml` exists and contains weights for methods (e.g., `#127` has `0.93` for `document`).
+*   **The Mechanism**: In `workflow-v7.0.md`, Phase 6 explicitly instructs the agent to calculate `new_weight`.
+*   **The Gap**: There is no *automated script* that commits these changes. The "Learning Loop" relies on the agent (the LLM) outputting the new weights, and the human user (or a post-processing script) updating the YAML file.
+*   **The Benefit**: Even if manual, it forces the system to *measure* ROI. "Method #X cost 5000 tokens and found 0 bugs" -> Weight drops. Next time, it's less likely to be picked. This creates a **Darwinian evolution** of methods, optimizing token efficiency over time.
+
 ### Why V8.1 exists
 *   V8.0 was an attempt to simplify (likely to reduce token cost or complexity), but it failed catastrophically (0% detection in key areas).
 *   V8.1 is a "panic fix" – it restores the obvious missing pieces (Self-Check, Integration) but doesn't fully restore the sophisticated architecture of V7.
