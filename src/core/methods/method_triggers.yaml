@@ -1,0 +1,372 @@
+# Method Triggers - Feature to Method Mapping
+# Version: 1.0
+# Purpose: Enable fast, deterministic method selection based on artifact features
+
+# Usage:
+# 1. Extract features from artifact during Phase 0.5
+# 2. Match features against trigger patterns
+# 3. Collect triggered methods with priorities
+# 4. Apply to RELEVANCE scoring formula
+
+version: "1.0"
+created: "2026-01-14"
+description: "Maps artifact features to applicable verification methods"
+
+# =============================================================================
+# FEATURE DEFINITIONS
+# =============================================================================
+
+features:
+  # Domain Features (detected from keywords)
+  domain_crypto:
+    patterns:
+      - "encrypt"
+      - "decrypt"
+      - "key"
+      - "signature"
+      - "hash"
+      - "PFS"
+      - "forward secrecy"
+      - "certificate"
+      - "PKI"
+      - "cipher"
+    detection: "keyword_scan"
+
+  domain_distributed:
+    patterns:
+      - "consensus"
+      - "partition"
+      - "replication"
+      - "CAP"
+      - "eventual consistency"
+      - "leader election"
+      - "quorum"
+      - "Byzantine"
+      - "Paxos"
+      - "Raft"
+    detection: "keyword_scan"
+
+  domain_formal:
+    patterns:
+      - "proof"
+      - "theorem"
+      - "invariant"
+      - "specification"
+      - "verification"
+      - "correctness"
+      - "soundness"
+      - "completeness"
+    detection: "keyword_scan"
+
+  domain_security:
+    patterns:
+      - "auth"
+      - "permission"
+      - "access control"
+      - "credential"
+      - "token"
+      - "session"
+      - "RBAC"
+      - "OAuth"
+    detection: "keyword_scan"
+
+  # Claim Features (detected from language patterns)
+  claim_guarantee:
+    patterns:
+      - "guarantees"
+      - "ensures"
+      - "always"
+      - "never"
+      - "must"
+      - "shall"
+    detection: "keyword_scan"
+
+  claim_impossibility:
+    patterns:
+      - "impossible"
+      - "cannot"
+      - "never fails"
+      - "always succeeds"
+      - "100%"
+      - "guaranteed"
+    detection: "keyword_scan"
+
+  claim_both_and:
+    patterns:
+      - "both .* and"
+      - "while also"
+      - "simultaneously"
+      - "at the same time"
+      - ".* and .* and .*"
+    detection: "regex_scan"
+
+  # Structure Features (detected from document structure)
+  structure_multiple_requirements:
+    patterns:
+      - "requirement"
+      - "must"
+      - "shall"
+      - "R[0-9]+"
+      - "REQ-"
+    detection: "count_threshold"
+    threshold: 3
+
+  structure_external_deps:
+    patterns:
+      - "import"
+      - "require"
+      - "depends on"
+      - "integrates with"
+      - "calls"
+      - "uses"
+    detection: "keyword_scan"
+
+  structure_circular_ref:
+    patterns:
+      - "requires .* which requires"
+      - "depends on .* depends"
+      - "A.*B.*A"
+    detection: "regex_scan"
+
+  # Complexity Features
+  complexity_high:
+    detection: "composite"
+    conditions:
+      - "token_count > 5000"
+      - "section_count > 10"
+      - "nesting_depth > 4"
+    require: "any_2"
+
+  complexity_low:
+    detection: "composite"
+    conditions:
+      - "token_count < 1000"
+      - "section_count < 5"
+      - "nesting_depth < 3"
+    require: "all"
+
+# =============================================================================
+# TRIGGER RULES
+# =============================================================================
+
+triggers:
+  # CORE Methods Triggers
+  - id: "T001"
+    name: "First Principles for Guarantees"
+    feature: "claim_guarantee"
+    methods: [71]
+    priority: HIGH
+    rationale: "Strong claims need fundamental analysis"
+
+  - id: "T002"
+    name: "5 Whys for Problems"
+    feature: "any"  # Always applicable
+    methods: [72]
+    priority: MEDIUM
+    rationale: "Root cause analysis always valuable"
+
+  - id: "T003"
+    name: "Inversion for Impossibility"
+    feature: "claim_impossibility"
+    methods: [80, 109]
+    priority: HIGH
+    rationale: "Check what would guarantee failure"
+
+  # SANITY Methods Triggers
+  - id: "T010"
+    name: "Scope Check for Requirements"
+    feature: "structure_multiple_requirements"
+    methods: [81, 82]
+    priority: HIGH
+    rationale: "Multiple requirements need scope verification"
+
+  - id: "T011"
+    name: "Closure Check Always"
+    feature: "any"
+    methods: [83]
+    priority: MEDIUM
+    rationale: "Check for TODO/TBD always"
+
+  - id: "T012"
+    name: "Coherence Check Always"
+    feature: "any"
+    methods: [84]
+    priority: MEDIUM
+    rationale: "Definition consistency always matters"
+
+  - id: "T013"
+    name: "Executability for Instructions"
+    feature: "claim_guarantee"
+    methods: [88]
+    priority: HIGH
+    rationale: "Verify claims are actionable"
+
+  # THEORY Methods Triggers
+  - id: "T020"
+    name: "Crypto Domain Check"
+    feature: "domain_crypto"
+    methods: [153, 155, 156]
+    priority: CRITICAL
+    rationale: "Crypto claims need theorem verification"
+
+  - id: "T021"
+    name: "Distributed Domain Check"
+    feature: "domain_distributed"
+    methods: [153, 155, 156]
+    priority: CRITICAL
+    rationale: "Distributed claims need CAP/FLP check"
+
+  - id: "T022"
+    name: "Formal Domain Check"
+    feature: "domain_formal"
+    methods: [153, 155, 156]
+    priority: CRITICAL
+    rationale: "Formal claims need theorem verification"
+
+  # CONFLICT Methods Triggers
+  - id: "T030"
+    name: "Both-And Conflict Detection"
+    feature: "claim_both_and"
+    methods: [108, 154, 158, 160]
+    priority: CRITICAL
+    rationale: "X AND Y claims often conflict"
+
+  - id: "T031"
+    name: "Multiple Requirements Conflict"
+    feature: "structure_multiple_requirements"
+    methods: [158, 159, 161]
+    priority: HIGH
+    rationale: "Many requirements need pairwise check"
+
+  # DEPENDENCY Methods Triggers
+  - id: "T040"
+    name: "External Deps Check"
+    feature: "structure_external_deps"
+    methods: [127, 159]
+    priority: HIGH
+    rationale: "External deps need bootstrap check"
+
+  - id: "T041"
+    name: "Circular Reference Check"
+    feature: "structure_circular_ref"
+    methods: [127, 159]
+    priority: CRITICAL
+    rationale: "Circular deps are critical issues"
+
+  # CHALLENGE Methods Triggers
+  - id: "T050"
+    name: "Sorites for Complex Systems"
+    feature: "complexity_high"
+    methods: [122]
+    priority: MEDIUM
+    rationale: "Find critical elements in complex systems"
+
+  - id: "T051"
+    name: "Theseus for Solutions"
+    feature: "any"
+    methods: [128]
+    priority: MEDIUM
+    rationale: "Verify solution addresses problem core"
+
+  - id: "T052"
+    name: "Assumption Torture for Guarantees"
+    feature: "claim_guarantee"
+    methods: [130]
+    priority: HIGH
+    rationale: "Test assumptions behind guarantees"
+
+  # RISK Methods Triggers
+  - id: "T060"
+    name: "Pre-mortem for New Systems"
+    feature: "complexity_high"
+    methods: [61]
+    priority: HIGH
+    rationale: "Complex systems need failure analysis"
+
+  - id: "T061"
+    name: "Failure Mode Analysis"
+    feature: "structure_external_deps"
+    methods: [62]
+    priority: MEDIUM
+    rationale: "Dependencies create failure modes"
+
+  # EXPLORATION Methods Triggers
+  - id: "T070"
+    name: "Coincidentia for Contradictions"
+    feature: "claim_both_and"
+    methods: [108]
+    priority: CRITICAL
+    rationale: "Find synthesis or impossibility"
+
+  - id: "T071"
+    name: "Contraposition for Claims"
+    feature: "claim_guarantee"
+    methods: [109]
+    priority: HIGH
+    rationale: "Test claims via contraposition"
+
+# =============================================================================
+# PRIORITY WEIGHTS
+# =============================================================================
+
+priority_weights:
+  CRITICAL: 1.0
+  HIGH: 0.75
+  MEDIUM: 0.5
+  LOW: 0.25
+
+# =============================================================================
+# METHOD CATEGORIES (for coverage check)
+# =============================================================================
+
+category_requirements:
+  minimum_categories: 3
+  required_categories:
+    - core      # At least 1 from core
+    - sanity    # At least 1 from sanity
+  recommended_categories:
+    - risk
+    - challenge
+
+# =============================================================================
+# USAGE INSTRUCTIONS
+# =============================================================================
+
+usage: |
+  1. FEATURE EXTRACTION (Phase 0.5):
+     - Scan artifact for each feature's patterns
+     - Record detected features with confidence
+
+  2. TRIGGER MATCHING (Phase 3.0):
+     - For each detected feature, find matching triggers
+     - Collect all triggered methods with priorities
+
+  3. METHOD SCORING (Phase 3.1):
+     - Base score = trigger priority weight
+     - Boost if multiple triggers activate same method
+     - Apply category coverage bonus
+
+  4. SELECTION (Phase 3.2):
+     - Select top N methods by score
+     - Verify minimum category coverage
+     - Apply Reasoning Gate to each
+
+example: |
+  Artifact claims: "System guarantees both PFS and key recovery"
+
+  Features detected:
+    - domain_crypto (PFS, key) → confidence 0.9
+    - claim_guarantee (guarantees) → confidence 1.0
+    - claim_both_and (both...and) → confidence 1.0
+
+  Triggers matched:
+    - T020: [153, 155, 156] priority CRITICAL
+    - T003: [80, 109] priority HIGH
+    - T030: [108, 154, 158, 160] priority CRITICAL
+    - T052: [130] priority HIGH
+
+  Methods selected (top 10 by score):
+    1. #108 (CRITICAL + CRITICAL) = 2.0
+    2. #153 (CRITICAL) = 1.0
+    3. #154 (CRITICAL) = 1.0
+    ...

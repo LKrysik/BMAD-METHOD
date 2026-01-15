@@ -1,0 +1,422 @@
+# Method Weights - Learning Storage
+# Version: 1.0
+# Purpose: Persist method effectiveness weights across sessions
+
+# Usage:
+# 1. Load at Phase 3.0 (with method library)
+# 2. Use in RELEVANCE scoring as historical_effectiveness
+# 3. Update at Phase 6.2 (Layer 3: Immune Memory)
+# 4. Save after each verification run
+
+version: "1.0"
+created: "2026-01-14"
+last_updated: "2026-01-14T00:00:00Z"
+session_count: 0
+
+# =============================================================================
+# WEIGHT SCHEMA
+# =============================================================================
+#
+# Each method entry contains:
+#   current: float (0.0-1.0) - current effectiveness weight
+#   baseline: float - starting weight (for reset)
+#   history: list - last 10 session scores
+#   stats:
+#     findings_total: int - total findings claimed
+#     findings_confirmed: int - findings that survived challenge
+#     false_positives: int - findings rejected
+#     tokens_avg: int - average tokens when applied
+#   status: ACTIVE | FLAGGED | RETIRED
+#   notes: string - any observations
+#
+# Weight Update Formula:
+#   new_weight = old_weight * 0.9 + session_score * 0.1
+#
+# Session Score Formula:
+#   score = (confirmed/claimed)*0.4 + (1-FP_rate)*0.3 + efficiency*0.2 + feedback*0.1
+#
+# Retirement Rule:
+#   If weight < 0.3 for 10 consecutive sessions → status = FLAGGED
+#   User review required before RETIRED
+#
+# =============================================================================
+
+# =============================================================================
+# DEFAULT WEIGHTS
+# =============================================================================
+# Initial weights based on method category and expected utility
+# These are starting points - will be adjusted through learning
+
+defaults:
+  core: 0.75        # High baseline - fundamental methods
+  sanity: 0.70      # High baseline - always useful
+  risk: 0.65        # Medium-high - often applicable
+  challenge: 0.60   # Medium - depends on context
+  exploration: 0.60 # Medium - depends on context
+  theory: 0.55      # Medium - domain-specific
+  conflict: 0.55    # Medium - triggered by requirements
+  meta: 0.50        # Lower - overhead methods
+  coherence: 0.50   # Lower - specific use cases
+  creative: 0.45    # Lower - rarely needed in verification
+  collaboration: 0.40 # Lower - multi-persona overhead
+
+# =============================================================================
+# METHOD WEIGHTS
+# =============================================================================
+
+methods:
+  # CORE Methods (71-80)
+  "71":
+    name: "First Principles Analysis"
+    category: core
+    current: 0.75
+    baseline: 0.75
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 2500
+    status: ACTIVE
+    notes: "Fundamental method - high baseline"
+
+  "72":
+    name: "5 Whys Deep Dive"
+    category: core
+    current: 0.75
+    baseline: 0.75
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 1500
+    status: ACTIVE
+    notes: "Root cause analysis - always valuable"
+
+  "80":
+    name: "Inversion"
+    category: core
+    current: 0.70
+    baseline: 0.70
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 1500
+    status: ACTIVE
+    notes: "Complement to first principles"
+
+  # SANITY Methods (81-90)
+  "81":
+    name: "Scope Integrity Audit"
+    category: sanity
+    current: 0.75
+    baseline: 0.75
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 1500
+    status: ACTIVE
+    notes: "Always run for requirements"
+
+  "83":
+    name: "Closure Check"
+    category: sanity
+    current: 0.70
+    baseline: 0.70
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 800
+    status: ACTIVE
+    notes: "Quick, always useful"
+
+  "84":
+    name: "Coherence Check"
+    category: sanity
+    current: 0.70
+    baseline: 0.70
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 1500
+    status: ACTIVE
+    notes: "Essential for consistency"
+
+  "88":
+    name: "Executability Check"
+    category: sanity
+    current: 0.70
+    baseline: 0.70
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 1500
+    status: ACTIVE
+    notes: "Critical for procedures"
+
+  # EXPLORATION Methods (101-110)
+  "108":
+    name: "Coincidentia Oppositorum"
+    category: exploration
+    current: 0.70
+    baseline: 0.70
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 2500
+    status: ACTIVE
+    notes: "Key for contradiction detection"
+
+  "109":
+    name: "Contraposition Inversion"
+    category: exploration
+    current: 0.65
+    baseline: 0.65
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 1500
+    status: ACTIVE
+    notes: "Complement to coincidentia"
+
+  # CHALLENGE Methods (121-130)
+  "122":
+    name: "Sorites Paradox"
+    category: challenge
+    current: 0.60
+    baseline: 0.60
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 1500
+    status: ACTIVE
+    notes: "Find critical elements"
+
+  "127":
+    name: "Bootstrap Paradox"
+    category: challenge
+    current: 0.60
+    baseline: 0.60
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 1000
+    status: ACTIVE
+    notes: "Circular dependency detection"
+
+  "128":
+    name: "Theseus Paradox"
+    category: challenge
+    current: 0.60
+    baseline: 0.60
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 1500
+    status: ACTIVE
+    notes: "Core alignment check"
+
+  "130":
+    name: "Assumption Torture"
+    category: challenge
+    current: 0.60
+    baseline: 0.60
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 2000
+    status: ACTIVE
+    notes: "Test assumption robustness"
+
+  # THEORY Methods (153-156)
+  "153":
+    name: "Theoretical Impossibility Check"
+    category: theory
+    current: 0.65
+    baseline: 0.65
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 2500
+    status: ACTIVE
+    notes: "Critical for theoretical domains"
+
+  "154":
+    name: "Definitional Contradiction Detector"
+    category: theory
+    current: 0.60
+    baseline: 0.60
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 2000
+    status: ACTIVE
+    notes: "Works with #108"
+
+  "155":
+    name: "Technical Term Verifier"
+    category: theory
+    current: 0.55
+    baseline: 0.55
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 1500
+    status: ACTIVE
+    notes: "Domain-specific verification"
+
+  "156":
+    name: "Domain Expert Activation"
+    category: theory
+    current: 0.55
+    baseline: 0.55
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 3000
+    status: ACTIVE
+    notes: "High overhead but valuable"
+
+  # CONFLICT Methods (157-161)
+  "158":
+    name: "Pairwise Compatibility Matrix"
+    category: conflict
+    current: 0.60
+    baseline: 0.60
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 2500
+    status: ACTIVE
+    notes: "Systematic conflict detection"
+
+  "159":
+    name: "Transitive Dependency Closure"
+    category: conflict
+    current: 0.55
+    baseline: 0.55
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 2000
+    status: ACTIVE
+    notes: "Cycle and gap detection"
+
+  "160":
+    name: "Compatibility Proof Demand"
+    category: conflict
+    current: 0.55
+    baseline: 0.55
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 2000
+    status: ACTIVE
+    notes: "Require proof of compatibility"
+
+  "161":
+    name: "Definition Triad Expansion"
+    category: conflict
+    current: 0.55
+    baseline: 0.55
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 1500
+    status: ACTIVE
+    notes: "MEANS/IMPLIES/EXCLUDES expansion"
+
+  # RISK Methods (61-70)
+  "61":
+    name: "Pre-mortem Analysis"
+    category: risk
+    current: 0.65
+    baseline: 0.65
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 2000
+    status: ACTIVE
+    notes: "Failure prediction"
+
+  "62":
+    name: "Failure Mode Analysis"
+    category: risk
+    current: 0.60
+    baseline: 0.60
+    history: []
+    stats:
+      findings_total: 0
+      findings_confirmed: 0
+      false_positives: 0
+      tokens_avg: 2500
+    status: ACTIVE
+    notes: "Component failure modes"
+
+# =============================================================================
+# UPDATE LOG
+# =============================================================================
+
+update_log: []
+  # Format:
+  # - session_id: "xxx"
+  #   timestamp: "2026-01-14T10:00:00Z"
+  #   methods_updated: [71, 72, 81]
+  #   notes: "verification of artifact X"
+
+# =============================================================================
+# FLAGGED METHODS
+# =============================================================================
+
+flagged_methods: []
+  # Methods with weight < 0.3 for 10+ sessions
+  # Require user review before retirement
+
+# =============================================================================
+# RETIRED METHODS
+# =============================================================================
+
+retired_methods: []
+  # Methods removed from active selection
+  # Keep record for potential reactivation

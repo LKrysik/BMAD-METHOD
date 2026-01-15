@@ -1,7 +1,26 @@
 # Universal Verification Protocol Test Orchestrator
 
-**Version: 2.0**
+**Version: 2.1**
 **Purpose**: Test ANY verification protocol against standardized trap tasks with measurable metrics and full token economy tracking.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│   ⛔⛔⛔  FUNDAMENTALNA ZASADA - PRZECZYTAJ PRZED UŻYCIEM  ⛔⛔⛔            │
+│                                                                             │
+│   ABSOLUTNIE ZABRONIONE JEST PODAWANIE:                                     │
+│   - "Estimated" / "Est." / "~" wartości tokenów                            │
+│   - "Should be" / "Expected" wyników                                        │
+│   - Jakichkolwiek wartości które nie pochodzą z session_usage_analyzer.py   │
+│                                                                             │
+│   KAŻDA wartość musi być ZMIERZONA i pochodzić z REALNYCH danych.          │
+│                                                                             │
+│   Jeśli nie masz realnych danych → wpisz "NOT MEASURED" (nie estimate!)    │
+│                                                                             │
+│   NARUSZENIE TEJ ZASADY = EKSPERYMENT NIEWAŻNY                             │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
