@@ -502,7 +502,7 @@ For each finding with confidence >= 50%:
 #### 6.3 Method Effectiveness & Weight Updates
 
 ```
-## 6.2 Method Effectiveness
+## 6.3 Method Effectiveness
 
 ### Method Performance This Run
 | Method | Relevance Score | Findings | Confirmed | ROI |
@@ -524,10 +524,10 @@ new_weight = old_weight × 0.9 + session_performance × 0.1
 | [new pattern] | Anomaly A1 | [what to match] | P00[N] |
 ```
 
-#### 6.3 Adaptation Feedback
+#### 6.4 Adaptation Feedback
 
 ```
-## 6.3 Adaptation Feedback
+## 6.4 Adaptation Feedback
 
 ### What Worked
 | Element | Evidence | Keep/Amplify |
@@ -802,5 +802,5 @@ If weight(M) < 0.3 for 10 consecutive runs → flag for removal review
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 7.1 | 2026-01-XX | EVOLUTION: Integrated Error Theory (Taxonomy Scan), Seeded Method Selection, Knowledge Injection slot, Limits Acknowledgment. |
+| 7.1 | 2026-01-15 | EVOLUTION: Integrated Error Theory (Taxonomy Scan), Seeded Method Selection, Knowledge Injection slot, Limits Acknowledgment. FIX 2026-01-16: Corrected section numbering (6.3→6.4 for Adaptation Feedback). |
 | 7.0 | 2026-01-13 | MAJOR: Adaptive Verification System architecture. |

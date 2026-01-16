@@ -6,11 +6,15 @@
 
 **V7.1.1 Changes from V7.1:**
 - **Batched Execution**: 15 phases → 5 super-phases (reduces context accumulation by ~67%)
-- **Compressed Templates**: Shorter output tables (same information, fewer tokens)
+- **Compressed Templates**: Shorter output tables with documented tradeoffs
 - **Checkpoint Summaries**: Each super-phase ends with a compact summary for next phase
-- **Same Detection Power**: All V7.1 methods and logic preserved
+- **Preserved Detection Power**: All V7.1 methods preserved; see tradeoffs in Appendix D
 
 **Expected Token Reduction:** ~230K → ~75K per task (67% savings)
+
+**Known Tradeoffs (documented in Appendix D):**
+- Batching may reduce sequential phase learning for complex artifacts
+- Compressed templates trade traceability for token efficiency
 
 ---
 
@@ -21,6 +25,7 @@
 | SUPER-PHASE | Batched execution of multiple V7.1 phases in single turn |
 | CHECKPOINT | Compact summary passed between super-phases |
 | COMPRESSED TEMPLATE | Minimal output format preserving essential data |
+| DETECTION POWER | Operational metric: DP = (methods_applied × method_coverage) + (findings_confirmed / findings_claimed) + (1 - false_positive_rate). V7.1.1 preserves method application; may reduce traceability. |
 
 **Methods source:** `src/core/methods/methods.csv`
 **Domain knowledge:** `src/core/knowledge/domain-knowledge-base.md`
@@ -113,9 +118,9 @@ Execute ALL of the following in a SINGLE response:
 ## SP2: INNATE
 
 ### Consistency (#84)
-| Term | Conflict? | Location |
-|------|-----------|----------|
-| [term] | Y/N | [loc] |
+| Term | First Def | Later Usage | Conflict? |
+|------|-----------|-------------|-----------|
+| [term] | [first definition @ loc] | [later usage @ loc] | Y/N |
 
 Verdict: [PASS/FAIL]
 
@@ -300,10 +305,31 @@ For EACH finding with conf ≥50%:
 
 ```
 ### Knowledge Injection
-Checked: optimization-strategies.md
+Source: optimization-strategies.md (if exists, else skip)
 | Strategy Violated? | By Artifact | By Process |
 |--------------------|-------------|------------|
 | [strategy] | Y/N | Y/N |
+| (none if file not found) | - | - |
+```
+
+### 4E. Adaptation Feedback
+
+```
+### Adaptation Feedback
+#### What Worked
+| Element | Evidence | Keep/Amplify |
+|---------|----------|--------------|
+| [method/strategy] | [result] | KEEP/AMPLIFY |
+
+#### What Didn't Work
+| Element | Evidence | Change/Remove |
+|---------|----------|---------------|
+| [method/strategy] | [result] | CHANGE/REMOVE |
+
+#### Process Improvements
+| Suggestion | Basis | Priority |
+|------------|-------|----------|
+| [suggestion] | [evidence] | HIGH/MED/LOW |
 ```
 
 ### Checkpoint 4
@@ -429,9 +455,10 @@ Execute ALL of the following in a SINGLE response:
 | 4.3 Hypothesis Generation | SP3: ADAPTIVE |
 | 5.1 Finding Consolidation | SP4: CONSOLIDATE |
 | 5.2 Challenge Protocol | SP4: CONSOLIDATE |
-| 6.1 Results Recording | SP4: CONSOLIDATE |
-| 6.2 Knowledge Injection | SP4: CONSOLIDATE |
-| 6.3 Method Effectiveness | SP4: CONSOLIDATE |
+| 6.1 Results Recording | SP4: CONSOLIDATE (4C) |
+| 6.2 Knowledge Injection | SP4: CONSOLIDATE (4D) |
+| 6.3 Method Effectiveness | SP4: CONSOLIDATE (4C) |
+| 6.4 Adaptation Feedback | SP4: CONSOLIDATE (4E) |
 | 7 Escalation | SP5: FINALIZE |
 | Output | SP5: FINALIZE |
 
@@ -460,10 +487,51 @@ Expected reduction: 67%
 
 ---
 
+## Appendix D: Learning Weight Formula & Tradeoffs
+
+### Learning Weight Formula (from V7.1)
+
+```
+Method effectiveness score:
+
+score(M) =
+  (findings_confirmed / findings_claimed) × 0.4 +
+  (1 - false_positive_rate) × 0.3 +
+  (findings / tokens_used) × 0.2 +
+  user_feedback_score × 0.1
+
+Weight update:
+new_weight(M) = old_weight(M) × 0.9 + score(M) × 0.1
+
+Method retirement threshold:
+If weight(M) < 0.3 for 10 consecutive runs → flag for removal review
+```
+
+### V7.1.1 Batching Tradeoffs
+
+| Tradeoff | V7.1 Behavior | V7.1.1 Behavior | Impact | Mitigation |
+|----------|---------------|-----------------|--------|------------|
+| Sequential Learning | Phase N informs Phase N+1 | Phases execute in parallel within super-phase | May miss findings dependent on prior phase results | For CRITICAL artifacts, consider V7.1 full execution |
+| Template Traceability | Full columns (First Def, Later Usage) | Restored in V7.1.1 | Minimal after fix | N/A |
+| Adaptation Feedback | Explicit "What Worked/Didn't" | Restored in V7.1.1 (4E) | Minimal after fix | N/A |
+| Token Efficiency | ~230K/task | ~75K/task | 67% cost reduction | Primary benefit |
+
+### When to Use V7.1 vs V7.1.1
+
+| Scenario | Recommended |
+|----------|-------------|
+| Standard verification | **V7.1.1** (token efficient) |
+| CRITICAL artifacts | **V7.1** (maximum rigor) |
+| Expert-difficulty domains | **V7.1** (sequential learning valuable) |
+| Budget-constrained | **V7.1.1** (67% savings) |
+| High-volume batch verification | **V7.1.1** (scalable) |
+
+---
+
 ## Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 7.1.1 | 2026-01-16 | TOKEN-OPT: Batched 15 phases → 5 super-phases, compressed templates, checkpoint summaries |
+| 7.1.1 | 2026-01-16 | TOKEN-OPT: Batched 15→5 super-phases. FIX: Restored Adaptation Feedback (4E), Learning Weight Formula (App D), template columns, defined Detection Power operationally, documented tradeoffs. |
 | 7.1 | 2026-01-15 | EVOLUTION: Error Theory integration, seeded selection, knowledge injection |
 | 7.0 | 2026-01-13 | MAJOR: Adaptive Verification System architecture |
