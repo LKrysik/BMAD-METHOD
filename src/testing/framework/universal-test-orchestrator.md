@@ -20,7 +20,7 @@
 
 ### 0.1 Setup
 1. **Select Protocol:** Choose file (e.g., `workflow-v7.4.md`).
-2. **Select Task:** Choose T[N] from `trap-tasks.md`.
+2. **Select Task:** Choose task T[N] from `trap-tasks.md`.
 3. **Configure Runs:** Default N=3 (Standard) or N=1 (Quick Check).
 
 ### 0.2 Artifact Logic (Cost Optimization)
@@ -34,17 +34,19 @@
 
 ## Phase 1: Protocol Execution
 
-Execute the verification protocol via subagents.
+Execute the verification protocol via subagents. The results of the verification are considered permanent artifacts and should not be deleted.
 
-**Prompting Strategy (Cost Saving):**
+### Prompting Strategy (Cost Saving & Detailed Logging)
 - Do NOT paste the protocol text into the prompt.
 - Instruct the subagent to `read_file` the protocol and artifact.
-- Instruction: "Read `src/core/workflows/deep-verify/workflow-v[X].md` and verify `src/testing/results/experiments/artifacts/artifact-t[N].md`."
+- **Instruction:** "Read `src/core/workflows/deep-verify/workflow-v[X].md` and verify `src/testing/results/experiments/artifacts/artifact-t[N].md`. **Log every step of your execution of the workflow, showing how you are applying the protocol to the artifact. The final output should be a complete trace of your verification process, including all phases of the workflow.**"
 
-**Execution Loop:**
-1. Spawn Subagent 1 → Save output to `verify-[task]-run-1.md`
-2. Spawn Subagent 2 → Save output to `verify-[task]-run-2.md` (if N>1)
-3. Spawn Subagent 3 → Save output to `verify-[task]-run-3.md` (if N>1)
+### Execution Loop & Output Management
+1.  **Create Directory:** Before execution, create a directory for the results named after the protocol file (e.g., `workflow-v7-0` from `workflow-v7.0.md`). All results will be stored here.
+2.  **Generate Timestamp:** Get the current time in `mmddhhmm` format.
+3.  **Execute and Save:**
+    -   Spawn Subagent 1 → Save output to `[protocol-folder]/verify-[task]_[timestamp].md`
+
 
 ---
 
