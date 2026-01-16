@@ -99,6 +99,13 @@ STEP 3 - Rules:
 
 ---
 
+## Process Selection: Standard vs Lite
+
+| Process | Orchestrator File | Cost | Use Case |
+|---------|-------------------|------|----------|
+| **Standard** | `universal-test-orchestrator.md` | $$$ | Formal experiments, detailed analysis (N=3) |
+| **Lite** | `universal-test-orchestrator-lite.md` | $ | Quick checks, debugging, cost optimization (N=1) |
+
 ## Protocol Selection Guide
 
 | Protocol | ID | Location | Recommended |
@@ -121,6 +128,19 @@ STEP 3 - Rules:
 - **Anomaly Detection**: Catches unknown pattern types
 - **Tiered Execution**: Cost scales with criticality (10K-100K+)
 - **Learning Loop**: Improves with each run
+
+---
+
+## Quick Start (Lite Mode)
+
+For cost-sensitive verification or routine checks:
+
+1. **Read:** `src/testing/framework/universal-test-orchestrator-lite.md`
+2. **Execute:** Follow the 4-step compressed loop.
+   - Reuse existing artifacts.
+   - Run protocol once.
+   - Measure using script.
+   - Log brief summary.
 
 ---
 
