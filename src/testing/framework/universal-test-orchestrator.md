@@ -46,6 +46,32 @@ Execute the verification protocol via subagents.
 2. Spawn Subagent 2 → Save output to `verify-[task]-run-2.md` (if N>1)
 3. Spawn Subagent 3 → Save output to `verify-[task]-run-3.md` (if N>1)
 
+### Method Usage Logging (MANDATORY)
+
+**Action:** Subagents MUST track every method applied from `methods.csv` and save a separate log file.
+
+**Filename:** `src/testing/results/methods_usage/MMDD_HH_[Version].md`
+- Format: MonthDay_Hour_[ProtocolVersion].md
+- Example: `0116_11_v7.0.md` (Jan 16th, 11am, v7.0)
+
+**Content Template:**
+```markdown
+# Method Usage Log - [Version]
+
+**Session:** [Date/Time]
+**Task:** [Task ID]
+
+## Usage Statistics
+- **Total methods.csv Reads:** [How many times did you look up/reference the methods file?]
+- **Total Unique Methods:** [Count]
+
+## Detail Table
+| Method ID | Name | Layer/Phase | Count | Est. Duration |
+|-----------|------|-------------|-------|---------------|
+| #84 | Consistency Check | Layer 1 | 1 | 5s |
+| #153 | Impossibility | Layer 2 | 2 | 15s |
+```
+
 ---
 
 ## Phase 2: Token Measurement (Automated)
