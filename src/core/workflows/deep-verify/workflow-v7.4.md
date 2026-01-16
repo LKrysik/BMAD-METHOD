@@ -5,12 +5,17 @@
 **Deep Verify V7.4** is a streamlined evolution of V7.1. It retains the powerful "Error Theory" (Taxonomy Scan) and "Dense Reasoning" architecture but optimizes it for token efficiency and reduced cognitive load. It applies the **REMOVE_REDUNDANCY** operator to the verification process itself.
 
 **Differences from V7.1 (Rolls-Royce):**
-- **Domain-Gated Visibility**: Low-tier tasks no longer scan all 160 methods; visibility is restricted by domain.
+- **Domain-Gated Visibility**: Low-tier tasks no longer scan all 160 methods (methods.csv); visibility is restricted by domain.
 - **Unified Innate Scan**: Consistency, Completeness, and Scope are checked in a single pass (Innate Sanity Check), reducing prompt overhead.
 - **Confident Taxonomy Filter**: Error categories with < 20% confidence are completely blocked from Layer 2 analysis.
 - **Simplified Challenge**: The "self-argument" phase is consolidated into a single "Sanity Challenge" pass, removing the triple-check redundancy for clear errors.
 
 **Target Use Case**: Standard software verification, high-quality code review, and efficient rigorous analysis. Use V7.1 only for critical banking/protocol systems.
+
+---
+
+**Methods source:** `src/core/methods/methods.csv`
+
 
 ---
 
