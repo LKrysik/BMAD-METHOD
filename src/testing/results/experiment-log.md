@@ -33,6 +33,7 @@
 
 | Exp ID | Date | Workflow | Task | DR | WDS | OES | Tokens | Cost USD | Summary File |
 |--------|------|----------|------|-----|-----|-----|--------|----------|--------------|
+| EXP-2026-01-16-001 | 2026-01-16 | v7.3 | T15-T21 | **84%** | 95 | 91 | 545,343 | $24.20 | [20260116-1020_results.md](summaries/20260116-1020_results.md) |
 | EXP-2026-01-15-001 | 2026-01-15 | v7.1 | T15-T21 | **100%** | 84 | 100 | 1,584,914 | $27.39 | [20260115-2240_results.md](summaries/20260115-2240_results.md) |
 | EXP-2026-01-15-002 | 2026-01-15 | v7.2 | T15-T21 | 56% | 69 | 68 | 375,401 | $7.38 | [20260115-2243_results.md](summaries/20260115-2243_results.md) |
 | _template_ | _YYYY-MM-DD_ | _vX.Y_ | _TN_ | _XX%_ | _XX_ | _XX_ | _NNNNN_ | _$X.XX_ | [YYYYMMDD-HHMM_results.md](summaries/YYYYMMDD-HHMM_results.md) |
