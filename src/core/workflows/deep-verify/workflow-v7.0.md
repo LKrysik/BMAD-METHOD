@@ -4,22 +4,6 @@
 
 **Deep Verify V7** is a fundamentally redesigned verification workflow based on the **Adaptive Verification System (AVS)** architecture. Unlike previous versions that used fixed method lists, V7 adapts its detection strategy to each artifact.
 
-**V7.0 Architecture Change from V6.x:**
-- **PARADIGM SHIFT**: From pattern-based detection → adaptive layered detection
-- **Biological Metaphor**: Modeled on immune system (innate + adaptive responses)
-- **4-Layer Architecture**: Innate → Adaptive → Memory → Escalation
-- **Dynamic Method Selection**: Per-artifact, not predefined
-- **Anomaly Detection**: Flags unknown patterns instead of missing them
-- **Learning Loop**: Improves with each verification run
-- **Tiered Execution**: Cost proportional to artifact criticality
-- **Explicit Uncertainty**: Reports confidence levels, not just findings
-
-**Why this change?**
-Experimental evidence from EXP-2026-01-13-001:
-- V6.6 added methods vs V6.5 → costs increased 18%, detection unchanged
-- Pattern matching fundamentally cannot detect unknown patterns
-- Adding specific fixes is whack-a-mole, not solution
-- 300+ method analysis across 18 categories converged on adaptive approach
 
 ---
 
@@ -888,44 +872,3 @@ If weight(M) < 0.3 for 10 consecutive runs → flag for removal review
 ```
 
 ---
-
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 7.0 | 2026-01-13 | MAJOR: Adaptive Verification System architecture, 4-layer model, dynamic method selection, anomaly detection, learning loop, tiered execution |
-| 6.6 | 2026-01-12 | Phase 2.7 Conflict & Dependency Deep Analysis |
-| 6.5 | 2026-01-12 | Two-Pass Semantic Selection |
-| 6.4 | 2026-01-11 | Adaptive method selection |
-| 6.3 | 2026-01-10 | Stability protocols |
-
----
-
-## Migration Notes from V6.x
-
-### What's Different
-
-| V6.x Approach | V7.0 Approach |
-|---------------|---------------|
-| Fixed method list | Dynamic per-artifact selection |
-| All methods always | Tiered execution by criticality |
-| Pattern matching only | Pattern + Anomaly + Hypothesis |
-| No learning | Weight updates from results |
-| Binary findings | Confidence levels |
-| No escalation path | Explicit human-in-loop |
-
-### Backward Compatibility
-
-V7 can emulate V6.x behavior by:
-- Setting Tier = 5 (all layers, no early termination)
-- Ignoring anomaly findings
-- Not updating weights
-
-However, this defeats the purpose of V7.
-
-### Recommended Migration
-
-1. Run V7 with default triage
-2. Compare findings to V6.x baseline
-3. Adjust triage thresholds if needed
-4. Allow learning loop to calibrate weights over 5-10 runs

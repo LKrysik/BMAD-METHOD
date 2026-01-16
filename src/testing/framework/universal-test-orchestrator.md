@@ -35,11 +35,9 @@
 | `DV-V6.5` | Deep Verify V6.5 | `workflow-v6.5.md` | Phases + Findings |
 | `DV-V6.6` | Deep Verify V6.6 | `workflow-v6.6.md` | Phases + Findings |
 | `DV-V7.0` | Deep Verify V7.0 | `workflow-v7.0.md` | Phases + Findings |
-| `DV-LITE` | Deep Verify Lite | `workflow-v6-lite.md` | Phases + Findings |
-| `VGD` | Tensor V-GD Protocol | `quality_gates/Tensor-Based-Verification-Protocol.md` | Lambda V + Gradient Hotspots |
-| `QVP` | Quadrant Verification | `quality_gates/Quadrant-Verification-Protocol.md` | 4 Scans + SPOF |
-| `UAQG` | Universal Agent QG | `quality_gates/Universal-Agent-Quality-Gate-Protocol.md` | Quality Gates |
-
+| `DV-V7.1` | Deep Verify V7.0 | `workflow-v7.1.md` |  |
+| `DV-V7.2` | Deep Verify V7.0 | `workflow-v7.2.md` |  |
+| `DV-V7.3` | Deep Verify V7.0 | `workflow-v7.3.md` |  |
 ---
 
 ## Architecture
@@ -293,6 +291,9 @@ Tokens collected from agent-[id].jsonl:
 | 4 | workflow-v6.6.md | T3 | 1 | m0n1o2p | quiet-yellow-moon | 38,200 | TOKENS_COLLECTED |
 | 5 | workflow-v6.6.md | T3 | 2 | q3r4s5t | bright-orange-wave | 39,800 | TOKENS_COLLECTED |
 | 6 | workflow-v7.0.md | T3 | 3 | u6v7w8x | deep-purple-cloud | 41,100 | TOKENS_COLLECTED |
+| 7 | workflow-v7.1.md | T3 | 3 | u6v7w8x | deep-purple-cloud | 41,100 | TOKENS_COLLECTED |
+| 8 | workflow-v7.2.md | T3 | 3 | u6v7w8x | deep-purple-cloud | 41,100 | TOKENS_COLLECTED |
+| 9 | workflow-v7.3.md | T3 | 3 | u6v7w8x | deep-purple-cloud | 41,100 | TOKENS_COLLECTED |
 
 ### Token Summary by Process
 | Process | Task | Runs | Total Tokens | Avg Tokens | Findings | Avg CPF |

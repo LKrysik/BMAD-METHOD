@@ -37,6 +37,10 @@ src/
 │   │   ├── workflow-v6.1.md
 │   │   ├── workflow-v6.2.md
 │   │   ├── workflow-v6.3.md
+│   │   ├── workflow-v7.0.md
+│   │   ├── workflow-v7.1.md
+│   │   ├── workflow-v7.2.md
+│   │   ├── workflow-v7.3.md
 │   │   └── workflow-v6-lite.md
 │   │
 │   └── quality_gates/                 # Other protocols
@@ -106,11 +110,10 @@ STEP 3 - Rules:
 | Deep Verify V6.3 | `DV-V6.3` | `src/core/workflows/deep-verify/workflow-v6.3.md` | Legacy |
 | Deep Verify V6.2 | `DV-V6.2` | `src/core/workflows/deep-verify/workflow-v6.2.md` | Legacy |
 | Deep Verify V6.1 | `DV-V6.1` | `src/core/workflows/deep-verify/workflow-v6.1.md` | Legacy |
-| Deep Verify V6 | `DV-V6` | `src/core/workflows/deep-verify/workflow-v6.md` | Legacy |
-| Deep Verify V5 | `DV-V5` | `src/core/workflows/deep-verify/workflow-v5.md` | Legacy |
-| Deep Verify Lite | `DV-LITE` | `src/core/workflows/deep-verify/workflow-v6-lite.md` | Quick checks |
-| Tensor V-GD | `VGD` | `src/core/quality_gates/Tensor-Based-Verification-Protocol.md` | Mathematical |
-| Quadrant QVP | `QVP` | `src/core/quality_gates/Quadrant-Verification-Protocol.md` | Structural |
+| Deep Verify V7.0 | `DV-V7.0` | `src/core/workflows/deep-verify/workflow-v7.0.md` | Legacy |
+| Deep Verify V7.1 | `DV-V7.1` | `src/core/workflows/deep-verify/workflow-v7.1.md` |  |
+| Deep Verify V7.2 | `DV-V7.2` | `src/core/workflows/deep-verify/workflow-v7.2.md` |  |
+| Deep Verify V7.3 | `DV-V7.3` | `src/core/workflows/deep-verify/workflow-v7.3.md` |  |
 
 ### V7 Key Features
 - **4-Layer Architecture**: Innate → Adaptive → Memory → Escalation
