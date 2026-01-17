@@ -16,6 +16,11 @@ These rules are **MANDATORY**. Violation invalidates the entire test run.
 | R3 | All output files MUST include timestamp `_MMDDHHMM` | File will be rejected |
 | R4 | Summary reports MUST use exact template structure | Report INVALID |
 | R5 | Ground truth MUST NOT be accessible to subagents | Test contaminated |
+| R6 | Section 4 MUST include Efficiency Metrics table with formulas | Report INCOMPLETE |
+| R7 | Per-Agent Breakdown (Section 2.2) MUST have all token columns | Report INCOMPLETE |
+| R8 | Section 2.4 MUST include Combined Per-Task Metrics (Tokens+Detection+Cost) | Report INCOMPLETE |
+| R9 | Section 3 Detection Matrix MUST include Points and Cost/Point columns | Report INCOMPLETE |
+| R10 | Section 4 MUST include Token Efficiency (DR%/K) with formula and summary | Report INCOMPLETE |
 
 ---
 
@@ -313,17 +318,40 @@ Example: `20260116-WFv741-T15T17-RESULTS.md`
 | Main Session Tokens | [INTEGER] |
 | Subagent Tokens | [INTEGER] |
 
+### 2.4 Combined Per-Task Metrics (MANDATORY)
+
+**This table MUST combine token usage with detection metrics for each task.**
+
+| Task | Level | Tokens | Cost_USD | Expected | Full | Partial | Missed | DR% | Points | Cost/Point |
+|------|-------|--------|----------|----------|------|---------|--------|-----|--------|------------|
+| T1 | V1 | X | $X.XX | X | X | X | X | X% | X.X | $X.XX |
+| ... | | | | | | | | | | |
+| **TOTAL** | - | **X** | **$X.XX** | **X** | **X** | **X** | **X** | **X%** | **X** | **$X.XX** |
+
+**Aggregated by Difficulty Level (MANDATORY):**
+
+| Level | Tasks | Tokens | Cost_USD | Expected | Full | Partial | Missed | DR% | Points | Cost/Point |
+|-------|-------|--------|----------|----------|------|---------|--------|-----|--------|------------|
+| V1 | X | X | $X.XX | X | X | X | X | X% | X.X | $X.XX |
+| V2 | X | X | $X.XX | X | X | X | X | X% | X.X | $X.XX |
+| V3 | X | X | $X.XX | X | X | X | X | X% | X.X | $X.XX |
+
 ---
 
 ## 3. Effectiveness Analysis
 
 ### 3.1 Detection Matrix
 
-| Task | Expected | Full | Partial | Missed | DR% | Points |
-|------|----------|------|---------|--------|-----|--------|
-| T15 | 7 | 1 | 2 | 4 | 28.6% | 2.0 |
-| ... | | | | | | |
-| **TOTAL** | **X** | **X** | **X** | **X** | **X%** | **X** |
+| Task | Expected | Full | Partial | Missed | DR% | Points | Cost_USD | Cost/Point |
+|------|----------|------|---------|--------|-----|--------|----------|------------|
+| T15 | 7 | 1 | 2 | 4 | 28.6% | 2.0 | $X.XX | $X.XX |
+| ... | | | | | | | | |
+| **TOTAL** | **X** | **X** | **X** | **X** | **X%** | **X** | **$X.XX** | **$X.XX** |
+
+**Formulas:**
+- `DR%` = (Full + Partial×0.5) / Expected × 100
+- `Points` = Full×1 + Partial×0.5
+- `Cost/Point` = Cost_USD / Points
 
 ### 3.2 Ground Truth Comparison
 
@@ -338,14 +366,63 @@ For each task, detailed comparison:
 
 ---
 
-## 4. Efficiency Metrics
+## 4. Efficiency Metrics (MANDATORY)
+
+**IMPORTANT**: This section MUST include the metrics table with explicit formulas and calculated values.
+This enables cross-workflow comparison and validates test economics.
+
+### 4.1 Core Metrics Table (REQUIRED FORMAT)
 
 | Metric | Formula | Value |
 |--------|---------|-------|
-| Cost per Point | TC_USD / Points | $X.XX |
-| Tokens per Point | Total / Points | X |
-| Cost per Detection | TC_USD / (Full+Partial) | $X.XX |
-| Detection Rate | (Full+Partial×0.5) / Expected | X% |
+| Detection Rate (DR) | (Full + Partial×0.5) / Expected | (X + Y×0.5) / Z = **W%** |
+| Points Earned | Full×1 + Partial×0.5 | X×1 + Y×0.5 = **Z** |
+| Cost per Point | TC_USD / Points | $X.XX / Y = **$Z.ZZ** |
+| Tokens per Point | Total_Tokens / Points | X / Y = **Z** |
+| Cost per Detection | TC_USD / (Full+Partial) | $X.XX / Y = **$Z.ZZ** |
+| Miss Rate | Missed / Expected | X / Y = **Z%** |
+| **Token Efficiency (TE)** | DR% / (Avg_Tokens_per_Task / 1000) | W / (X / 1000) = **Y DR%/K** |
+
+**Variables**:
+- `TC_USD` = Total Cost from analyzer
+- `Points` = Full detections × 1 + Partial detections × 0.5
+- `Total_Tokens` = From analyzer output
+- `Full` = Count of fully detected errors
+- `Partial` = Count of partially detected errors
+- `Expected` = Total expected errors from ground truth
+
+### 4.2 Extended Analysis (OPTIONAL)
+
+| Metric | Formula | Value |
+|--------|---------|-------|
+| Cost per Task | TC_USD / Task_Count | $X.XX |
+| Tokens per Task | Total_Tokens / Task_Count | X |
+| Subagent vs Main Ratio | Subagent_Tokens / Main_Tokens | X.XX |
+
+### 4.3 Token Efficiency Summary (MANDATORY)
+
+**Token Efficiency (TE)** measures detection capability per 1000 tokens consumed. Higher is better.
+
+```
+╔═══════════════════════════════════════════════════════════════════════════╗
+║  WORKFLOW [VERSION] - TOKEN EFFICIENCY SUMMARY                            ║
+╠═══════════════════════════════════════════════════════════════════════════╣
+║  OVERALL TOKEN EFFICIENCY:  X.XXX DR%/K                                   ║
+║  Formula: DR% / (Avg_Tokens_per_Task / 1000) = X / Y = Z                  ║
+║                                                                           ║
+║  BY DIFFICULTY LEVEL:                                                     ║
+║  ├── V1: X.XXX DR%/K                                                      ║
+║  ├── V2: X.XXX DR%/K                                                      ║
+║  └── V3: X.XXX DR%/K                                                      ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+```
+
+### 4.4 Cross-Version Comparison (IF APPLICABLE)
+
+| Workflow Version | Detection Rate | Cost/Point | Tokens/Point | Token Efficiency | Status |
+|------------------|----------------|------------|--------------|------------------|--------|
+| v6.x (baseline) | X% | $X.XX | X | X.XX DR%/K | Baseline |
+| **vN.N (tested)** | **X%** | **$X.XX** | **X** | **X.XX DR%/K** | **Current** |
 
 ---
 
@@ -509,6 +586,8 @@ date +%m%d%H%M
 - [ ] **R3**: All filenames include `_MMDDHHMM` timestamp
 - [ ] **R4**: Summary report follows exact template structure
 - [ ] **R5**: Subagents never accessed ground-truth.md
-- [ ] **R6**: Registry Agent_IDs match analyzer output 1:1
-- [ ] **R7**: Verbose logs saved to `agent_verbose/[workflow]/`
-- [ ] **R8**: Verification files saved to `verifications/[workflow]/`
+- [ ] **R6**: Section 4 Efficiency Metrics table includes formulas AND calculated values
+- [ ] **R7**: Section 2.2 Per-Agent Breakdown has ALL columns: Agent_ID, Task, Input, Output, Cache_Create, Cache_Read, Total, Cost_USD
+- [ ] **R8**: Registry Agent_IDs match analyzer output 1:1
+- [ ] **R9**: Verbose logs saved to `agent_verbose/[workflow]/`
+- [ ] **R10**: Verification files saved to `verifications/[workflow]/`
