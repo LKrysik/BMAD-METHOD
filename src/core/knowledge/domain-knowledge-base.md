@@ -1,7 +1,7 @@
 # Domain Knowledge Base
 
 > **Purpose:** Reference for methods #153-156 (theory category). Updated by Deep Verify Phase 7.5.
-> **Last Updated:** 2026-01-12
+> **Last Updated:** 2026-01-18
 > **Update Protocol:** See [Updating This Base](#updating-this-base) at end.
 
 ---
@@ -33,6 +33,8 @@
 | **VCG Subsidy** | VCG requires external subsidy (not budget balanced) | Uses VCG + claims budget balance |
 | **Arrow's Theorem** | No voting system satisfies all fairness criteria | Claims "fair" voting without trade-off |
 | **Gibbard-Satterthwaite** | Non-dictatorial voting systems are manipulable | Claims strategyproof non-dictatorial voting |
+| **History-SP Incompatibility** | History-dependent allocation rules break strategyproofness (agents can manipulate history) | Fairness adjustments + strategyproofness claim | `PROPOSED` |
+| **Redistribution Gaming** | Redistribution based on participation creates gaming incentive (strategic losing) | Redistribution mechanism + strategyproofness | `PROPOSED` |
 
 ### Cryptography
 
@@ -94,6 +96,14 @@
 | **Complete** | All true statements provable | Undecidable type inference |
 | **Terminating** | All executions halt | Turing-complete + termination guarantee |
 
+### Mechanism Design Terms
+
+| Term | Correct Usage | Incorrect Usage |
+|------|---------------|-----------------|
+| **Strategyproof** | Truthful reporting is dominant strategy regardless of others' actions | Mechanism where history affects allocation (creates gaming) | `PROPOSED` |
+| **Budget Balanced** | Mechanism neither injects nor extracts money (Σ payments = 0) | VCG mechanism (requires subsidy by construction) |
+| **Individually Rational** | Participation yields non-negative utility | Redistribution that can be negative when R < 0 | `PROPOSED` |
+
 ---
 
 ## 3. Domain Expert Quick Reference
@@ -121,6 +131,9 @@
 - [ ] VCG used? Requires subsidy
 - [ ] Combinatorial auction? NP-hard timing
 - [ ] Fairness + efficiency? Usually trade-off
+- [ ] History-dependent rules? Breaks strategyproofness (agents can game history) `PROPOSED`
+- [ ] Redistribution mechanism? Check if R can be negative; check if creates gaming `PROPOSED`
+- [ ] Multiple mechanisms in one doc? Verify which claims apply to which `PROPOSED`
 
 ### Quantum Checklist
 - [ ] Speedup claimed? Is it proven or conjectured?
@@ -149,6 +162,17 @@
 | Full type inference | Dependent types | Undecidable |
 | Budget balance | VCG mechanism | VCG needs subsidy |
 | O(N) messages | BFT consensus | Lower bound Ω(N²) |
+| History-dependent allocation | Strategyproofness | Agents can manipulate history to gain advantage | `PROPOSED` |
+| Participation-based redistribution | Strategyproofness | Strategic losing becomes profitable | `PROPOSED` |
+| Fairness controller adjustments | Dominant strategy incentive compatibility | Tie-breaker preferences create gaming incentive | `PROPOSED` |
+
+### Document-Level Anti-Patterns `PROPOSED`
+
+| Pattern | Description | Detection Signal |
+|---------|-------------|------------------|
+| **Mixed Mechanism Conflation** | Design doc uses multiple mechanisms (e.g., VCG + posted-price) but conclusion claims properties for entire system without distinguishing which apply where | Conclusion lists properties; multiple mechanism sections exist |
+| **Proof Sketch Overclaim** | "Proof sketch" provided for properties that require formal proof due to known impossibility theorems | "Proof sketch" + claims against M-S/FLP/CAP |
+| **By Construction Handwave** | Claims property holds "by construction" without providing the construction | "by construction" + no mathematical proof |
 
 ---
 
@@ -156,7 +180,7 @@
 
 ### When to Update
 
-Deep Verify Phase 7.5 (Learning Extraction) should add entry when:
+Deep Verify Phase (Learning Extraction) should add entry when:
 1. New impossibility theorem encountered
 2. New technical term misuse pattern found
 3. New definitional contradiction discovered
@@ -189,3 +213,8 @@ Deep Verify Phase 7.5 (Learning Extraction) should add entry when:
 | Date | Change | Source |
 |------|--------|--------|
 | 2026-01-12 | Initial creation | EXP-2026-01-12-002 analysis |
+| 2026-01-18 | Added: History-SP Incompatibility, Redistribution Gaming theorems (PROPOSED) | v7-0-T19 F4, F6 |
+| 2026-01-18 | Added: Mechanism Design Terms section (Strategyproof, Budget Balanced, IR) | v7-0-T19 |
+| 2026-01-18 | Added: 3 new contradiction patterns (history-dependent, redistribution, fairness) | v7-0-T19 F4 |
+| 2026-01-18 | Added: Document-Level Anti-Patterns section (Mixed Mechanism, Proof Sketch, By Construction) | v7-0-T19 F3, F8 |
+| 2026-01-18 | Updated: Mechanism Design Checklist (+3 items) | v7-0-T19 |

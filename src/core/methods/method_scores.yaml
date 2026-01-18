@@ -3,9 +3,9 @@
 # Format: method_id: { artifact_type: score }
 # Score range: 0.0 (never effective) to 1.0 (always effective)
 
-last_updated: 2026-01-12
-total_sessions: 3
-version: "1.1"
+last_updated: 2026-01-18
+total_sessions: 6
+version: "1.4"
 
 # Updated with v6.4 testing on T15 (3 runs)
 # Priors from v6.3 testing (EXP-2026-01-12-V63-T12T15)
@@ -56,6 +56,13 @@ scores:
 
   # === MEDIUM CONFIDENCE (0.60-0.70) ===
 
+  71:  # First Principles Analysis
+    document: 0.60
+    code: 0.50
+    plan: 0.55
+    protocol: 0.50
+    _notes: "V8.0+V8.1-T21: Found CRITICAL issues in PLT artifacts"
+
   152:  # Socratic Decomposition
     document: 0.68
     code: 0.65
@@ -77,10 +84,11 @@ scores:
     _notes: "Effective for concurrency"
 
   116:  # Strange Loop Detection
-    document: 0.62
+    document: 0.66
     code: 0.60
     plan: 0.65
     protocol: 0.70
+    _notes: "V8.0-T21: Found type-check/term-check circularity"
 
   131:  # Observer Paradox
     document: 0.65
@@ -150,10 +158,11 @@ scores:
     protocol: 0.62
 
   109:  # Contraposition Inversion
-    document: 0.70
+    document: 0.73
     code: 0.68
     plan: 0.72
     protocol: 0.70
+    _notes: "V8.1-T21: Found termination gap in higher-order rules"
 
   128:  # Theseus Paradox
     document: 0.68
@@ -182,6 +191,41 @@ scores:
     plan: 0.60
     protocol: 0.62
     _notes: "Always useful for handoff but doesn't find issues"
+
+# === THEORY METHODS (V8.0 Path B clusters) ===
+  # High effectiveness for PLT/formal verification artifacts
+
+  153:  # Theoretical Impossibility Check
+    document: 0.55
+    code: 0.50
+    plan: 0.50
+    protocol: 0.50
+    _notes: "V8.0-T21: Found CRITICAL termination+higher-order conflict"
+    _condition: has_theoretical_claims
+
+  154:  # Definitional Contradiction Detector
+    document: 0.55
+    code: 0.50
+    plan: 0.50
+    protocol: 0.50
+    _notes: "V8.0-T21: Found Y-combinator encoding gap"
+    _condition: has_theoretical_claims
+
+  108:  # Coincidentia Oppositorum
+    document: 0.55
+    code: 0.50
+    plan: 0.50
+    protocol: 0.50
+    _notes: "V8.0-T21: Found soundness+gradual typing contradiction"
+    _condition: has_contradictory_requirements
+
+  161:  # Definition Triad Expansion
+    document: 0.55
+    code: 0.50
+    plan: 0.50
+    protocol: 0.50
+    _notes: "V8.0-T21: Found CRITICAL type inference termination gap"
+    _condition: has_complex_definitions
 
 # Default score for methods not listed
 _default: 0.50
@@ -219,3 +263,39 @@ v64_test_results:
     method_reduction: "65%"
     findings_change: "+15%"
     efficiency_improvement: "365%"
+
+# V8.1 Testing Results (T21, 1 run)
+v81_test_results:
+  task: T21
+  runs: 1
+  methods_planned: 8
+  methods_executed: 2
+  methods_skipped: 6
+  findings: 2
+  critical_findings: 1
+  early_exit_triggered: true
+  early_exit_at_method: 71
+  efficiency: 1.0  # findings per method
+  notes: "Early exit strategy effective - CRITICAL found in 2nd method"
+
+# V8.0 Testing Results (T21, 2 runs) - Full Path B execution
+v80_test_results:
+  task: T21
+  runs: 2
+  workflow_version: "8.0"
+  path_taken: "B (Surgical Deep Dive)"
+  phase_0_methods: [113, 131, 132]
+  attack_cluster_theory: [153, 154, 109, 71]
+  attack_cluster_contradiction: [108, 161, 158, 116]
+  total_methods: 11
+  findings: 6
+  critical_findings: 2
+  important_findings: 3
+  minor_findings: 1
+  efficiency: 0.75  # findings per method (excluding Phase 0)
+  verdict: "NEEDS REVISION"
+  key_findings:
+    - "F-01: Higher-order rules break termination checking"
+    - "F-02: Definitional contradiction between first-class rules and termination"
+    - "F-03: Dependent type compile-time evaluation lacks termination guarantee"
+  notes: "Theory cluster highly effective for PLT artifacts. Both attack clusters produced findings. Run 2 added #158 to contradiction cluster."
