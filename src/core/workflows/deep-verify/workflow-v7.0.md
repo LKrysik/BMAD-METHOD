@@ -11,14 +11,13 @@
 
 | Term | Definition |
 |------|------------|
-| LAYER | Detection tier: INNATE (fast, pattern) / ADAPTIVE (deep, learning) / MEMORY / ESCALATION |
+| LAYER | Detection tier: INNATE (fast, pattern) / ADAPTIVE (deep, analysis) / SESSION / ESCALATION |
 | PROFILE | Artifact characteristics: domains, structure, complexity, criticality |
 | TRIAGE | Severity classification determining execution tier |
 | BUDGET | Token allocation based on triage tier |
 | RELEVANCE | Method score for THIS artifact (not global) |
 | ANOMALY | Pattern that doesn't match known categories → flagged for investigation |
 | CONFIDENCE | Certainty level (0-100%) for each finding |
-| LEARNING | Weight updates based on detection results |
 
 **Methods source:** `src/core/methods/methods.csv`
 **Domain knowledge:** `src/core/knowledge/domain-knowledge-base.md`
@@ -59,12 +58,11 @@
      └────────────────────────┬─────────────────────────────┘
                               │
      ┌────────────────────────▼─────────────────────────────┐
-     │           LAYER 3: IMMUNE MEMORY                      │
-     │  Phase 6: Learning and weight updates                 │
+     │           LAYER 3: SESSION MEMORY                     │
+     │  Phase 6: Documentation and observations              │
      │  • Record what found, what missed                     │
-     │  • Update method relevance weights                    │
-     │  • Add new patterns from findings                     │
-     │  • Retire low-ROI methods                            │
+     │  • Note which methods were useful                     │
+     │  • Document observations for future reference         │
      └────────────────────────┬─────────────────────────────┘
                               │
      ┌────────────────────────▼─────────────────────────────┐
@@ -82,6 +80,35 @@
 ## Phase 0: Artifact Intake & Triage (MANDATORY)
 
 **Purpose:** Profile artifact and allocate resources proportionally.
+
+### Step 0.0: Load Knowledge Sources (CRITICAL - DO NOT SKIP)
+
+**Before ANY analysis, you MUST read these files:**
+
+```
+## Phase 0.0: Knowledge Loading
+
+### Required Reads
+| File | Path | Purpose | Status |
+|------|------|---------|--------|
+| Methods Library | src/core/methods/methods.csv | All available verification methods | [ ] READ |
+| Domain Knowledge | src/core/knowledge/domain-knowledge-base.md | Formal definitions, theorems, constraints | [ ] READ |
+
+### Verification
+- [ ] I have READ methods.csv (not just noted its existence)
+- [ ] I have READ domain-knowledge-base.md (not just noted its existence)
+- [ ] I can reference specific method numbers from the file
+- [ ] I can reference specific domain definitions from the file
+
+**HALT if any checkbox unchecked** - return to read files before proceeding.
+```
+
+**Why this matters:**
+- Session w7.0 demonstrated that skipping these files leads to:
+  - Inventing methods instead of using existing ones
+  - Missing relevant methods (#153, #154, #160)
+  - Using intuition instead of formal definitions
+  - Lower quality findings
 
 ### Step 0.1: Self-Check (Unchanged from V6)
 
@@ -356,11 +383,16 @@ Condition C - CONTINUE TO ADAPTIVE:
 
 ### Phase 3: Dynamic Method Selection
 
-**KEY INNOVATION:** Methods selected FOR THIS ARTIFACT, not from predefined list.
+**KEY INNOVATION:** Methods selected FOR THIS ARTIFACT from the loaded methods.csv library.
+
+**CRITICAL REQUIREMENT:** All methods MUST come from `methods.csv` loaded in Step 0.0.
+- DO NOT invent methods - use existing ones
+- If you need a method that doesn't exist, note it for later addition
+- Reference methods by their exact # number from the file
 
 #### 3.1 Relevance Scoring
 
-For each method in library, calculate artifact-specific relevance:
+For each method in the **loaded methods.csv library**, calculate artifact-specific relevance:
 
 ```
 ## 3.1 Method Relevance Scoring
@@ -369,11 +401,10 @@ For each method in library, calculate artifact-specific relevance:
 For method M and artifact A:
 
 RELEVANCE(M, A) =
-  domain_match(M, A.domains) × 0.25 +
-  complexity_match(M, A.complexity) × 0.20 +
-  pattern_match(M, L1_findings) × 0.25 +
-  category_coverage(M, selected) × 0.15 +
-  historical_effectiveness(M) × 0.15
+  domain_match(M, A.domains) × 0.30 +
+  complexity_match(M, A.complexity) × 0.25 +
+  pattern_match(M, L1_findings) × 0.30 +
+  category_coverage(M, selected) × 0.15
 
 ### Candidate Methods (Top 2×BUDGET)
 | Rank | Method | Category | Relevance | Selection Reasoning |
@@ -539,13 +570,13 @@ For each finding with confidence >= 50%:
 
 ---
 
-## LAYER 3: IMMUNE MEMORY (Phase 6)
+## LAYER 3: SESSION MEMORY (Phase 6)
 
-**Purpose:** Learn from this verification to improve future runs.
+**Purpose:** Document results and observations from this verification.
 **Budget:** ~1K tokens (overhead)
 **Always executes:** YES
 
-### Phase 6: Learning Extraction
+### Phase 6: Results Documentation
 
 #### 6.1 Results Recording
 
@@ -582,46 +613,30 @@ For each finding with confidence >= 50%:
 ## 6.2 Method Effectiveness
 
 ### Method Performance This Run
-| Method | Relevance Score | Findings | Confirmed | ROI |
-|--------|-----------------|----------|-----------|-----|
-| #[N] | [score] | [N] | [N] | [findings/cost] |
-| #[N] | [score] | [N] | [N] | [findings/cost] |
+| Method | Findings | Confirmed | Useful? |
+|--------|----------|-----------|---------|
+| #[N] | [N] | [N] | YES/NO |
+| #[N] | [N] | [N] | YES/NO |
 
-### Weight Updates
-For each method used:
-new_weight = old_weight × 0.9 + session_performance × 0.1
-
-| Method | Old Weight | Performance | New Weight |
-|--------|------------|-------------|------------|
-| #[N] | [old] | [0-1] | [new] |
-
-### New Pattern Learning
-| Pattern | Source | Description | Suggested Pattern ID |
-|---------|--------|-------------|---------------------|
-| [new pattern] | Anomaly A1 | [what to match] | P00[N] |
+### Observations
+- High performers: [methods that found confirmed issues]
+- Low performers: [methods that found nothing or false positives]
+- Recommendation for similar artifacts: [which methods to prioritize/skip]
 ```
 
-#### 6.3 Adaptation Feedback
+#### 6.3 Session Notes
 
 ```
-## 6.3 Adaptation Feedback
+## 6.3 Session Notes
 
-### What Worked
-| Element | Evidence | Keep/Amplify |
-|---------|----------|--------------|
-| [selection strategy] | [result] | [recommendation] |
-| [method X] | [findings] | [recommendation] |
+### What Worked Well
+- [method/approach that was effective and why]
 
 ### What Didn't Work
-| Element | Evidence | Change/Remove |
-|---------|----------|---------------|
-| [selection strategy] | [result] | [recommendation] |
-| [method Y] | [no findings, high cost] | [recommendation] |
+- [method/approach that was ineffective and why]
 
-### Process Improvement Suggestions
-| Suggestion | Basis | Priority |
-|------------|-------|----------|
-| [suggestion] | [evidence] | HIGH/MEDIUM/LOW |
+### Notes for Similar Artifacts
+- [observations that might help future verification of similar artifacts]
 ```
 
 ---
@@ -853,22 +868,85 @@ SELECTION COMPLETE
 
 ---
 
-## Appendix E: Learning Weight Formula
+## Appendix E: Method Effectiveness Evaluation
 
 ```
-Method effectiveness score:
+Method usefulness for THIS session:
 
-score(M) =
-  (findings_confirmed / findings_claimed) × 0.4 +
-  (1 - false_positive_rate) × 0.3 +
-  (findings / tokens_used) × 0.2 +
-  user_feedback_score × 0.1
+USEFUL if:
+- Found at least 1 confirmed finding, OR
+- Ruled out a significant concern (negative result with value)
 
-Weight update:
-new_weight(M) = old_weight(M) × 0.9 + score(M) × 0.1
+NOT USEFUL if:
+- Found nothing, OR
+- Only false positives, OR
+- Duplicated findings from other methods
 
-Method retirement threshold:
-If weight(M) < 0.3 for 10 consecutive runs → flag for removal review
+Record observations in Phase 6.2 for future reference.
+```
+
+---
+
+## Appendix F: Domain-Specific Method Priorities
+
+Based on session learnings, prioritize these methods per detected domain:
+
+### PL Theory / Type Systems / Language Design
+
+```
+TOP TIER (always use):
+#153 Theoretical Impossibility Check    - catches FLP/CAP/Halting violations
+#154 Definitional Contradiction Detector - finds mutually exclusive requirements
+#165 Constructive Counterexample         - actively builds breaking examples
+#109 Contraposition Inversion            - "what guarantees failure?"
+
+HIGH VALUE:
+#162 Theory-Dependence Verification      - checks claims have backing
+#163 Existence Proof Demand              - demands proofs for capabilities
+#164 Second-Order Effect Analysis        - finds feature interaction bugs
+#160 Compatibility Proof Demand          - demands construction proofs
+
+MEDIUM VALUE:
+#166 Higher-Order Composition Gap        - checks property preservation
+#156 Domain Expert Activation            - loads PL expertise
+
+LOW VALUE (for design docs):
+Anomaly Detection                        - high false positive rate (67%)
+Self-Check                               - mindset, not detection
+```
+
+### Distributed Systems
+
+```
+TOP TIER:
+#153 Theoretical Impossibility Check    - CAP/FLP violations
+#154 Definitional Contradiction Detector
+#109 Contraposition Inversion
+
+HIGH VALUE:
+#67  Stability Basin Analysis
+#68  Critical Path Severance
+#39  Chaos Engineering
+```
+
+### Security / Crypto
+
+```
+TOP TIER:
+#153 Theoretical Impossibility Check    - crypto impossibilities
+#154 Definitional Contradiction Detector - PFS vs recovery conflicts
+#21  Red Team vs Blue Team
+
+HIGH VALUE:
+#34  Security Audit Personas
+#165 Constructive Counterexample
+```
+
+### General Software
+
+```
+Use standard category distribution from 3.1
+No specific prioritization needed
 ```
 
 ---
