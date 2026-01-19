@@ -1,341 +1,137 @@
-# Deep Verify V9.0 - Simplified Verification Workflow
+# Deep Verify V9.0 - Empirical Core
 
-## What is this?
+## Philosophy
 
-Deep Verify V9.0 is a verification workflow that selects and applies methods to detect issues in artifacts. The workflow is designed around three principles:
+This workflow is the culmination of analyzing the effectiveness of all V7.x and V8.x processes. It is built on the principle of **Evidence-Based Design**, incorporating only the most effective, high-ROI methods and structures.
 
-1. **Simple selection** - methods selected by markers and domain, not fuzzy scoring
-2. **Self-contained methods** - each method file contains everything needed to apply it
-3. **Clear flow** - PROFILE → SELECT → EXECUTE → REPORT
-
----
-
-## Files Structure
-
-```
-src/core/workflows/deep-verify/
-├── workflow-v9.0.md          # This file (process)
-├── catalog.yaml              # Method selection rules (WHEN to use)
-└── methods/                  # Method procedures (HOW to use)
-    ├── core/                 # Always apply
-    ├── theory/               # For theoretical claims
-    ├── domain/               # Domain-specific
-    └── challenge/            # Stress-testing findings
-```
+- **Efficiency:** An aggressive "early exit" policy terminates verification as soon as a CRITICAL finding is confirmed.
+- **Flexibility:** A generative, content-agnostic extraction phase replaces rigid checklists.
+- **Power:** A single, potent analysis path using a curated set of proven "killer" methods is used for all artifacts.
 
 ---
 
-## Workflow
+## Phase 0: Triage & Signature
+
+**Goal:** Profile the artifact and extract its core "signature" for analysis.
+
+### Step 0.1: Self-Check
+Execute **#113 Counterfactual Self-Incrimination**, **#131 Observer Paradox**, and **#132 Goodhart's Law Check** to ensure verifier honesty and focus.
+
+### Step 0.2: Artifact Profile
+Analyze the artifact to produce a compact profile.
 
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   PROFILE   │────▶│   SELECT    │────▶│   EXECUTE   │────▶│  CHALLENGE  │────▶│   REPORT    │
-│  artifact   │     │   methods   │     │   methods   │     │ (if CRIT)   │     │   findings  │
-└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
-   Phase 1            Phase 2            Phase 3            Phase 3.5           Phase 4
+### Artifact Profile
+- **Type**: [code/document/plan/spec]
+- **Complexity Score**: [LOW/MEDIUM/HIGH]
+- **Criticality Score**: [LOW/MEDIUM/HIGH/CRITICAL]
+- **Primary Domain(s)**: [list of detected domains]
 ```
 
-**Note:** Phase 3.5 (CHALLENGE) only executes if CRITICAL findings exist after Phase 3.
+### Step 0.3: Problem Signature
+Extract the artifact's core claims and tensions.
 
----
-
-## Phase 1: PROFILE (5 min)
-
-**Goal:** Extract artifact characteristics for method selection.
-
-### Step 1.1: Basic Info
-
-```markdown
-## Artifact Profile
-
-**Name:** [artifact name]
-**Type:** [specification / design / protocol / code / plan]
-**Size:** [small <2K / medium 2-10K / large >10K tokens]
 ```
-
-### Step 1.2: Marker Scan
-
-Scan artifact for keywords. Check boxes for found markers:
-
-```markdown
-## Markers Found
-
-### Guarantee Markers (trigger: theory methods)
-- [ ] "guarantees" / "ensures" / "always" / "never"
-- [ ] "impossible" / "cannot" / "must"
-- [ ] "polynomial" / "exponential" / "optimal"
-- [ ] "proves" / "verified" / "sound" / "complete"
-
-### Domain Markers (check box = domain detected)
-- [ ] QUANTUM: qubit, superposition, annealing, quantum advantage, QPU
-- [ ] DISTRIBUTED: consensus, partition, CAP, FLP, replication, availability
-- [ ] CRYPTO: encrypt, PFS, ZK, signature, hash, cipher
-- [ ] PL-THEORY: type system, inference, termination, soundness, dependent types
-- [ ] SECURITY: auth, permission, token, password, injection, vulnerability
-- [ ] MECHANISM: incentive, game theory, auction, voting, mechanism design
-```
-
-### Step 1.3: Determine Domains and Complexity
-
-**Domain Detection Rule:** If ANY marker in a domain category is found → that domain is detected.
-
-**Complexity Calculation:**
-- Count checked Guarantee Markers: [N]
-- Count detected Domains: [M]
-- **Complexity = LOW** if N=0 and M≤1
-- **Complexity = MEDIUM** if N=1-2 or M=2
-- **Complexity = HIGH** if N≥3 or M≥3
-
-```markdown
-## Profile Summary
-
-| Property | Value |
-|----------|-------|
-| Type | [type] |
-| Size | [size] |
-| Guarantee markers found | [N] |
-| Domains detected | [list from checked boxes] |
-| Complexity | [LOW/MEDIUM/HIGH per rules above] |
+### Problem Signature
+- **Core Claims**: [List of 1-3 most central claims]
+- **Core Tensions**: [List of 1-3 most obvious tensions]
+- **Keywords**: [List of up to 10 most relevant technical keywords]
 ```
 
 ---
 
-## Phase 2: SELECT (2 min)
+## Phase 1: Dynamic Element Extraction (from V7.7)
 
-**Goal:** Select methods based on profile.
+**Goal:** Generatively determine what needs to be checked based on the artifact's content.
 
-### Step 2.1: Selection Algorithm
+### Step 1.1: Claim Extraction
+Read the artifact and list ALL claims (GUARANTEE, PERFORMANCE, CAUSAL, etc.). Mark claims that are Red Flags (e.g., GUARANTEE without proof).
 
-```
-ALGORITHM SelectMethods(profile):
+### Step 1.2: Term & Requirement Extraction
+List key technical terms that need definition and all explicit or implicit requirements.
 
-  selected = []
-
-  # 1. ALWAYS add CORE methods
-  selected.add("consistency", "methods/core/consistency.md")
-  selected.add("completeness", "methods/core/completeness.md")
-  selected.add("scope-alignment", "methods/core/scope-alignment.md")
-
-  # 2. Add CONDITIONAL methods based on markers
-  FOR each method in catalog.conditional:
-    FOR each marker in method.apply_when.markers:
-      IF artifact_text.lower() CONTAINS marker.lower():
-        selected.add(method)
-        BREAK  # One match is enough
-
-  # 3. Add CONDITIONAL methods based on domain
-  FOR each method in catalog.conditional:
-    IF method.apply_when.domains INTERSECTS profile.domains:
-      selected.add(method)  # May already be added, that's OK
-
-  # 4. Challenge methods are added LATER in Phase 3.5 (after findings)
-
-  RETURN selected (deduplicated)
-```
-
-### Step 2.2: Apply Algorithm
-
-```markdown
-## Method Selection
-
-### CORE Methods (always)
-| Method | File |
-|--------|------|
-| Consistency Check | methods/core/consistency.md |
-| Completeness Check | methods/core/completeness.md |
-| Scope Alignment | methods/core/scope-alignment.md |
-
-### CONDITIONAL Methods (marker/domain match)
-
-For each method in catalog, check if artifact contains any of its markers OR if domains overlap:
-
-| Method | Markers Found? | Domain Match? | Selected? | File |
-|--------|----------------|---------------|-----------|------|
-| Impossibility Check | [YES/NO: which marker] | [YES/NO: which domain] | [YES/NO] | methods/theory/impossibility-check.md |
-| Contradiction Detector | [YES/NO] | [YES/NO] | [YES/NO] | methods/theory/contradiction-detector.md |
-| Term Verifier | [YES/NO] | [YES/NO] | [YES/NO] | methods/theory/term-verifier.md |
-| Quantum Claims | [YES/NO] | [YES/NO] | [YES/NO] | methods/domain/quantum-claims.md |
-| Distributed Claims | [YES/NO] | [YES/NO] | [YES/NO] | methods/domain/distributed-claims.md |
-| Security Check | [YES/NO] | [YES/NO] | [YES/NO] | methods/domain/security-check.md |
-| PL Theory Check | [YES/NO] | [YES/NO] | [YES/NO] | methods/domain/pl-theory-check.md |
-
-### Final Selection (ordered: CORE first, then CONDITIONAL)
-1. [method] - [file]
-2. [method] - [file]
-...
-```
+### Step 1.3: Assumption Extraction
+List all explicit and, more importantly, implicit assumptions the artifact relies on.
 
 ---
 
-## Phase 3: EXECUTE (15-45 min)
+## Phase 2: Threat Scan & Routing (from V8.3)
 
-**Goal:** Apply each selected method and collect findings.
+**Goal:** Identify high-risk signals to focus the analysis. V9.0 uses a simplified, single-path routing.
 
-### Step 3.1: For Each Method
+### Step 2.1: Risk Vector Analysis
+Analyze the signature and extracted elements to set risk flags.
 
-```markdown
-## Method: [Name]
-**File:** [path]
-
-[Read the method file and follow its procedure exactly]
-
-### Output
-[Use output format from method file]
-
-### Findings from this method
-| ID | Severity | Description | Evidence |
-|----|----------|-------------|----------|
-| [M-1] | [CRITICAL/IMPORTANT/MINOR] | [what's wrong] | "[quote]" line X |
 ```
-
-### Step 3.2: Consolidate Findings
-
-After all methods executed:
-
-```markdown
-## All Findings (before challenge)
-
-| ID | Source Method | Severity | Description |
-|----|---------------|----------|-------------|
-| F1 | [method] | CRITICAL | [desc] |
-| F2 | [method] | IMPORTANT | [desc] |
-| F3 | [method] | MINOR | [desc] |
-
-**CRITICAL findings count:** [N]
+### Risk Vector Analysis
+| Risk Vector | Detected? (Y/N) | Evidence |
+|---|---|---|
+| THEORY_VIOLATION | [Y/N] | [e.g., Claim "guarantees termination" + keyword "recursion"] |
+| CONTRADICTION | [Y/N] | [e.g., Tension between "PFS" and "Recovery" claims] |
+| SECURITY_CRITICAL | [Y/N] | [e.g., Domain is "Crypto" and Criticality is "HIGH"] |
+| HIGH_COMPLEXITY | [Y/N] | [e.g., Complexity is "HIGH"] |
 ```
+**Note:** This list of four risk vectors is the complete, defined set for workflow V9.0. It represents an empirically derived set of the most common, high-impact failure domains identified from the analysis of V7.x and V8.x workflows.
+
+### Step 2.2: Path Selection (Simplified)
+In V9.0, **all artifacts are routed to a single, powerful deep dive path.** The risk vectors inform which methods to prioritize.
+
+**Routing Decision:** Path B (Surgical Deep Dive) is always taken.
+
+### Step 2.3: Risk-to-Method Mapping
+The risk vectors explicitly guide the focus for the methods in Phase 3. While all methods are executed, apply extra scrutiny and depth when a method's specialty aligns with an active risk vector.
+
+| Risk Vector | Primary Method(s) to Focus On | Rationale |
+| :--- | :--- | :--- |
+| `THEORY_VIOLATION` | #153, #163 | These methods directly test claims against formal scientific and logical limits. |
+| `CONTRADICTION` | #154, #161, #116, #84 | These methods specialize in finding definitional, logical, and structural self-contradictions. |
+| `SECURITY_CRITICAL` | #109, #154 | Apply these methods with a security mindset: #109 to find attack paths ("guaranteed failure") and #154 to find conflicts in security properties. |
+| `HIGH_COMPLEXITY` | #116, #161, #84 | These methods help manage complexity by exposing hidden dependencies, circular reasoning, and inconsistencies. |
 
 ---
 
-## Phase 3.5: CHALLENGE (if CRITICAL findings exist)
+## Phase 3: Surgical Deep Dive (The "Empirical Core" Method Set)
 
-**Goal:** Stress-test critical findings with challenge methods.
+**Goal:** Apply a curated set of the most effective methods identified in the V7/V8 analysis. The "Atakuj -> Sprawdź -> Przerwij" loop is implemented here.
 
-**Trigger:** Execute this phase ONLY if there are CRITICAL findings from Phase 3.
+### Step 3.1: Method Application
+Execute the following methods in sequence. Each method **operates on the elements extracted in Phase 1** to find findings.
 
-### Step 3.5.1: Select Challenge Methods
+**The V9.0 Empirical Core Method Set:**
 
-```markdown
-## Challenge Methods
+| Priority | Method | **Primary Input from Phase 1** | Focus |
+|:---:|---|---|---|
+| **1** | **#153 Theoretical Impossibility Check** | Extracted Claims (especially GUARANTEE) | Check claims against known impossibility theorems. |
+| **2** | **#154 Definitional Contradiction Detector** | Extracted Requirements & Terms | Find requirements that are definitionally mutually exclusive. |
+| **3** | **#161 Definition Triad Expansion** | Extracted Requirements | Unpack requirements into MEANS/IMPLIES/EXCLUDES to find hidden conflicts. |
+| **4** | **#116 Strange Loop Detection** | All Extracted Elements (Claims, Assumptions) | Build justification graphs and detect circular reasoning. |
+| **5** | **#109 Contraposition Inversion** | Extracted Claims & Requirements | Ask "what would GUARANTEE failure?" and check if the artifact does it. |
+| **6** | **#163 Existence Proof Demand** | Extracted Claims (especially PERFORMANCE, CAUSAL) | For every major capability claim, demand formal proof or empirical evidence. |
+| **7** | **#84 Consistency Check** | All Extracted Elements (Terms, Claims) | A final check for internal consistency in definitions and claims. |
+| **8** | **#165 Constructive Counterexample** | Extracted Claims | If a claim seems weak, try to build a concrete example that breaks it. |
+| **9** | **#63 Critical Challenge** | Red-Flagged Claims | For any remaining high-confidence findings, formulate the strongest possible counter-argument to validate. |
 
-CRITICAL findings found: [N]
+### Step 3.2: Early Exit Protocol
+**This is the core "Przerwij" (Interrupt) step.**
 
-IF N > 0:
-  - [ ] Apply: Contraposition Check (methods/challenge/contraposition.md)
-  - [ ] Apply: Counterexample Construction (methods/challenge/counterexample.md)
-ELSE:
-  Skip to Phase 4.
-```
+**RULE:** After **each** method is executed in Step 3.1:
+1.  Review the finding(s).
+2.  If any finding is determined to be **🔴 CRITICAL** with **High Confidence (>85%)**:
+    - **HALT** the verification process immediately.
+    - Proceed directly to Phase 4 (Report).
+    - Do NOT execute any further methods.
 
-### Step 3.5.2: Execute Challenge Methods
-
-For each CRITICAL finding, apply challenge methods to verify it's real.
-
-```markdown
-## Challenge: [Finding ID]
-
-### Contraposition Check
-[Follow procedure from methods/challenge/contraposition.md]
-Result: CONFIRMED / WEAKENED / REFUTED
-
-### Counterexample Construction
-[Follow procedure from methods/challenge/counterexample.md]
-Result: CONSTRUCTED / FAILED TO CONSTRUCT
-```
-
-### Step 3.5.3: Update Findings
-
-```markdown
-## Findings After Challenge
-
-| ID | Original Severity | After Challenge | Notes |
-|----|-------------------|-----------------|-------|
-| F1 | CRITICAL | CONFIRMED/DOWNGRADED | [notes] |
-```
+This ensures maximum token efficiency by stopping as soon as a fatal flaw is confirmed.
 
 ---
 
-## Phase 4: REPORT (5 min)
+## Phase 4: Report Generation
 
-**Goal:** Present findings clearly.
+**Goal:** Consolidate findings and provide a clear, actionable verdict.
 
-```markdown
-# Verification Report
-
-## Summary
-| Metric | Value |
-|--------|-------|
-| Artifact | [name] |
-| Methods applied | [N] |
-| Findings | [N] total |
-| Critical | [N] |
-| Important | [N] |
-| Minor | [N] |
-
-## Critical Findings (must fix)
-
-### F1: [Title]
-- **What:** [description]
-- **Where:** [location in artifact]
-- **Evidence:** "[exact quote]"
-- **Why critical:** [explanation]
-
-## Important Findings (should fix)
-
-### F2: [Title]
-- **What:** [description]
-- **Where:** [location]
-- **Evidence:** "[quote]"
-
-## Minor Findings (consider fixing)
-
-### F3: [Title]
-...
-
-## Recommendations
-1. [Priority 1 action]
-2. [Priority 2 action]
-...
-```
-
----
-
-## Quick Reference
-
-### Method Selection Summary
-
-| Condition | Methods | Files |
-|-----------|---------|-------|
-| **ALWAYS** | Consistency, Completeness, Scope | `methods/core/*.md` |
-| Guarantee markers found | Impossibility, Contradiction, Term Verifier | `methods/theory/*.md` |
-| Domain: QUANTUM | Quantum Claims | `methods/domain/quantum-claims.md` |
-| Domain: DISTRIBUTED | Distributed Claims | `methods/domain/distributed-claims.md` |
-| Domain: SECURITY/CRYPTO | Security Check | `methods/domain/security-check.md` |
-| Domain: PL-THEORY | PL Theory Check | `methods/domain/pl-theory-check.md` |
-| **After CRITICAL findings** | Contraposition, Counterexample | `methods/challenge/*.md` |
-
-### Domain Detection (from Phase 1.2 markers)
-
-| If you find... | Domain is... |
-|----------------|--------------|
-| qubit, superposition, annealing, QPU | QUANTUM |
-| consensus, partition, CAP, FLP | DISTRIBUTED |
-| encrypt, PFS, ZK, cipher | CRYPTO |
-| auth, token, password, injection | SECURITY |
-| type system, inference, termination | PL-THEORY |
-| incentive, game theory, auction | MECHANISM |
-
-### Severity Guide
-
-| Severity | Meaning | Action |
-|----------|---------|--------|
-| CRITICAL | Fundamental flaw, blocks use | Must fix before use |
-| IMPORTANT | Significant issue | Should fix |
-| MINOR | Small problem or improvement | Consider fixing |
-
----
-
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 9.0 | 2026-01-18 | Simplified workflow, self-contained methods |
+### Step 4.1: Final Report
+1.  Summarize the executed path and note if an Early Exit was triggered.
+2.  List all confirmed findings, categorized by severity (🔴, 🟠, 🟡).
+3.  For each finding, include its ID, a brief description, and the method that discovered it.
+4.  Provide a final verdict (e.g., "NEEDS REVISION", "PASS WITH CAVEATS").
+5.  List clear, actionable recommendations.

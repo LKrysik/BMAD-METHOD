@@ -1,0 +1,203 @@
+# Method Selection Catalog
+# Purpose: Define WHEN to use each method (selection rules)
+# Each method's HOW is in its own file under methods/
+
+version: "9.0"
+last_updated: "2026-01-18"
+
+# =============================================================================
+# CORE METHODS - Always apply to every artifact
+# =============================================================================
+
+core:
+  consistency:
+    name: "Consistency Check"
+    purpose: "Verify definitions and terms are used consistently"
+    file: "methods/core/consistency.md"
+    cost: LOW
+
+  completeness:
+    name: "Completeness Check"
+    purpose: "Verify no missing elements, TODOs, or placeholders"
+    file: "methods/core/completeness.md"
+    cost: LOW
+
+  scope-alignment:
+    name: "Scope Alignment Check"
+    purpose: "Verify artifact addresses its stated purpose"
+    file: "methods/core/scope-alignment.md"
+    cost: LOW
+
+# =============================================================================
+# CONDITIONAL METHODS - Apply when markers/domain match
+# =============================================================================
+
+conditional:
+
+  # --- THEORY METHODS (for guarantee/impossibility claims) ---
+
+  impossibility-check:
+    name: "Theoretical Impossibility Check"
+    purpose: "Detect claims that violate known impossibility theorems"
+    file: "methods/theory/impossibility-check.md"
+    cost: MEDIUM
+    apply_when:
+      markers:
+        - "guarantees"
+        - "ensures"
+        - "always"
+        - "never"
+        - "impossible"
+        - "polynomial"
+        - "exponential"
+        - "optimal"
+        - "proves"
+        - "sound"
+        - "complete"
+      domains:
+        - quantum
+        - distributed
+        - crypto
+        - pl-theory
+        - mechanism
+
+  contradiction-detector:
+    name: "Definitional Contradiction Detector"
+    purpose: "Find requirements that are mutually exclusive by definition"
+    file: "methods/theory/contradiction-detector.md"
+    cost: MEDIUM
+    apply_when:
+      markers:
+        - "must"
+        - "shall"
+        - "requires"
+        - "guarantees"
+      min_requirements: 3  # Only if artifact has 3+ requirements
+
+  term-verifier:
+    name: "Technical Term Verifier"
+    purpose: "Check if technical terms are used correctly"
+    file: "methods/theory/term-verifier.md"
+    cost: LOW
+    apply_when:
+      domains:
+        - quantum
+        - distributed
+        - crypto
+        - pl-theory
+
+  # --- DOMAIN: QUANTUM ---
+
+  quantum-claims:
+    name: "Quantum Claims Checker"
+    purpose: "Verify quantum computing claims against known limitations"
+    file: "methods/domain/quantum-claims.md"
+    cost: MEDIUM
+    apply_when:
+      markers:
+        - "quantum"
+        - "qubit"
+        - "superposition"
+        - "annealing"
+        - "quantum advantage"
+        - "QPU"
+      domains:
+        - quantum
+
+  # --- DOMAIN: DISTRIBUTED SYSTEMS ---
+
+  distributed-claims:
+    name: "Distributed Systems Checker"
+    purpose: "Verify distributed systems claims against CAP/FLP"
+    file: "methods/domain/distributed-claims.md"
+    cost: MEDIUM
+    apply_when:
+      markers:
+        - "consensus"
+        - "partition"
+        - "availability"
+        - "consistency"
+        - "replication"
+        - "CAP"
+        - "FLP"
+      domains:
+        - distributed
+
+  # --- DOMAIN: SECURITY/CRYPTO ---
+
+  security-check:
+    name: "Security Analysis"
+    purpose: "Check for security vulnerabilities and crypto misuse"
+    file: "methods/domain/security-check.md"
+    cost: MEDIUM
+    apply_when:
+      markers:
+        - "auth"
+        - "encrypt"
+        - "key"
+        - "token"
+        - "password"
+        - "permission"
+        - "PFS"
+        - "ZK"
+      domains:
+        - security
+        - crypto
+
+  # --- DOMAIN: PL THEORY ---
+
+  pl-theory-check:
+    name: "PL Theory Checker"
+    purpose: "Verify programming language theory claims"
+    file: "methods/domain/pl-theory-check.md"
+    cost: MEDIUM
+    apply_when:
+      markers:
+        - "type system"
+        - "inference"
+        - "termination"
+        - "soundness"
+        - "dependent types"
+        - "gradual typing"
+      domains:
+        - pl-theory
+
+# =============================================================================
+# CHALLENGE METHODS - Apply in Phase 3.5 AFTER findings (not during selection)
+# =============================================================================
+
+challenge:
+  # NOTE: These are NOT selected in Phase 2. They are applied in Phase 3.5
+  # ONLY IF critical findings exist after Phase 3.
+
+  contraposition:
+    name: "Contraposition Check"
+    purpose: "Ask 'what would guarantee failure?' and check if artifact does it"
+    file: "methods/challenge/contraposition.md"
+    cost: LOW
+    trigger: "CRITICAL findings exist"
+
+  counterexample:
+    name: "Counterexample Construction"
+    purpose: "Try to construct a case that breaks claimed properties"
+    file: "methods/challenge/counterexample.md"
+    cost: MEDIUM
+    trigger: "CRITICAL findings exist"
+
+# =============================================================================
+# SELECTION ALGORITHM (Phase 2)
+# =============================================================================
+
+selection_rules:
+  phase_2:
+    1_always_include: "All methods from 'core' section"
+    2_marker_match: "Include conditional method if ANY of its markers found in artifact (case-insensitive)"
+    3_domain_match: "Include conditional method if ANY of its domains matches detected domains"
+
+  phase_3_5:
+    4_challenge_after_critical: "IF critical findings exist after Phase 3, apply ALL challenge methods"
+
+budget_guidance:
+  small_artifact: "3-5 methods, ~3K tokens"
+  medium_artifact: "5-8 methods, ~6K tokens"
+  large_artifact: "8-12 methods, ~10K tokens"

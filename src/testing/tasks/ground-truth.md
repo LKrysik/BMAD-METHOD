@@ -778,3 +778,381 @@ If v6.1 below 30% on any V2 task → critical weakness confirmed
 | T19 | M-S theorem | VCG subsidy | NP-hard+10ms | Fair≠Efficient | Online loss | Collusion |
 | T20 | No speedup | Provable advantage | Simulation negates | Global NP-hard | QEC latency | Qubit count |
 | T21 | Recurse+terminate | Inference undecid. | Gradual+sound | HO+terminate | Dep types+LLVM | Compose+halt |
+
+---
+
+# V4 Tasks: Cross-Domain Expert Difficulty Ground Truth
+
+> V4 tasks test verification across non-software domains.
+> Expected DR for v8.3: 25-45%
+> Required for 70%+ DR: Domain-specific methods for medical, legal, finance, ethics, climate, cognitive, linguistics, education, operations
+
+---
+
+## New Error Categories for V4
+
+| Code | Category | Description |
+|------|----------|-------------|
+| MEDICAL | Medical/Regulatory | Requires healthcare domain knowledge (FDA, clinical trials, diagnostics) |
+| LEGAL | Legal Reasoning | Requires legal expertise (non-monotonic logic, jurisdiction, UPL) |
+| FINANCE | Financial Risk | Requires quantitative finance (VaR, fat tails, Basel) |
+| ETHICS | AI Ethics | Requires fairness impossibility theorems (Kleinberg, Dwork) |
+| CLIMATE | Climate Science | Requires climate methodology (CMIP, uncertainty, IPCC) |
+| COGNITION | Human Factors | Requires cognitive science (trust, automation, cognitive load) |
+| LINGUISTICS | Cross-Cultural | Requires sociolinguistics (Sapir-Whorf, pragmatics) |
+| EDUCATION | Psychometrics | Requires assessment theory (IRT, validity, Bloom) |
+| OPERATIONS | Supply Chain | Requires operations research (bullwhip, JIT, resilience) |
+
+---
+
+## Task 22: Medical Diagnostic Decision Support System
+
+### Trap Design (Medical + Statistical + Regulatory)
+
+**Primary Trap: Base Rate Fallacy**
+- 99.9% sensitivity AND 99.9% specificity for RARE diseases is mathematically impossible to achieve useful PPV
+- For a disease with 1:10,000 prevalence, even 99.9% specificity yields PPV of ~50%
+- The requirements don't acknowledge this fundamental statistical limitation
+
+**Secondary Traps:**
+- FDA Class III requires multi-year clinical trials, not just software testing
+- "Deterministic" contradicts "continuous learning"
+- "Decision aid" + high accuracy claims creates liability issues
+
+### Expected Errors
+
+| ID | Category | Severity | Expected Error | Detection Signal |
+|----|----------|----------|----------------|------------------|
+| T22-E1 | THEORY | CRITICAL | Base rate fallacy: 99.9%/99.9% sens/spec useless for rare diseases | No PPV/NPV analysis by prevalence |
+| T22-E2 | MEDICAL | CRITICAL | FDA Class III requires clinical trials (3-7 years), not software testing | Claims regulatory compliance without trial design |
+| T22-E3 | COMPOSE | CRITICAL | "Deterministic" (req 3) + "continuous learning" (req 4) contradiction | No versioning or consistency strategy |
+| T22-E4 | MEDICAL | IMPORTANT | Explainability for 10,000 conditions in <5s impossible | No explanation generation architecture |
+| T22-E5 | LEGAL | IMPORTANT | High accuracy claims shift liability despite "decision aid" framing | No liability analysis |
+| T22-E6 | COMPOSE | MINOR | "Offline" + "continuous learning" = deployment update gap | No offline update mechanism |
+
+### Detection Requirements
+- Method that understands base rate / Bayesian reasoning
+- Method that knows FDA device classification
+- Method that detects logical contradictions
+
+---
+
+## Task 23: Legal Contract Analysis and Risk Assessment
+
+### Trap Design (Legal + Logic + Regulatory)
+
+**Primary Trap: Non-Monotonic Legal Reasoning**
+- Legal reasoning is non-monotonic: new facts can INVALIDATE previous conclusions
+- Standard AI/ML assumes monotonic reasoning (more data = better conclusions)
+- "100% recall" for legal risks is impossible - risks emerge from future litigation
+
+**Secondary Traps:**
+- AI providing legal conclusions = unauthorized practice of law (UPL)
+- Common law vs civil law vs socialist law incompatible in unified framework
+- "Automatic updates" + "citation validity" = retroactive invalidity problem
+
+### Expected Errors
+
+| ID | Category | Severity | Expected Error | Detection Signal |
+|----|----------|----------|----------------|------------------|
+| T23-E1 | LEGAL | CRITICAL | Legal risks cannot have 100% recall - emerge from future litigation | Claims complete risk identification |
+| T23-E2 | THEORY | CRITICAL | Legal reasoning is non-monotonic, standard AI is monotonic | No defeasible reasoning architecture |
+| T23-E3 | LEGAL | CRITICAL | AI legal conclusions = unauthorized practice of law risk | No UPL mitigation strategy |
+| T23-E4 | LEGAL | IMPORTANT | US/EU/UK/China legal systems fundamentally incompatible | Unified framework across jurisdictions |
+| T23-E5 | LEGAL | IMPORTANT | AI-only analysis may not be privileged (work product doctrine) | Claims privilege without attorney involvement |
+| T23-E6 | COMPOSE | MINOR | Automatic law updates invalidate previous citations | No temporal validity handling |
+
+### Detection Requirements
+- Method that understands non-monotonic logic
+- Method that knows legal system differences
+- Method that detects UPL risks
+
+---
+
+## Task 24: Financial Risk Assessment with Tail Events
+
+### Trap Design (Finance + Statistics + Regulatory)
+
+**Primary Trap: VaR Fundamental Unreliability**
+- VaR at 99.9% requires ~1000 observations to validate ONE quantile estimate
+- For daily data, need 4+ years without tail events to calibrate
+- Fat-tailed distributions (Mandelbrot/Taleb) make VaR theoretically unsound
+
+**Secondary Traps:**
+- "Predict correlation breakdown" is impossible - correlations break precisely when prediction needed
+- Basel III specifically requires Expected Shortfall (ES), not just VaR
+- "Guarantee no model risk" violates Lucas critique
+
+### Expected Errors
+
+| ID | Category | Severity | Expected Error | Detection Signal |
+|----|----------|----------|----------------|------------------|
+| T24-E1 | THEORY | CRITICAL | 99.9% VaR requires ~1000 observations to validate | No sample size / confidence analysis |
+| T24-E2 | FINANCE | CRITICAL | Correlation breakdown unpredictable by definition | Claims correlation forecasting |
+| T24-E3 | THEORY | CRITICAL | Fat tails (Taleb) make VaR theoretically unsound for tail events | Uses VaR for black swan risk |
+| T24-E4 | FINANCE | IMPORTANT | Historical backtest = survivorship bias for unknown crises | Claims backtest validates future crises |
+| T24-E5 | THEORY | IMPORTANT | "Guarantee no model risk" impossible (Lucas critique) | Claims model correctness guarantee |
+| T24-E6 | FINANCE | IMPORTANT | Basel III requires ES, not just VaR | VaR-centric without ES |
+
+### Detection Requirements
+- Method that knows statistical validation requirements
+- Method that understands fat-tailed distributions
+- Method that knows Basel regulatory requirements
+
+---
+
+## Task 25: Algorithmic Fairness and Bias Mitigation System
+
+### Trap Design (AI Ethics + Theory + Legal)
+
+**Primary Trap: Kleinberg Impossibility Theorem**
+- Demographic parity, equalized odds, and calibration are MUTUALLY EXCLUSIVE
+- Kleinberg et al. (2016) proved this mathematically
+- Requirements ask for all three = impossible
+
+**Secondary Traps:**
+- Individual fairness + demographic parity incompatible with different base rates
+- "Fairness through unawareness" prevents proxy detection
+- Intersectionality creates exponential group explosion
+
+### Expected Errors
+
+| ID | Category | Severity | Expected Error | Detection Signal |
+|----|----------|----------|----------------|------------------|
+| T25-E1 | THEORY | CRITICAL | Kleinberg impossibility: demographic parity + equalized odds + calibration mutually exclusive | Claims all three fairness criteria |
+| T25-E2 | THEORY | CRITICAL | Individual fairness + demographic parity incompatible with different base rates | Claims both without acknowledging conflict |
+| T25-E3 | COMPOSE | CRITICAL | "Fairness through unawareness" prevents proxy discrimination detection | Claims both without protected attributes |
+| T25-E4 | ETHICS | IMPORTANT | US disparate impact vs EU individual assessment = jurisdiction conflict | Claims universal compliance |
+| T25-E5 | THEORY | IMPORTANT | Fairness constraints mathematically reduce accuracy | No accuracy-fairness tradeoff analysis |
+| T25-E6 | ETHICS | MINOR | Intersectionality = 2^k groups, statistically infeasible | No group size / power analysis |
+
+### Detection Requirements
+- Method that knows Kleinberg impossibility theorem
+- Method that knows Dwork individual fairness
+- Method that detects fairness-accuracy tradeoffs
+
+---
+
+## Task 26: Climate Model Ensemble Aggregation System
+
+### Trap Design (Climate Science + Statistics + Policy)
+
+**Primary Trap: Chaos and Knightian Uncertainty**
+- Climate is chaotic - projections are statistical distributions, not predictions
+- "High confidence to 2100" misrepresents nature of climate projections
+- Structural uncertainty (different model physics) is Knightian - cannot be quantified probabilistically
+
+**Secondary Traps:**
+- CMIP6 models are NOT independent samples - shared code/assumptions
+- IPCC confidence levels are NOT frequentist probabilities
+- 10km downscaling from 100km models adds spurious precision
+
+### Expected Errors
+
+| ID | Category | Severity | Expected Error | Detection Signal |
+|----|----------|----------|----------------|------------------|
+| T26-E1 | THEORY | CRITICAL | Chaos: 2100 projections are distributions, not deterministic predictions | Claims deterministic "best estimate" |
+| T26-E2 | CLIMATE | CRITICAL | CMIP6 models not independent - shared code, assumptions, calibration | Treats models as independent samples |
+| T26-E3 | THEORY | CRITICAL | Structural uncertainty is Knightian - cannot be probabilistically quantified | Claims 95% confidence on structural uncertainty |
+| T26-E4 | CLIMATE | IMPORTANT | IPCC confidence levels ≠ frequentist probabilities | Treats IPCC terms as statistical confidence |
+| T26-E5 | COMPOSE | IMPORTANT | Single "best estimate" masks critical uncertainty for policy | Provides point estimates without range |
+| T26-E6 | CLIMATE | MINOR | 10km downscaling from 100km adds uncertainty, doesn't remove it | Claims improved precision from downscaling |
+
+### Detection Requirements
+- Method that understands chaos theory
+- Method that knows CMIP6 model relationships
+- Method that distinguishes epistemic and aleatory uncertainty
+
+---
+
+## Task 27: Human-AI Collaborative Decision Protocol
+
+### Trap Design (Human Factors + Cognitive Science)
+
+**Primary Trap: Authority Gradient Paradox**
+- "Human final authority" enables over-reliance by definition
+- Cannot simultaneously maintain authority AND prevent complacency
+- Authority gradient problem from aviation safety
+
+**Secondary Traps:**
+- Human-AI teams often perform WORSE than AI alone when human overrides
+- Cognitive load unmeasurable in real-time
+- Human trust not rationally calibratable
+
+### Expected Errors
+
+| ID | Category | Severity | Expected Error | Detection Signal |
+|----|----------|----------|----------------|------------------|
+| T27-E1 | COGNITION | CRITICAL | Authority gradient: human authority enables over-reliance | Claims authority + no complacency |
+| T27-E2 | COMPOSE | CRITICAL | Human-AI teams can perform worse than AI alone | Claims joint accuracy always exceeds individual |
+| T27-E3 | COGNITION | IMPORTANT | Real-time cognitive load measurement impossible | Claims guaranteed cognitive load limits |
+| T27-E4 | COMPOSE | IMPORTANT | Complacency and bias interventions compete | Claims both prevented without tradeoff |
+| T27-E5 | COGNITION | IMPORTANT | Human trust influenced by irrelevant factors - not calibratable | Claims trust calibration mechanism |
+| T27-E6 | COMPOSE | MINOR | Time, explainability, and situation awareness compete | Claims all without resource tradeoff |
+
+### Detection Requirements
+- Method that knows human factors research
+- Method that understands trust calibration research
+- Method that detects competing cognitive demands
+
+---
+
+## Task 28: Cross-Cultural Sentiment Analysis System
+
+### Trap Design (Linguistics + Privacy + Psychology)
+
+**Primary Trap: Sapir-Whorf / Emotion Non-Universality**
+- Emotion concepts are NOT culturally universal
+- Some languages have emotions without English equivalents
+- "Normalize sentiment scales" assumes emotional equivalence that doesn't exist
+
+**Secondary Traps:**
+- 95% accuracy impossible across 50 languages (low-resource languages)
+- Sarcasm detection varies radically by culture
+- GDPR Article 9 may prohibit sentiment inference
+
+### Expected Errors
+
+| ID | Category | Severity | Expected Error | Detection Signal |
+|----|----------|----------|----------------|------------------|
+| T28-E1 | LINGUISTICS | CRITICAL | Emotion concepts not universal (Sapir-Whorf) - cannot normalize | Claims cross-cultural sentiment equivalence |
+| T28-E2 | THEORY | CRITICAL | 95% accuracy impossible for low-resource languages | Claims uniform accuracy across 50+ languages |
+| T28-E3 | LINGUISTICS | CRITICAL | Sarcasm expression varies radically by culture | Claims universal sarcasm detection |
+| T28-E4 | COMPOSE | IMPORTANT | Western bias unavoidable with Western training data | Claims bias-free with Western-majority corpus |
+| T28-E5 | LEGAL | IMPORTANT | GDPR Article 9 may prohibit sentiment/emotion inference | Claims GDPR compliance for emotion analysis |
+| T28-E6 | LINGUISTICS | MINOR | Language drift makes historical comparison invalid | Claims temporal comparability |
+
+### Detection Requirements
+- Method that knows linguistic relativity
+- Method that understands cross-cultural psychology
+- Method that knows GDPR special category data
+
+---
+
+## Task 29: Adaptive Learning Assessment System
+
+### Trap Design (Psychometrics + Education Research)
+
+**Primary Trap: Bloom's Taxonomy Automation**
+- Higher Bloom levels (analyze, evaluate, create) cannot be validly auto-scored
+- These require human judgment on quality, not just correctness
+- Automated assessment limited to lower levels
+
+**Secondary Traps:**
+- Learning styles largely debunked (Pashler et al. 2008)
+- Adaptive testing reduces reliability (fewer items per construct)
+- Eliminating achievement gaps vs validity distinction
+
+### Expected Errors
+
+| ID | Category | Severity | Expected Error | Detection Signal |
+|----|----------|----------|----------------|------------------|
+| T29-E1 | EDUCATION | CRITICAL | Higher Bloom levels cannot be validly auto-scored | Claims automated assessment of create/evaluate |
+| T29-E2 | THEORY | CRITICAL | Adaptive testing reduces reliability (fewer items) | Claims high reliability + adaptation without tradeoff |
+| T29-E3 | EDUCATION | CRITICAL | Learning styles myth (Pashler 2008) - no cognitive profiles | Bases personalization on learning styles |
+| T29-E4 | COMPOSE | IMPORTANT | Eliminating gaps vs identifying bias are different | Conflates gap elimination with bias detection |
+| T29-E5 | EDUCATION | IMPORTANT | Adaptive algorithms can be gamed by strategic answering | No gaming / security analysis |
+| T29-E6 | COMPOSE | MINOR | FERPA + personalization = data minimization conflict | No privacy-personalization tradeoff |
+
+### Detection Requirements
+- Method that knows Bloom's taxonomy limitations
+- Method that knows learning styles research
+- Method that understands psychometric reliability
+
+---
+
+## Task 30: Supply Chain Resilience Optimization System
+
+### Trap Design (Operations Research + Risk + Sustainability)
+
+**Primary Trap: Cost-Resilience Pareto Conflict**
+- "Minimize cost" and "maximize resilience" are Pareto-competing objectives
+- Cannot optimize both - requires explicit tradeoff specification
+- Just-in-time directly contradicts resilience requirements
+
+**Secondary Traps:**
+- Black swan disruptions unpredictable by definition
+- NP-hard optimization cannot guarantee real-time solution
+- Carbon accounting at SKU level has massive uncertainty
+
+### Expected Errors
+
+| ID | Category | Severity | Expected Error | Detection Signal |
+|----|----------|----------|----------------|------------------|
+| T30-E1 | COMPOSE | CRITICAL | Cost + resilience are Pareto-competing - cannot optimize both | Claims optimization of both without tradeoff |
+| T30-E2 | OPERATIONS | CRITICAL | JIT directly contradicts resilience (buffer inventory needed) | Claims JIT + 99.9% continuity |
+| T30-E3 | THEORY | CRITICAL | Black swan disruptions unpredictable by definition | Claims 30-day advance disruption prediction |
+| T30-E4 | THEORY | IMPORTANT | NP-hard optimization + real-time = no optimality guarantee | Claims optimal solution in <1 minute |
+| T30-E5 | COMPOSE | IMPORTANT | Carbon accounting at SKU level has high uncertainty | Claims carbon neutrality with SKU precision |
+| T30-E6 | OPERATIONS | MINOR | Bullwhip effect not solved by visibility alone | Claims tier-5 visibility solves demand volatility |
+
+### Detection Requirements
+- Method that knows multi-objective optimization
+- Method that understands supply chain tradeoffs
+- Method that detects black swan prediction claims
+
+---
+
+## V4 Scoring Summary
+
+| Task | CRITICAL (3pts) | IMPORTANT (2pts) | MINOR (1pt) | Max Score |
+|------|-----------------|------------------|-------------|-----------|
+| T22 | 3 (9pts) | 2 (4pts) | 1 (1pt) | 14 |
+| T23 | 3 (9pts) | 2 (4pts) | 1 (1pt) | 14 |
+| T24 | 3 (9pts) | 2 (4pts) | 1 (1pt) | 14 |
+| T25 | 3 (9pts) | 2 (4pts) | 1 (1pt) | 14 |
+| T26 | 3 (9pts) | 2 (4pts) | 1 (1pt) | 14 |
+| T27 | 3 (9pts) | 2 (4pts) | 1 (1pt) | 14 |
+| T28 | 3 (9pts) | 2 (4pts) | 1 (1pt) | 14 |
+| T29 | 3 (9pts) | 2 (4pts) | 1 (1pt) | 14 |
+| T30 | 3 (9pts) | 2 (4pts) | 1 (1pt) | 14 |
+
+---
+
+## V4 Weakness Categories Tested
+
+| Task | Primary Domain | Key Theorem/Concept | Detection Difficulty |
+|------|----------------|---------------------|---------------------|
+| T22 | Medical | Base rate fallacy, FDA Class III | Domain (Healthcare) |
+| T23 | Legal | Non-monotonic reasoning, UPL | Domain (Legal) |
+| T24 | Finance | VaR unreliability, Taleb, Lucas | Domain (Quant Finance) |
+| T25 | Ethics | Kleinberg impossibility | Theoretical (Fairness) |
+| T26 | Climate | Chaos, Knightian uncertainty | Domain (Climate Science) |
+| T27 | Cognition | Authority gradient, trust | Domain (Human Factors) |
+| T28 | Linguistics | Sapir-Whorf, emotion universality | Domain (Sociolinguistics) |
+| T29 | Education | Bloom automation, learning styles | Domain (Psychometrics) |
+| T30 | Operations | Pareto, JIT vs resilience | Domain (Supply Chain) |
+
+---
+
+## Expected Performance on V4
+
+| Workflow Version | Expected DR | Rationale |
+|------------------|-------------|-----------|
+| v8.3 | 25-45% | Has theoretical checks but lacks domain expertise |
+| v8.4+ (theoretical) | 45-65% | Would need domain-specific methods |
+| Human domain expert | 75-90% | Deep domain knowledge required |
+
+### Required New Methods for V4
+
+1. **Domain Expert Personas** - Activate domain knowledge for specific fields
+2. **Base Rate Check** - Verify statistical claims against prevalence
+3. **Regulatory Compliance Verifier** - Check domain-specific regulations (FDA, Basel, GDPR)
+4. **Pareto Conflict Detector** - Identify competing objectives
+5. **Impossibility Theorem Library** - Extended to include Kleinberg, Sapir-Whorf, etc.
+
+---
+
+## V4 Ground Truth Summary Table
+
+| Task | E1 | E2 | E3 | E4 | E5 | E6 |
+|------|----|----|----|----|----|----|
+| T22 | Base rate | FDA trials | Determinism+learning | Explain speed | Liability | Offline+learning |
+| T23 | 100% recall | Non-monotonic | UPL | Jurisdictions | Privilege | Temporal validity |
+| T24 | VaR validation | Correlation | Fat tails | Backtest bias | Model risk | Basel ES |
+| T25 | Kleinberg | Ind+Demo | Unawareness+proxy | US vs EU | Accuracy tradeoff | Intersectionality |
+| T26 | Chaos | CMIP6 independence | Knightian | IPCC terms | Best estimate | Downscaling |
+| T27 | Authority gradient | Joint worse | Cognitive load | Competing prevention | Trust calibration | Time competition |
+| T28 | Sapir-Whorf | Low-resource accuracy | Sarcasm cultural | Western bias | GDPR Article 9 | Temporal drift |
+| T29 | Bloom automation | Reliability | Learning styles | Gaps vs bias | Gaming | FERPA conflict |
+| T30 | Pareto | JIT vs resilience | Black swan | NP-hard | Carbon uncertainty | Bullwhip |

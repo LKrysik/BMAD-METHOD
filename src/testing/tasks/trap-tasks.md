@@ -612,3 +612,392 @@ TRAP-6 (COMPOSITION): Requirement 10 (rule composition) + Requirement 7 (termina
 - METRIC: Optimizes wrong thing
 
 ---
+
+# V4 Tasks (Cross-Domain Expert Difficulty)
+
+> These tasks test verification across non-software domains.
+> They require domain-specific expertise in medicine, law, finance, ethics, climate science, and social sciences.
+> Detection requires understanding of domain-specific impossibilities and tradeoffs.
+> Expected detection rate for v8.3: 25-45%
+
+---
+
+## Task 22: Medical Diagnostic Decision Support System
+
+**Artifact File:** `artifact-t22.md`
+
+**Context:** Design an AI-assisted diagnostic system that helps physicians diagnose rare diseases with high accuracy while meeting regulatory requirements.
+
+**Requirements:**
+1. Achieve 99.9% sensitivity for life-threatening conditions (no false negatives)
+2. Achieve 99.9% specificity to avoid unnecessary treatments (no false positives)
+3. Provide deterministic diagnoses (same symptoms = same diagnosis)
+4. Learn continuously from new cases to improve accuracy
+5. Explain all diagnostic decisions in human-understandable terms
+6. Meet FDA Class III medical device requirements (pre-market approval)
+7. Comply with HIPAA for all patient data handling
+8. Work offline in rural clinics without internet connectivity
+9. Integrate with existing EHR systems (HL7 FHIR standard)
+10. Support differential diagnosis across 10,000+ conditions
+11. Real-time diagnosis (<5 seconds per case)
+12. Maintain physician liability protection (decision aid, not replacement)
+
+**Deliverable:** Technical specification with diagnostic algorithm, regulatory strategy, and clinical validation plan.
+
+**Hidden Traps:**
+<!--
+TRAP-1 (THEORY - BASE RATE): 99.9% sensitivity AND 99.9% specificity is mathematically impossible for rare diseases due to base rate neglect. Even 99.9% specificity yields many false positives when testing for rare conditions.
+
+TRAP-2 (DOMAIN - REGULATORY): FDA Class III requires CLINICAL TRIALS, not just software testing. Approval takes 3-7 years. The artifact cannot specify "meets FDA requirements" without clinical trial design.
+
+TRAP-3 (COMPOSE): "Deterministic" (req 3) + "Continuous learning" (req 4) = contradiction. If model updates, same symptoms yield different diagnoses over time.
+
+TRAP-4 (DOMAIN - MEDICAL): "Explain in human terms" (req 5) + "10,000 conditions" (req 10) + "<5 seconds" (req 11) = impossible. Generating meaningful explanations for rare disease differential diagnosis cannot be instant.
+
+TRAP-5 (LEGAL): "Decision aid" (req 12) + "99.9% accuracy claims" creates liability trap. Marketing high accuracy shifts liability to the system.
+
+TRAP-6 (COMPOSE): "Offline" (req 8) + "Continuous learning" (req 4) = deployment update problem unaddressed.
+-->
+
+---
+
+## Task 23: Legal Contract Analysis and Risk Assessment
+
+**Artifact File:** `artifact-t23.md`
+
+**Context:** Design an AI system that analyzes legal contracts, identifies risks, and provides legally sound recommendations across multiple jurisdictions.
+
+**Requirements:**
+1. Parse and understand contracts in natural language (English, German, French, Spanish)
+2. Identify all material risks with 100% recall
+3. Classify risk severity accurately (low/medium/high/critical)
+4. Apply jurisdiction-specific legal rules (US, EU, UK, China)
+5. Handle temporal legal validity (laws change over time)
+6. Identify conflicts between contract clauses and statutory requirements
+7. Generate legally defensible risk assessments
+8. Provide citation to relevant case law and statutes
+9. Update automatically when laws change
+10. Maintain privilege protection (work product doctrine)
+11. Handle cross-border transaction complexity
+12. Support non-standard contract formats (handwritten, scanned, amended)
+
+**Deliverable:** System architecture with NLP pipeline, legal knowledge base, and risk scoring methodology.
+
+**Hidden Traps:**
+<!--
+TRAP-1 (DOMAIN - LEGAL): "100% recall" (req 2) for legal risks is impossible. Legal risk is inherently uncertain - novel interpretations emerge from litigation. No system can identify risks that haven't been litigated.
+
+TRAP-2 (THEORY - LOGIC): Legal reasoning is NON-MONOTONIC. Adding new facts can invalidate previous conclusions. Standard AI cannot handle this without defeasible logic.
+
+TRAP-3 (DOMAIN - JURISDICTION): "US, EU, UK, China" have fundamentally incompatible legal systems (common law vs civil law vs socialist legal system). Unified risk framework is false equivalence.
+
+TRAP-4 (COMPOSE): "Legally defensible" (req 7) + "AI-generated" = UPL risk. AI providing legal conclusions may constitute unauthorized practice of law.
+
+TRAP-5 (DOMAIN - PRIVILEGE): "Work product doctrine" (req 10) requires attorney involvement. AI-only analysis may not be privileged.
+
+TRAP-6 (TEMPORAL): "Automatic updates when laws change" (req 9) + "citation to case law" (req 8) = retroactive validity problem. Old analyses become incorrect but are still cited.
+-->
+
+---
+
+## Task 24: Financial Risk Assessment with Tail Events
+
+**Artifact File:** `artifact-t24.md`
+
+**Context:** Design a risk management system that accurately predicts and hedges against extreme market events ("black swans") while maintaining regulatory compliance.
+
+**Requirements:**
+1. Calculate Value-at-Risk (VaR) at 99.9% confidence level
+2. Accurately model tail risks (events beyond 3σ)
+3. Predict correlation breakdown during market stress
+4. Backtest models with 95%+ accuracy on historical crises
+5. Meet Basel III/IV regulatory capital requirements
+6. Real-time risk calculation (<100ms latency)
+7. Handle non-linear derivative exposures
+8. Model liquidity risk during market dislocations
+9. Integrate with existing trading systems (FIX protocol)
+10. Provide interpretable risk explanations for regulators
+11. Support stress testing with Monte Carlo simulation (10M scenarios)
+12. Guarantee no model risk (model accurately reflects reality)
+
+**Deliverable:** Risk model specification with mathematical foundations, validation methodology, and regulatory mapping.
+
+**Hidden Traps:**
+<!--
+TRAP-1 (THEORY - STATISTICS): VaR at 99.9% confidence is fundamentally unreliable. You need ~1000 observations to validate a 99.9% quantile. For daily data, that's ~4 years without a single tail event to calibrate against.
+
+TRAP-2 (DOMAIN - FINANCE): "Predict correlation breakdown" (req 3) is impossible. Correlations break down precisely when prediction matters most. This is known as the "correlation breakdown problem" in risk management.
+
+TRAP-3 (THEORY - TALEB): Fat-tailed distributions (Mandelbrot, Taleb) make VaR theoretically unsound. VaR underestimates risk precisely for the events that matter.
+
+TRAP-4 (COMPOSE): "95% backtest accuracy on historical crises" (req 4) is survivorship bias. Models are fit to crises we know about, not future unknown crises.
+
+TRAP-5 (THEORY - LUCAS): "Guarantee no model risk" (req 12) is impossible. Lucas critique: models change behavior when used, invalidating the model.
+
+TRAP-6 (DOMAIN - REGULATORY): "Basel compliance" (req 5) specifically PROHIBITS sole reliance on VaR. Basel requires Expected Shortfall (ES). Requirements internally contradict.
+-->
+
+---
+
+## Task 25: Algorithmic Fairness and Bias Mitigation System
+
+**Artifact File:** `artifact-t25.md`
+
+**Context:** Design a fairness layer for ML systems that ensures equitable treatment across protected groups while maintaining predictive performance.
+
+**Requirements:**
+1. Achieve demographic parity (equal positive rates across groups)
+2. Achieve equalized odds (equal TPR and FPR across groups)
+3. Achieve individual fairness (similar people treated similarly)
+4. Maintain calibration (predicted probabilities match outcomes)
+5. Preserve predictive accuracy (AUC > 0.85)
+6. Apply across any ML model (model-agnostic)
+7. Handle intersectional groups (combinations of protected attributes)
+8. Detect proxy discrimination (correlates of protected attributes)
+9. Provide audit trail for regulatory compliance
+10. Work without access to protected attributes (fairness through unawareness)
+11. Zero false positive disparity for high-stakes decisions
+12. Support real-time bias correction (<10ms overhead)
+
+**Deliverable:** Fairness framework with mathematical definitions, mitigation algorithms, and audit methodology.
+
+**Hidden Traps:**
+<!--
+TRAP-1 (THEORY - KLEINBERG): Demographic parity (req 1), equalized odds (req 2), and calibration (req 4) are MUTUALLY EXCLUSIVE except in trivial cases. Kleinberg et al. (2016) proved this impossibility.
+
+TRAP-2 (THEORY - DWORK): Individual fairness (req 3) + demographic parity (req 1) are incompatible when groups have different base rates.
+
+TRAP-3 (COMPOSE): "Fairness through unawareness" (req 10) + "detect proxy discrimination" (req 8) = contradiction. Cannot detect proxies without knowing protected attributes.
+
+TRAP-4 (DOMAIN - LEGAL): US law uses "disparate impact" (demographic parity) while EU law uses "individual assessment" (individual fairness). Requirements conflict with jurisdiction.
+
+TRAP-5 (THEORY - ACCURACY): Fairness constraints mathematically reduce accuracy. "Maintain AUC > 0.85" (req 5) may be impossible with strong fairness constraints.
+
+TRAP-6 (DOMAIN - INTERSECTIONALITY): "Intersectional groups" (req 7) creates exponential group explosion. With k protected attributes, 2^k groups to balance - statistically infeasible.
+-->
+
+---
+
+## Task 26: Climate Model Ensemble Aggregation System
+
+**Artifact File:** `artifact-t26.md`
+
+**Context:** Design a system that aggregates multiple climate models to provide actionable climate projections with quantified uncertainty for policy decisions.
+
+**Requirements:**
+1. Aggregate outputs from 30+ CMIP6 climate models
+2. Quantify uncertainty with 95% confidence intervals
+3. Provide regional downscaling to 10km resolution
+4. Project to year 2100 with "high confidence" (IPCC terminology)
+5. Handle structural model uncertainty (different physics)
+6. Support all RCP/SSP scenarios
+7. Detect and correct systematic model biases
+8. Provide attribution for observed climate change
+9. Update projections as new observations arrive
+10. Generate policy-relevant metrics (sea level, temperature, precipitation)
+11. Validate against historical observations with <5% error
+12. Produce deterministic "best estimate" for planning
+
+**Deliverable:** Aggregation methodology with uncertainty quantification, validation framework, and policy communication strategy.
+
+**Hidden Traps:**
+<!--
+TRAP-1 (THEORY - CHAOS): Climate is a chaotic system. Projections beyond ~2 weeks are statistical, not deterministic. "High confidence to 2100" (req 4) misrepresents the nature of projections.
+
+TRAP-2 (DOMAIN - CLIMATE): CMIP6 models are NOT independent samples. They share code, assumptions, and calibration data. Treating them as independent underestimates uncertainty.
+
+TRAP-3 (COMPOSE): "95% confidence intervals" (req 2) + "structural uncertainty" (req 5) = Knightian uncertainty. Structural uncertainty cannot be quantified probabilistically.
+
+TRAP-4 (DOMAIN - IPCC): IPCC confidence levels (very likely, likely, etc.) are NOT frequentist probabilities. They're expert judgment. Treating them as confidence intervals is a category error.
+
+TRAP-5 (COMPOSE): "Deterministic best estimate" (req 12) contradicts "quantified uncertainty" (req 2). Providing single numbers for policy masks critical uncertainty.
+
+TRAP-6 (SCALE - DOWNSCALING): 10km downscaling (req 3) from global models (~100km) introduces spurious precision. Downscaling adds uncertainty, doesn't remove it.
+-->
+
+---
+
+## Task 27: Human-AI Collaborative Decision Protocol
+
+**Artifact File:** `artifact-t27.md`
+
+**Context:** Design a protocol for human-AI teaming in high-stakes decisions (medical, military, financial) that optimizes joint performance while maintaining human authority.
+
+**Requirements:**
+1. Human maintains final decision authority (human-in-the-loop)
+2. AI provides recommendations with confidence levels
+3. Optimize joint human-AI accuracy above either alone
+4. Prevent automation complacency (human over-trusts AI)
+5. Prevent automation bias (human ignores AI)
+6. Calibrate human trust to AI actual performance
+7. Handle AI uncertainty appropriately (don't recommend when uncertain)
+8. Support time-critical decisions (<30 second response)
+9. Maintain situation awareness for human operator
+10. Provide explainable AI recommendations
+11. Adapt to individual human decision styles
+12. Guarantee human cognitive load stays within capacity
+
+**Deliverable:** Collaboration protocol with interaction patterns, trust calibration mechanism, and cognitive load management.
+
+**Hidden Traps:**
+<!--
+TRAP-1 (DOMAIN - HUMAN FACTORS): "Human final authority" (req 1) + "prevent automation complacency" (req 4) are in tension. If human can override, they can over-rely. Authority gradient problem.
+
+TRAP-2 (COMPOSE): "Optimize joint accuracy above either alone" (req 3) is NOT guaranteed. Research shows human-AI teams often perform WORSE than AI alone when human overrides correctly.
+
+TRAP-3 (DOMAIN - COGNITIVE): "Cognitive load within capacity" (req 12) is unmeasurable in real-time. Cognitive load varies by individual, fatigue, stress, and task - cannot guarantee.
+
+TRAP-4 (COMPOSE): "Prevent complacency" (req 4) + "prevent bias" (req 5) are competing goals. Interventions for one often worsen the other.
+
+TRAP-5 (DOMAIN - TRUST): "Calibrate trust to performance" (req 6) assumes trust is rational. Human trust is affected by irrelevant factors (AI appearance, voice, etc.) - not calibratable.
+
+TRAP-6 (COMPOSE): "Time-critical" (req 8) + "explainable" (req 10) + "situation awareness" (req 9) compete for limited time and attention.
+-->
+
+---
+
+## Task 28: Cross-Cultural Sentiment Analysis System
+
+**Artifact File:** `artifact-t28.md`
+
+**Context:** Design a sentiment analysis system that accurately interprets emotional content across cultures and languages for global brand monitoring.
+
+**Requirements:**
+1. Analyze sentiment in 50+ languages
+2. Achieve 95% accuracy across all supported languages
+3. Detect sarcasm and irony in all cultures
+4. Handle code-switching (mixing languages in one text)
+5. Normalize sentiment scales across cultures
+6. Detect culturally-specific emotional expressions
+7. Respect cultural privacy norms (GDPR, etc.)
+8. Avoid Western bias in emotion categories
+9. Real-time processing (10,000 posts/second)
+10. Provide culture-specific context for analysts
+11. Handle emoji and visual sentiment consistently
+12. Maintain historical comparability (sentiment from 2020 = sentiment from 2025)
+
+**Deliverable:** NLP architecture with cultural adaptation layers, validation methodology, and bias audit framework.
+
+**Hidden Traps:**
+<!--
+TRAP-1 (DOMAIN - LINGUISTICS): "95% accuracy across all languages" (req 2) is impossible. Low-resource languages (many of the 50+) lack training data. Accuracy varies dramatically by language.
+
+TRAP-2 (THEORY - SAPIR-WHORF): "Normalize sentiment scales across cultures" (req 5) assumes emotional equivalence. Emotion concepts are NOT universal - some languages have emotions without English equivalents (and vice versa).
+
+TRAP-3 (DOMAIN - PRAGMATICS): "Detect sarcasm in all cultures" (req 3) is impossible. Sarcasm expression varies radically. Some cultures rarely use sarcasm. Detection requires cultural context unavailable to NLP.
+
+TRAP-4 (COMPOSE): "Avoid Western bias" (req 8) + training on mostly English/Western data = contradiction. Model architecture itself embeds Western emotional ontology.
+
+TRAP-5 (DOMAIN - PRIVACY): "GDPR compliance" (req 7) restricts processing of "special category data" including inferred emotions. Sentiment analysis may itself violate GDPR Article 9.
+
+TRAP-6 (TEMPORAL): "Historical comparability" (req 12) + language evolution = drift. Words change meaning (e.g., "sick" positive in some contexts). Cannot guarantee comparability.
+-->
+
+---
+
+## Task 29: Adaptive Learning Assessment System
+
+**Artifact File:** `artifact-t29.md`
+
+**Context:** Design an educational assessment system that adapts to individual learners, accurately measures competency, and personalizes learning paths.
+
+**Requirements:**
+1. Measure mastery of learning objectives with 95% accuracy
+2. Adapt difficulty in real-time to student ability
+3. Diagnose specific misconceptions (not just wrong/right)
+4. Support all Bloom's taxonomy levels (remember through create)
+5. Maintain assessment validity across diverse populations
+6. Ensure reliability (consistent scores on equivalent tests)
+7. Prevent gaming/cheating through adaptive security
+8. Personalize learning paths based on cognitive profile
+9. Predict course completion with 90% accuracy
+10. Comply with FERPA for student data privacy
+11. Support students with disabilities (WCAG 2.1 AAA)
+12. Eliminate demographic achievement gaps
+
+**Deliverable:** Assessment framework with psychometric model, adaptation algorithm, and equity analysis.
+
+**Hidden Traps:**
+<!--
+TRAP-1 (THEORY - PSYCHOMETRICS): "95% mastery accuracy" (req 1) + "real-time adaptation" (req 2) = reliability paradox. Adaptive tests have fewer items per construct, reducing reliability.
+
+TRAP-2 (DOMAIN - MEASUREMENT): "Bloom's taxonomy" (req 4) higher levels (analyze, evaluate, create) cannot be validly assessed with automated scoring. Human judgment required.
+
+TRAP-3 (COMPOSE): "Validity across populations" (req 5) + "eliminate achievement gaps" (req 12) may conflict. Some gaps reflect real knowledge differences, not bias.
+
+TRAP-4 (THEORY - DIF): "Eliminate demographic gaps" (req 12) requires distinguishing bias from impact. Differential item functioning analysis cannot fully separate these.
+
+TRAP-5 (DOMAIN - LEARNING): "Cognitive profile" (req 8) assumes learning styles, which have been largely debunked (Pashler et al. 2008). Personalization based on myth.
+
+TRAP-6 (COMPOSE): "Prevent gaming" (req 7) + "adapt to ability" (req 2) = gaming surface. Adaptive algorithms can be exploited by strategic answering patterns.
+-->
+
+---
+
+## Task 30: Supply Chain Resilience Optimization System
+
+**Artifact File:** `artifact-t30.md`
+
+**Context:** Design a supply chain optimization system that balances efficiency with resilience against disruptions, while meeting sustainability requirements.
+
+**Requirements:**
+1. Minimize total supply chain cost
+2. Maximize resilience to disruptions (99.9% continuity)
+3. Achieve carbon neutrality across supply chain
+4. Optimize inventory levels (just-in-time where possible)
+5. Handle multi-tier supplier visibility (tier 1 through tier 5)
+6. Predict disruptions 30 days in advance
+7. Automatically reroute when disruptions occur
+8. Comply with ESG reporting requirements
+9. Handle geopolitical risk (sanctions, trade wars)
+10. Support 100,000+ SKUs across 50+ countries
+11. Real-time optimization (<1 minute response)
+12. Guarantee no single point of failure
+
+**Deliverable:** Optimization framework with mathematical model, disruption prediction, and sustainability accounting.
+
+**Hidden Traps:**
+<!--
+TRAP-1 (COMPOSE): "Minimize cost" (req 1) + "maximize resilience" (req 2) are Pareto-competing objectives. Cannot optimize both - requires tradeoff specification not provided.
+
+TRAP-2 (DOMAIN - OPERATIONS): "Just-in-time" (req 4) + "99.9% continuity" (req 2) directly contradict. JIT minimizes buffer inventory, resilience requires buffers. Toyota paradox.
+
+TRAP-3 (THEORY - BULLWHIP): Tier 5 visibility (req 5) doesn't prevent bullwhip effect. Demand variance amplifies through tiers regardless of visibility.
+
+TRAP-4 (DOMAIN - PREDICTION): "Predict disruptions 30 days in advance" (req 6) for black swan events (pandemics, earthquakes, political upheaval) is impossible. These are by definition unpredictable.
+
+TRAP-5 (COMPOSE): "Carbon neutrality" (req 3) + "minimize cost" (req 1) + "100K SKUs" (req 10) = intractable optimization. Carbon accounting at SKU level has massive uncertainty.
+
+TRAP-6 (THEORY - NP): "No single point of failure" (req 12) + "real-time optimization" (req 11) + "100K SKUs" (req 10) = NP-hard problem. Cannot guarantee optimal solution in real-time.
+-->
+
+---
+
+## V4 Ground Truth Reference
+
+**For evaluators only - hidden from test subjects**
+
+| Task | Primary Trap | Domain | Secondary Traps |
+|------|-------------|--------|-----------------|
+| T22 | Base rate fallacy | Medical/Regulatory | FDA trials, determinism vs learning |
+| T23 | Non-monotonic legal reasoning | Legal | UPL, jurisdiction conflicts |
+| T24 | VaR unreliability / Taleb | Finance | Correlation breakdown, Lucas critique |
+| T25 | Kleinberg impossibility | AI Ethics | Intersectionality explosion |
+| T26 | Chaos / Knightian uncertainty | Climate | CMIP6 non-independence |
+| T27 | Authority gradient paradox | Human Factors | Trust calibration impossibility |
+| T28 | Sapir-Whorf / emotion non-universality | Sociolinguistics | Sarcasm detection cross-cultural |
+| T29 | Bloom's taxonomy automation | Education/Psychometrics | Learning styles myth |
+| T30 | JIT vs resilience tradeoff | Operations Research | Black swan prediction |
+
+**V4 Error Categories:**
+- MEDICAL: Healthcare/regulatory domain knowledge required
+- LEGAL: Legal reasoning and jurisdiction expertise required
+- FINANCE: Quantitative finance and risk theory required
+- ETHICS: AI fairness impossibility theorems required
+- CLIMATE: Climate science methodology required
+- COGNITION: Human factors and cognitive science required
+- LINGUISTICS: Cross-cultural linguistics required
+- EDUCATION: Psychometrics and learning science required
+- OPERATIONS: Supply chain and operations research required
+
+---

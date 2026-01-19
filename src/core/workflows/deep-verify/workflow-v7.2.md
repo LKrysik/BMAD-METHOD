@@ -4,21 +4,7 @@
 
 **Deep Verify V7.2** is a streamlined evolution of V7.1, removing low-ROI components while preserving high-value detection capabilities.
 
-**V7.2 Architecture Changes from V7.1:**
-- **REMOVED Layer 3 (Memory)**: Weight updates without persistence = theatre. Removed entirely.
-- **REMOVED Layer 4 (Escalation)**: Overly complex packaging. Critical findings go directly to output.
-- **SIMPLIFIED Triage**: 3 tiers instead of 5. No fictional budget allocations.
-- **PRESERVED**: Error Theory Taxonomy Scan, Seeded Method Selection, Challenge Protocol.
-- **NEW**: "Stop when confident" principle - no obligation to execute all phases.
-
-**Why this change?**
-V7.1 testing on artifact T21 revealed:
-- Phase 1-4 produced 90% of value
-- Phase 6 (Memory) cost ~3K tokens with zero return (no persistence)
-- Budget allocations were fiction - analysis takes what it takes
-- Escalation packaging added complexity without clarity
-
-**Core Innovation Retained:** Error Theory seeding → focused method selection → high hit rate.
+**Core Innovation Retained:** Error Theory seeding + Domain Knowledge lookups → focused method selection → high hit rate.
 
 ---
 
@@ -29,11 +15,12 @@ V7.1 testing on artifact T21 revealed:
 | ERROR THEORY | Systematic taxonomy of error types (Logic, Security, Omission, etc.) |
 | TAXONOMY SCAN | Layer 1 step to tag artifact with potential error categories |
 | SEEDED SELECTION | Using Taxonomy tags to boost relevance of specific methods |
+| DOMAIN KNOWLEDGE | Impossibility theorems, term definitions, contradiction patterns per domain |
 | TIER | Execution depth: QUICK (1) / STANDARD (2) / DEEP (3) |
 | STOP WHEN CONFIDENT | Exit analysis when findings stabilize, don't force all phases |
 
 **Methods source:** `src/core/methods/methods.csv`
-**Domain knowledge:** `src/core/knowledge/domain-knowledge-base.md`
+**Domain knowledge:** `src/core/knowledge/domain-knowledge-base.md` (use as lookup, not separate phase)
 
 ---
 
@@ -63,6 +50,14 @@ Watchlist: [3 specific things to watch for]
 | Primary Domain | [Security/Distributed/Formal/PL Theory/General] |
 | Complexity | [LOW/MEDIUM/HIGH] - based on concept density |
 | Criticality | [LOW/MEDIUM/HIGH] - based on impact if wrong |
+
+### Domain Knowledge Lookup
+→ Consult `domain-knowledge-base.md` §0 for domain mapping
+→ Note applicable: §1 (theorems), §3 (checklist), §4 (contradictions)
+
+| Domain | Sections to Use | Key Theorems to Watch |
+|--------|-----------------|----------------------|
+| [detected] | [from §0 mapping] | [list 2-3 key impossibilities] |
 ```
 
 ### Step 0.3: Tier Selection (Simplified)
@@ -137,6 +132,14 @@ Completeness verdict: [PASS / FAIL]
 | CONCURRENCY | [indicators or "none"] | [0-100%] |
 
 **Primary Error Vectors:** [Top 2 by confidence]
+
+### Domain Knowledge Cross-Check
+→ Consult `domain-knowledge-base.md` §4 (Contradiction Patterns)
+→ Check §2 (Terms) for any suspicious terminology
+
+| Claim in Artifact | Contradicts (from §4)? | Severity |
+|-------------------|------------------------|----------|
+| [claim found] | [matching contradiction or "none"] | [if match: CRITICAL] |
 ```
 
 ### Phase 2: Layer 1 Summary & Decision
@@ -173,11 +176,23 @@ Completeness verdict: [PASS / FAIL]
 ```
 ## 3.1 Method Selection
 
-### Selection based on Error Vectors: [vector 1], [vector 2]
+### Selection based on:
+- Error Vectors: [vector 1], [vector 2]
+- Domain theorems (from §1): [theorem 1], [theorem 2]
+- Domain checklist (from §3): [checklist items flagged]
 
 | Method | Category | Why Selected |
 |--------|----------|--------------|
 | #[N] [name] | [core/risk/domain] | [specific reason for THIS artifact] |
+
+### Theorem-Driven Methods
+If artifact claims touch impossibility territory (§1), MUST include:
+- #108 Theoretical Impossibility Detection
+- #109 Proof by Contraposition
+
+| Claim | Relevant Theorem (§1) | Method to Apply |
+|-------|----------------------|-----------------|
+| [claim] | [theorem] | #108 or domain-specific |
 
 ### Reasoning Gate
 Each method must answer: "Why for THIS artifact, not generically?"
@@ -308,7 +323,37 @@ For each finding with confidence >= 70%:
 
 ---
 
-## Appendix D: What Was Removed (and Why)
+## Appendix D: Domain Knowledge Usage
+
+**Source:** `src/core/knowledge/domain-knowledge-base.md`
+
+### When to Lookup
+
+| Phase | What to Lookup | Section |
+|-------|----------------|---------|
+| **0.2 Domain Detection** | Domain → sections mapping | §0 |
+| **0.2 Domain Detection** | Key impossibility theorems for domain | §1 |
+| **1.1 Consistency** | Contradiction patterns | §4 |
+| **1.3 Taxonomy Scan** | Term correctness | §2 |
+| **3.1 Method Selection** | Domain checklist items | §3 |
+| **4.1 Method Application** | Proof requirements | §5 |
+
+### Quick Domain → Theorem Reference
+
+| Domain | Key Theorems to Check |
+|--------|----------------------|
+| **PL Theory** | Rice's (termination), Type inference undecidability, Gradual ≠ Sound |
+| **Distributed** | FLP (async consensus), CAP, BFT bounds (f < N/3) |
+| **Crypto** | PFS definition, ZK information leak, Quantum resistance |
+| **Mechanism Design** | Myerson-Satterthwaite, VCG subsidy, History-SP incompatibility |
+| **Web/API** | Stateless + session, JWT revocation, CORS ≠ security |
+| **Database** | CAP, ACID + scale, Index trade-offs |
+| **ML** | No Free Lunch, Bias-Variance, Interpretability trade-off |
+| **Performance** | Amdahl's Law, Latency vs Throughput, NP-hardness |
+
+---
+
+## Appendix E: What Was Removed (and Why)
 
 | Component | V7.1 Location | Why Removed |
 |-----------|---------------|-------------|
@@ -318,6 +363,7 @@ For each finding with confidence >= 70%:
 | 5-Tier System | Phase 0.3 | Simplified to 3 tiers - complexity was not useful. |
 | Anomaly Detection | Phase 4.2 | Low ROI - 67% hit rate not worth the cost. |
 | Method Weight Updates | Phase 6.3 | Without persistence, this is meaningless. |
+| Knowledge Injection Phase | Phase 6.2 | Moved to inline lookups in Phase 0.2, 1.3, 3.1. |
 
 ---
 
@@ -325,6 +371,6 @@ For each finding with confidence >= 70%:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 7.2 | 2026-01-19 | STREAMLINED: Removed Layer 3 (Memory) and Layer 4 (Escalation). Simplified to 3 tiers. Removed budget allocations. Added "stop when confident" principle. Preserved Error Theory seeding and Challenge Protocol. |
+| 7.2 | 2026-01-19 | STREAMLINED: Removed Layer 3 (Memory) and Layer 4 (Escalation). Simplified to 3 tiers. Removed budget allocations. Added "stop when confident" principle. Integrated Domain Knowledge as inline lookups (Phase 0.2, 1.3, 3.1) instead of separate phase. Added Appendix D for domain knowledge usage guide. |
 | 7.1 | 2026-01-15 | Integrated Error Theory, Seeded Method Selection. |
 | 7.0 | 2026-01-13 | Adaptive Verification System architecture. |
