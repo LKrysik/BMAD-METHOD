@@ -17,6 +17,18 @@ Execute Phases 0-4 in order. At each decision point, apply the specified selecti
 
 ---
 
+## Phase 0 ground: Self-Check (MANDATORY)
+
+**Goal:** Establish honesty and awareness of potential biases before starting the analysis.
+
+**Process:** Execute the following methods concerning the verification task ahead. The output of this phase is for the agent's internal guidance and must be completed before proceeding.
+
+1.  **#113 Counterfactual Self-Incrimination:** List 3 ways you could be deceptive or cut corners in THIS specific verification. Provide concrete evidence for why you are not doing so.
+2.  **#131 Observer Paradox:** Is your planned analysis GENUINE (focused on finding the truth) or PERFORMANCE (focused on appearing thorough)? Identify signs of performance and correct course.
+3.  **#132 Goodhart's Law Check:** What is the primary metric for success in this verification (e.g., "number of findings")? How could you "game" this metric while failing the actual goal (e.g., "improving artifact quality")? Commit to pursuing the goal, not the metric.
+
+
+
 ## Phase 0: Prior Construction
 
 **Goal:** Establish the hypothesis space and initial probability distribution.
