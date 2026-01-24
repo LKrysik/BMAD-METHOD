@@ -1,0 +1,185 @@
+# Decision Thresholds — Verdict Logic and Exit Conditions
+# LOAD: step-00-setup.md, step-01-pattern-scan.md, step-04-verdict.md
+# PURPOSE: Consistent decision-making across workflow
+
+---
+
+# LOADING INSTRUCTIONS:
+# 1. Load this file at START of step-00 (for stakes assessment)
+# 2. Load at END of step-01 (for early exit check)
+# 3. Load at START of step-04 (for final verdict)
+# 4. Always check conditions in order listed
+
+---
+
+evidence_thresholds:
+
+  REJECT_EARLY:
+    condition: "S ≥ 6 AND pattern_match"
+    score_min: 6
+    requires_pattern: true
+    action: "STOP immediately"
+    next_step: "step-04-verdict.md"
+    verdict: "REJECT"
+    note: "Early exit - skip Phase 2 and 3"
+
+  REJECT_NEEDS_CONFIRMATION:
+    condition: "S ≥ 6 AND NOT pattern_match"
+    score_min: 6
+    requires_pattern: false
+    action: "CONTINUE to Phase 2"
+    next_step: "step-02-targeted.md"
+    note: "High S without pattern may indicate novel issue OR false positive"
+
+  BORDERLINE:
+    condition: "4 ≤ S < 6"
+    score_min: 4
+    score_max: 6
+    action: "MANDATORY Phase 2 AND Phase 3"
+    next_step: "step-02-targeted.md"
+    note: "No shortcuts allowed for borderline cases"
+
+  ACCEPT_EARLY:
+    condition: "S ≤ -3 AND stakes ≠ HIGH"
+    score_max: -3
+    stakes_exception: HIGH
+    action: "STOP immediately"
+    next_step: "step-04-verdict.md"
+    verdict: "ACCEPT"
+    note: "Early exit for clearly sound artifacts (unless HIGH stakes)"
+
+  CONTINUE:
+    condition: "-3 < S < 4"
+    action: "Continue to next phase"
+    note: "Normal progression through workflow"
+
+---
+
+final_verdict_rules:
+
+  REJECT:
+    condition: "S ≥ 6"
+    score_min: 6
+    validation_checklist:
+      - "At least one CRITICAL finding survived Phase 3"
+      - "Pattern Library match exists OR Phase 2 confirmation obtained"
+      - "False Positive Checklist completed"
+      - "Steel-man arguments addressed"
+    note: "If any checklist item unchecked → reconsider or document exception"
+
+  ACCEPT:
+    condition: "S ≤ -3"
+    score_max: -3
+    validation_checklist:
+      - "All Tier 1 methods passed clean"
+      - "No CRITICAL findings at any phase"
+      - "If IMPORTANT findings existed, all were resolved in Phase 3"
+      - "Steel-man for REJECT was attempted and failed"
+    note: "If any checklist item unchecked → reconsider or document exception"
+
+  UNCERTAIN:
+    condition: "-3 < S < 6"
+    action: "Document uncertainty, consider escalation"
+    escalation_triggers:
+      - "Stakes are HIGH"
+      - "Methods strongly disagree"
+      - "Findings require domain expertise"
+      - "Novel pattern not in library"
+      - "Multiple steel-man arguments hold"
+      - "False Positive Checklist has 2+ unchecked"
+
+---
+
+confidence_levels:
+
+  HIGH:
+    condition: "|S| > 10 AND methods_agree AND adversarial_failed"
+    description: "Strong confidence in verdict"
+    expected_accuracy: ">90%"
+
+  MEDIUM:
+    condition: "6 ≤ |S| ≤ 10 AND most_methods_agree"
+    description: "Moderate confidence with some uncertainty"
+    expected_accuracy: "70-90%"
+
+  LOW:
+    condition: "|S| near threshold OR methods_disagree OR findings_weakened"
+    description: "Low confidence, consider escalation"
+    expected_accuracy: "50-70%"
+
+---
+
+stakes_assessment:
+
+  LOW:
+    description: "Minor rework, <$10K, <1 week, reversible"
+    accept_flawed_impact: "Manageable"
+    reject_sound_impact: "Minor delay"
+    threshold_adjustments: none
+
+  MEDIUM:
+    description: "Significant rework, $10K-$100K, 1-4 weeks"
+    accept_flawed_impact: "Significant cost"
+    reject_sound_impact: "Significant delay"
+    threshold_adjustments: none
+
+  HIGH:
+    description: "Major damage, >$100K, >1 month, safety, reputation"
+    accept_flawed_impact: "Critical - must avoid"
+    reject_sound_impact: "Major opportunity cost"
+    threshold_adjustments:
+      - "S ≤ -3 does NOT trigger early ACCEPT"
+      - "UNCERTAIN always triggers escalation"
+      - "Recommend Blind Mode in Phase 0"
+
+---
+
+escalation_criteria:
+  description: "When to escalate to human reviewer"
+
+  mandatory_escalation:
+    - "UNCERTAIN verdict AND stakes are HIGH"
+    - "Methods strongly disagree (some REJECT, some ACCEPT)"
+    - "False Positive Checklist has 2+ unchecked items"
+
+  recommended_escalation:
+    - "Findings require domain expertise verifier lacks"
+    - "Novel pattern not in library with uncertain severity"
+    - "Multiple steel-man arguments hold"
+
+  escalation_output:
+    required_fields:
+      - "Reason for escalation"
+      - "Specific question for reviewer"
+      - "What information would resolve"
+    template: |
+      ESCALATION NEEDED: [Yes/No]
+      Reason: ________________________________
+      Specific question: ________________________________
+      Information needed: ________________________________
+
+---
+
+early_exit_flow:
+  description: "Decision tree for early exit"
+
+  phase1_exit:
+    check_order:
+      1: "S ≥ 6 AND pattern_match → REJECT (early)"
+      2: "S ≤ -3 AND stakes ≠ HIGH → ACCEPT (early)"
+      3: "Otherwise → Continue to Phase 2"
+
+  phase2_exit:
+    note: "In V2, Phase 3 is MANDATORY after Phase 2"
+    exception: "Only Phase 1 early exit (with pattern match) skips Phase 3"
+
+---
+
+# USAGE SUMMARY:
+#
+# 1. Phase 0: Load for stakes_assessment
+# 2. Phase 1 end: Check evidence_thresholds in order, apply first match
+# 3. Phase 2 end: Always proceed to Phase 3 (mandatory in V2)
+# 4. Phase 4: Apply final_verdict_rules, check validation_checklist
+# 5. Assign confidence_level based on conditions
+# 6. Check escalation_criteria if UNCERTAIN or LOW confidence
