@@ -62,16 +62,16 @@ outputs:
 ## 1.1 Execute Tier 1 Methods
 
 Execute ALL three methods. For each method:
-1. Read definition from `data/methods.csv`
-2. Apply method to artifact
-3. Record findings with mandatory quotes
-4. Check Pattern Library for matches
-5. Update evidence score
+1. **READ the procedure file** listed under "Load procedure:"
+2. Follow step-by-step instructions from the procedure file
+3. Apply method to artifact
+4. Record findings with mandatory quotes
+5. Check Pattern Library for matches
+6. Update evidence score
 
 ### Method #71: First Principles Analysis
 
-**From data/methods.csv:**
-> Strip away assumptions to rebuild from fundamental truths. Identify the 3-5 core claims of the artifact. For each claim ask: What must be fundamentally true for this to work?
+**Load procedure:** `data/method-procedures/071_First_Principles_Analysis.md`
 
 **Execute now:**
 
@@ -103,8 +103,7 @@ Findings (if any): ________________________________
 
 ### Method #100: Vocabulary Consistency
 
-**From data/methods.csv:**
-> Extract all key terms and identify synonyms (same concept different words) and homonyms (same word different concepts).
+**Load procedure:** `data/method-procedures/100_Vocabulary_Consistency.md`
 
 **Execute now:**
 
@@ -130,8 +129,7 @@ Findings (if any): ________________________________
 
 ### Method #17: Abstraction Laddering
 
-**From data/methods.csv:**
-> Move up (why does this matter?) and down (how specifically?) levels of abstraction. Check vertical coherence.
+**Load procedure:** `data/method-procedures/017_Abstraction_Laddering.md`
 
 **Execute now:**
 

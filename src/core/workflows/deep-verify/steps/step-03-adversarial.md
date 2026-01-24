@@ -40,8 +40,8 @@ Empirical data shows adversarial review changes verdict direction in **57% of bo
 **Before ANY analysis, load these files:**
 
 ```
-1. data/methods.csv
-   → Have available for method #63 (Critical Challenge) if needed
+1. data/method-procedures/063_Challenge_from_Critical_Perspective.md
+   → Load for method #63 (Critical Challenge) procedure
 
 2. data/severity-scoring.yaml
    → Load phase3_adjustment_rules section
