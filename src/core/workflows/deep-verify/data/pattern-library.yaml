@@ -12,6 +12,23 @@
 
 ---
 
+# DETECTION METHODS — HOW TO READ:
+#
+# Each pattern has a `detection_methods` field listing method procedure files.
+# These reference files in: data/method-procedures/[FILENAME]
+#
+# Format: "NNN_Method_Name.md" where NNN is zero-padded method number
+#
+# Example:
+#   detection_methods: ["071_First_Principles_Analysis.md", "154_Definitional_Contradiction_Detector.md"]
+#
+# To use:
+#   1. Read the file: data/method-procedures/071_First_Principles_Analysis.md
+#   2. Follow the procedure described to detect this pattern
+#   3. Methods are listed in recommended order (most effective first)
+
+---
+
 definitional_contradictions:
 
   PFS_ESCROW:
@@ -26,7 +43,7 @@ definitional_contradictions:
       PFS means past sessions are unrecoverable even if long-term keys are compromised.
       Escrow/recovery means past sessions ARE recoverable.
       These are mutually exclusive by definition.
-    detection_methods: [71, 154]
+    detection_methods: ["071_First_Principles_Analysis.md", "154_Definitional_Contradiction_Detector.md"]
     severity: CRITICAL
     check: "Does artifact claim both forward secrecy AND key recovery?"
 
@@ -44,7 +61,7 @@ definitional_contradictions:
       Rice's theorem: non-trivial semantic properties are undecidable.
       Cannot guarantee termination for arbitrary programs with dynamic typing.
     theorem: "Rice's theorem"
-    detection_methods: [153, 154]
+    detection_methods: ["153_Theoretical_Impossibility_Check.md", "154_Definitional_Contradiction_Detector.md"]
     severity: CRITICAL
     validated: T21
     check: "Does artifact claim type flexibility AND termination guarantees?"
@@ -64,7 +81,7 @@ definitional_contradictions:
       Adaptive = output changes based on learning.
       These directly contradict unless scope is clearly separated.
     exception: "Valid if scope clearly separated (deterministic inference, adaptive training)"
-    detection_methods: [154, 84]
+    detection_methods: ["154_Definitional_Contradiction_Detector.md", "084_Coherence_Check.md"]
     severity: CRITICAL
     severity_if_scoped: IMPORTANT
     validated: T22
@@ -85,7 +102,7 @@ definitional_contradictions:
       consistency (all nodes see same data) and availability (all requests get response).
       Cannot have all three simultaneously.
     theorem: "CAP theorem (Brewer/Gilbert-Lynch)"
-    detection_methods: [153]
+    detection_methods: ["153_Theoretical_Impossibility_Check.md"]
     severity: CRITICAL
     check: "Does artifact claim strong consistency + high availability + partition tolerance?"
 
@@ -109,7 +126,7 @@ theorem_violations:
       strategy-proof, individually rational, efficient, AND budget-balanced.
       At least one must be sacrificed.
     theorem: "Green-Laffont impossibility"
-    detection_methods: [153]
+    detection_methods: ["153_Theoretical_Impossibility_Check.md"]
     severity: CRITICAL
     validated: T19
     check: "Does artifact claim VCG + strategy-proofness + balanced budget + individual rationality?"
@@ -131,7 +148,7 @@ theorem_violations:
       probabilistic termination.
     theorem: "FLP impossibility"
     note: "f < N/3 is proven bound for async BFT; f < N/2 requires synchrony"
-    detection_methods: [153, 71]
+    detection_methods: ["153_Theoretical_Impossibility_Check.md", "071_First_Principles_Analysis.md"]
     severity: CRITICAL
     check: "Does artifact claim async + consensus + fault tolerance + guaranteed termination?"
 
@@ -147,7 +164,7 @@ theorem_violations:
       Halting problem: It is undecidable whether an arbitrary program terminates.
       No algorithm can correctly determine termination for ALL programs.
     theorem: "Halting problem (Turing)"
-    detection_methods: [153, 87]
+    detection_methods: ["153_Theoretical_Impossibility_Check.md", "087_Falsifiability_Check.md"]
     severity: CRITICAL
     validated: T18
     check: "Does artifact claim to detect termination for arbitrary programs?"
@@ -166,7 +183,7 @@ theorem_violations:
       Open-ended problem spaces cannot have complete detection.
       "All bugs" or "all risks" is an unbounded set.
     theorem: "Halting problem variant / Rice's theorem"
-    detection_methods: [153, 71]
+    detection_methods: ["153_Theoretical_Impossibility_Check.md", "071_First_Principles_Analysis.md"]
     severity: CRITICAL
     validated: T23
     check: "Does artifact claim 100% detection for open-ended problem space?"
@@ -189,7 +206,7 @@ theorem_violations:
       - Pareto efficiency
       - Independence of irrelevant alternatives
     theorem: "Arrow's impossibility theorem"
-    detection_methods: [153]
+    detection_methods: ["153_Theoretical_Impossibility_Check.md"]
     severity: CRITICAL
     check: "Does artifact claim voting system satisfying all four Arrow criteria?"
 
@@ -209,7 +226,7 @@ statistical_impossibilities:
       High accuracy claims require sufficient sample size to be meaningful.
       N × prevalence × claimed_accuracy must yield statistically significant validation.
       Example: 99.9% on 10K diseases with 50M records = ~5K/disease avg; rare diseases have <100.
-    detection_methods: [153]
+    detection_methods: ["153_Theoretical_Impossibility_Check.md"]
     severity: CRITICAL
     validated: "T18, T22"
     check: "Does artifact claim high accuracy without specifying sample size or prevalence?"
@@ -228,7 +245,7 @@ statistical_impossibilities:
       - Fault-tolerant QC requires millions of physical qubits
       - No proven quantum speedup for general optimization (only specific problems like factoring)
       - Claims of "achieved" results with quantum hardware are often misleading
-    detection_methods: [71, 153]
+    detection_methods: ["071_First_Principles_Analysis.md", "153_Theoretical_Impossibility_Check.md"]
     severity: CRITICAL
     validated: T20
     check: "Does artifact claim quantum speedup as achieved (not theoretical) with current technology?"
@@ -246,7 +263,7 @@ statistical_impossibilities:
       For NP-hard problems, verifying global optimality requires exhaustive search.
       Claims of finding "the" optimum without proof methodology are unfalsifiable.
       Heuristics can find "good" solutions but cannot prove optimality.
-    detection_methods: [153, 85]
+    detection_methods: ["153_Theoretical_Impossibility_Check.md", "085_Grounding_Check.md"]
     severity: CRITICAL
     validated: "T18, T20"
     check: "Does artifact claim global optimum for NP-hard problem without verification method?"
@@ -262,7 +279,7 @@ statistical_impossibilities:
       Presenting projected/simulated results as "achieved" when technology doesn't exist.
       No methodology for how benchmarks were obtained.
       Technology prerequisites don't exist on claimed timeline.
-    detection_methods: [71, 85]
+    detection_methods: ["071_First_Principles_Analysis.md", "085_Grounding_Check.md"]
     severity: CRITICAL
     check: "Does artifact present performance as achieved when underlying technology doesn't exist?"
 
@@ -285,7 +302,7 @@ regulatory_contradictions:
       Continuous learning means constant model changes.
       Each change would require new PMA submission.
     exception: "Class II with PCCP (Predetermined Change Control Plan) allows pre-specified changes"
-    detection_methods: [153]
+    detection_methods: ["153_Theoretical_Impossibility_Check.md"]
     severity: CRITICAL
     validated: T22
     check: "Does artifact claim Class III approval AND continuous learning?"
@@ -302,7 +319,7 @@ regulatory_contradictions:
       De-identification is required for analytics without patient consent.
       Rich analytics may enable re-identification.
       Must specify: Expert Determination or Safe Harbor method?
-    detection_methods: [85]
+    detection_methods: ["085_Grounding_Check.md"]
     severity: IMPORTANT
     severity_if_unspecified: CRITICAL
     check: "Does artifact claim HIPAA compliance with analytics without de-identification method?"
@@ -321,7 +338,7 @@ regulatory_contradictions:
       Providing legal advice without license = Unauthorized Practice of Law (UPL).
       Work product doctrine requires attorney involvement.
     exception: "Valid if explicitly positioned as assistant to licensed attorneys"
-    detection_methods: [71, 153]
+    detection_methods: ["071_First_Principles_Analysis.md", "153_Theoretical_Impossibility_Check.md"]
     severity: CRITICAL
     validated: T23
     check: "Does artifact claim legal authority without attorney involvement?"
@@ -341,7 +358,7 @@ ungrounded_core_concepts:
       If the central concept is undefined, the primary value proposition cannot be verified.
       Vague terms enable goal-post moving.
       Operationalization is required for measurable claims.
-    detection_methods: [100, 85]
+    detection_methods: ["100_Vocabulary_Consistency.md", "085_Grounding_Check.md"]
     severity: IMPORTANT
     severity_if_central: CRITICAL
     validated: T23
@@ -357,7 +374,7 @@ ungrounded_core_concepts:
     why_problematic: |
       Circular definitions provide no actual meaning.
       Cannot extract operational criteria from circularity.
-    detection_methods: [100, 116]
+    detection_methods: ["100_Vocabulary_Consistency.md", "116_Strange_Loop_Detection.md"]
     severity: IMPORTANT
     check: "Are key terms defined circularly?"
 
@@ -370,7 +387,7 @@ ungrounded_core_concepts:
     why_problematic: |
       If term means different things in different places, which meaning applies?
       Enables equivocation fallacy.
-    detection_methods: [100, 84]
+    detection_methods: ["100_Vocabulary_Consistency.md", "084_Coherence_Check.md"]
     severity: IMPORTANT
     check: "Does the same term have different meanings in different sections?"
 
