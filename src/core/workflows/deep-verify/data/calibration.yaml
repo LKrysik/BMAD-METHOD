@@ -1,0 +1,274 @@
+# Calibration and Ground Truth — Workflow Accuracy Tracking
+# LOAD: After completing verifications, during workflow audits
+# PURPOSE: Track and improve workflow accuracy over time
+
+---
+
+# LOADING INSTRUCTIONS:
+# 1. After each verification, record verdict in calibration_log
+# 2. When ground truth becomes available, update the log
+# 3. Periodically review accuracy metrics
+# 4. Recalibrate thresholds if systematic bias detected
+
+---
+
+purpose: |
+  This file helps verify that workflow verdicts are accurate over time.
+  Without ground truth tracking, we cannot know if the workflow is
+  actually effective or just generating confident-sounding verdicts.
+
+---
+
+calibration_log:
+  description: "Template for tracking verdict accuracy"
+
+  fields:
+    - date: "ISO date of verification"
+    - artifact: "Name/ID of artifact verified"
+    - verdict: "REJECT | ACCEPT | UNCERTAIN | ESCALATE"
+    - confidence: "HIGH | MEDIUM | LOW"
+    - score: "Final S value"
+    - critical_findings: "Count of CRITICAL findings"
+    - pattern_matches: "List of matched patterns"
+    - ground_truth: "FLAWED | SOUND | UNKNOWN (fill when known)"
+    - ground_truth_date: "When ground truth was determined"
+    - correct: "true | false | unknown"
+    - notes: "Any relevant context"
+
+  template: |
+    | Date | Artifact | Verdict | Conf | S | Ground Truth | Correct? |
+    |------|----------|---------|------|---|--------------|----------|
+    |      |          |         |      |   |              |          |
+
+---
+
+expected_accuracy:
+  description: "Target accuracy by confidence level"
+
+  high:
+    target: ">90%"
+    description: "9 out of 10 HIGH confidence verdicts should be correct"
+    acceptable_range: "85-95%"
+
+  medium:
+    target: "70-90%"
+    description: "7-9 out of 10 MEDIUM confidence verdicts should be correct"
+    acceptable_range: "65-90%"
+
+  low:
+    target: "50-70%"
+    description: "Better than random, but significant uncertainty"
+    acceptable_range: "45-75%"
+
+---
+
+accuracy_metrics:
+  description: "How to calculate workflow accuracy"
+
+  primary_metrics:
+    true_positive_rate:
+      formula: "correctly_rejected / total_flawed"
+      description: "What % of flawed artifacts did we correctly REJECT?"
+      target: ">85%"
+
+    true_negative_rate:
+      formula: "correctly_accepted / total_sound"
+      description: "What % of sound artifacts did we correctly ACCEPT?"
+      target: ">85%"
+
+    false_positive_rate:
+      formula: "incorrectly_rejected / total_sound"
+      description: "What % of sound artifacts did we incorrectly REJECT?"
+      target: "<15%"
+      critical_threshold: "<25%"
+
+    false_negative_rate:
+      formula: "incorrectly_accepted / total_flawed"
+      description: "What % of flawed artifacts did we incorrectly ACCEPT?"
+      target: "<10%"
+      critical_threshold: "<20%"
+      note: "False negatives are worse - accepting flawed artifacts causes damage"
+
+  secondary_metrics:
+    precision:
+      formula: "true_positives / (true_positives + false_positives)"
+      description: "When we say REJECT, how often are we right?"
+
+    recall:
+      formula: "true_positives / (true_positives + false_negatives)"
+      description: "Of all flawed artifacts, how many did we catch?"
+
+    uncertain_resolution:
+      formula: "resolved_uncertain / total_uncertain"
+      description: "What % of UNCERTAIN verdicts were eventually resolved?"
+
+---
+
+recalibration_triggers:
+  description: "When to review and adjust workflow parameters"
+
+  immediate_review:
+    - trigger: "False negative discovered"
+      description: "Accepted artifact that later proved flawed"
+      action: "Root cause analysis, check if pattern should be added"
+
+    - trigger: "Multiple false positives"
+      description: "3+ consecutive sound artifacts incorrectly rejected"
+      action: "Review severity thresholds, check for over-sensitivity"
+
+    - trigger: "Pattern Library miss"
+      description: "New impossibility pattern found not in library"
+      action: "Add pattern to pattern-library.yaml"
+
+  periodic_review:
+    frequency: "Quarterly or after 20+ verifications"
+    checks:
+      - "Calculate all accuracy metrics"
+      - "Compare to expected accuracy ranges"
+      - "Identify systematic bias (always REJECT vs always ACCEPT)"
+      - "Review UNCERTAIN resolution rates"
+      - "Check if new domains need domain-specific patterns"
+
+  systematic_bias_indicators:
+    reject_bias:
+      signal: "False positive rate > 25%"
+      causes:
+        - "Severity thresholds too aggressive"
+        - "Pattern Library too broad"
+        - "Confirmation bias in verifiers"
+      adjustments:
+        - "Raise S threshold from 6 to 7"
+        - "Require 2 CRITICAL findings for early exit"
+        - "Mandate Blind Mode for all verifications"
+
+    accept_bias:
+      signal: "False negative rate > 20%"
+      causes:
+        - "Severity thresholds too lenient"
+        - "Pattern Library incomplete"
+        - "Pressure to approve"
+      adjustments:
+        - "Lower S threshold from -3 to -4"
+        - "Add stricter ACCEPT validation checklist"
+        - "Require Phase 2+3 for all verifications"
+
+---
+
+ground_truth_sources:
+  description: "How to determine if artifact was actually sound or flawed"
+
+  for_software_specs:
+    - "Implementation succeeded/failed"
+    - "Production incidents traced to spec issues"
+    - "External audit findings"
+    - "User feedback after deployment"
+
+  for_research_claims:
+    - "Replication studies"
+    - "Peer review outcomes"
+    - "Subsequent corrections/retractions"
+
+  for_designs:
+    - "Build failures"
+    - "Performance vs claims in production"
+    - "Maintenance burden"
+
+  for_proposals:
+    - "Project success/failure"
+    - "Budget overruns traced to spec gaps"
+    - "Scope changes required"
+
+  time_to_ground_truth:
+    immediate: "Build/test failures (days)"
+    short: "Integration issues (weeks)"
+    medium: "Production problems (months)"
+    long: "Maintenance/evolution issues (years)"
+    note: "Track separately by timeframe for fair comparison"
+
+---
+
+calibration_process:
+  description: "Steps to calibrate the workflow"
+
+  initial_calibration:
+    requirements:
+      - "At least 20 verifications completed"
+      - "At least 10 ground truths known"
+      - "Mix of REJECT and ACCEPT verdicts"
+    steps:
+      1: "Export calibration log to spreadsheet"
+      2: "Calculate all accuracy metrics"
+      3: "Compare to expected accuracy"
+      4: "Identify outliers and root causes"
+      5: "Adjust thresholds if needed"
+      6: "Document changes in workflow version"
+
+  ongoing_calibration:
+    requirements:
+      - "Record every verification"
+      - "Update ground truth when available"
+      - "Review quarterly"
+    steps:
+      1: "Add new entries to calibration log"
+      2: "Update ground truth for past entries"
+      3: "Recalculate metrics"
+      4: "Check for drift from expected accuracy"
+      5: "Apply recalibration if triggers met"
+
+---
+
+domain_expansion:
+  description: "When workflow is used in new domain"
+
+  considerations:
+    - "Domain may have different impossibility patterns"
+    - "Severity calibration may differ"
+    - "New regulatory contradictions possible"
+
+  process:
+    1: "Start with standard workflow"
+    2: "Track accuracy separately for new domain"
+    3: "Collect domain-specific patterns"
+    4: "Create domain-specific additions to pattern-library.yaml"
+    5: "Adjust thresholds if domain has different base rates"
+
+  domain_specific_sections:
+    example: |
+      # In pattern-library.yaml, add:
+      domain_specific:
+        healthcare:
+          - pattern_id: "HS-001"
+            name: "HIPAA + Real-time Analytics"
+            ...
+        finance:
+          - pattern_id: "FN-001"
+            name: "SOX + Automated Approval"
+            ...
+
+---
+
+version_tracking:
+  description: "Track workflow changes that affect calibration"
+
+  record_when:
+    - "Thresholds changed"
+    - "Pattern Library updated"
+    - "Severity definitions modified"
+    - "New methods added"
+
+  format: |
+    | Version | Date | Change | Rationale | Impact |
+    |---------|------|--------|-----------|--------|
+    | V2.0 | 2024-01 | Initial modular | Refactor from V12.2 | Baseline |
+    | V2.1 | TBD | TBD | TBD | TBD |
+
+---
+
+# USAGE SUMMARY:
+#
+# 1. After each verification: Add entry to calibration_log
+# 2. When ground truth known: Update the entry
+# 3. Quarterly: Calculate accuracy metrics
+# 4. If triggers met: Initiate recalibration
+# 5. When expanding domains: Create domain-specific patterns
+# 6. Track all changes: Update version_tracking

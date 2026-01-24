@@ -5,12 +5,12 @@ time_estimate: "15-30 minutes"
 goal: "Select methods based on Phase 1 signals, confirm or refute hypotheses"
 requires_completion: [0, 1]
 next_steps:
-  DEFAULT: "step-03-adversarial.md"
+  DEFAULT: "steps/step-03-adversarial.md"
 data_dependencies:
-  - "../data/methods.csv"
-  - "../data/method-clusters.yaml"
-  - "../data/severity-scoring.yaml"
-  - "../data/pattern-library.yaml"
+  - "data/methods.csv"
+  - "data/method-clusters.yaml"
+  - "data/severity-scoring.yaml"
+  - "data/pattern-library.yaml"
 outputs:
   - findings (updated)
   - currentScore (updated)
@@ -26,7 +26,7 @@ outputs:
 3. **Respect cluster correlation rules** — Never 3+ from same cluster
 4. **Execute 2-4 methods** — Minimum 2, maximum 4
 5. **Update score after EACH method** — Check thresholds continuously
-6. **ALWAYS proceed to Phase 3** — Mandatory in V2
+6. **ALWAYS proceed to Phase 3** — Mandatory in this workflow
 
 ---
 
@@ -35,19 +35,19 @@ outputs:
 **Before ANY analysis, load these files:**
 
 ```
-1. ../data/methods.csv
+1. data/methods.csv
    → Have full method catalog available
    → Will select specific methods based on signals
 
-2. ../data/method-clusters.yaml
+2. data/method-clusters.yaml
    → Load cluster definitions
    → Load signal_to_cluster_mapping
    → Load selection_algorithm
 
-3. ../data/severity-scoring.yaml
+3. data/severity-scoring.yaml
    → Load for score updates
 
-4. ../data/pattern-library.yaml
+4. data/pattern-library.yaml
    → Have ready for new finding comparison
 ```
 
@@ -97,14 +97,14 @@ Primary signal detected (check all that apply):
 
 ## 2.2 Method Selection
 
-**From `method-clusters.yaml` → `selection_algorithm`:**
+**From `data/method-clusters.yaml` → `selection_algorithm`:**
 
 ### Step 1: Identify primary signal
 Primary signal from 2.1: _____________________
 
 ### Step 2: Select first method from recommended cluster
 
-**Load method definition from `methods.csv`:**
+**Load method definition from `data/methods.csv`:**
 
 ```
 First method selected: #_____ _____________________
@@ -112,8 +112,8 @@ Cluster: _____________________
 Reason: Based on _____ signal
 
 Method definition:
-Description: [from methods.csv]
-Output pattern: [from methods.csv]
+Description: [from data/methods.csv]
+Output pattern: [from data/methods.csv]
 ```
 
 ### Step 3: Plan remaining methods
@@ -148,8 +148,8 @@ Planned methods (2-4 total):
 
 ### Method #___: _____________________
 
-**From methods.csv:**
-> [Paste full description from methods.csv]
+**From data/methods.csv:**
+> [Paste full description from data/methods.csv]
 
 **WHY SELECTED:** [1 sentence — what signal triggered this choice]
 
@@ -193,7 +193,7 @@ Threshold check:
 [ ] Otherwise — Continue with remaining methods
 ```
 
-**V2 RULE:** Phase 3 is MANDATORY. Do not exit early from Phase 2.
+**RULE:** Phase 3 is MANDATORY. Do not exit early from Phase 2.
 
 → **HALT** — Wait for method execution, then repeat for each selected method
 
@@ -275,11 +275,11 @@ methodsExecuted:
 
 ## 2.7 Proceed to Adversarial Validation
 
-**In V2, Phase 3 is MANDATORY.** Regardless of S value, proceed to adversarial review.
+**Phase 3 is MANDATORY.** Regardless of S value, proceed to adversarial review.
 
 **Exception:** Only if Phase 1 triggered early exit with Pattern match (which would have skipped Phase 2 entirely).
 
-**Next step:** Load `step-03-adversarial.md`
+**Next step:** Load `steps/step-03-adversarial.md`
 
 **Before loading, verify:**
 - [ ] 2-4 methods executed in Phase 2

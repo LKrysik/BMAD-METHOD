@@ -5,9 +5,9 @@ time_estimate: "2-5 minutes"
 goal: "Assess stakes, document biases, prepare for verification"
 requires_completion: []
 next_steps:
-  DEFAULT: "step-01-pattern-scan.md"
+  DEFAULT: "steps/step-01-pattern-scan.md"
 data_dependencies:
-  - "../data/decision-thresholds.yaml"
+  - "data/decision-thresholds.yaml"
 outputs:
   - stakes
   - bias_mode
@@ -18,7 +18,7 @@ outputs:
 
 ## MANDATORY EXECUTION RULES
 
-1. **LOAD DATA FIRST** — Read `../data/decision-thresholds.yaml` before proceeding
+1. **LOAD DATA FIRST** — Read `data/decision-thresholds.yaml` before proceeding
 2. **Complete all sections** — Do not skip bias assessment
 3. **Be honest** — Bias awareness only works with honesty
 4. **Record in frontmatter** — All outputs go to document frontmatter
@@ -27,7 +27,7 @@ outputs:
 
 ## 0.1 Stakes Assessment
 
-**Load:** `../data/decision-thresholds.yaml` → `stakes_assessment` section
+**Load:** `data/decision-thresholds.yaml` → `stakes_assessment` section
 
 Answer these questions about the artifact being verified:
 
@@ -138,7 +138,7 @@ After completing setup, update the working document frontmatter:
 
 ```yaml
 ---
-workflow: deep-verify-v2
+workflow: deep-verify
 artifact: "[name from user]"
 started: "[current ISO timestamp]"
 stakes: [LOW / MEDIUM / HIGH]
@@ -173,7 +173,7 @@ confidence: null
 | MEDIUM | Standard execution, be thorough |
 | HIGH | Extra attention to Pattern Library, consider additional Tier 1 scrutiny |
 
-**Next step:** Load `step-01-pattern-scan.md`
+**Next step:** Load `steps/step-01-pattern-scan.md`
 
 Before loading, verify:
 - [ ] Stakes recorded

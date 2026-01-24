@@ -6,10 +6,10 @@ goal: "Calculate final score, determine verdict, assess confidence"
 requires_completion: [0]
 requires_one_of: [[1], [1, 2, 3]]
 next_steps:
-  DEFAULT: "step-05-report.md"
+  DEFAULT: "steps/step-05-report.md"
 data_dependencies:
-  - "../data/decision-thresholds.yaml"
-  - "../data/severity-scoring.yaml"
+  - "data/decision-thresholds.yaml"
+  - "data/severity-scoring.yaml"
 outputs:
   - verdict
   - confidence
@@ -22,7 +22,7 @@ outputs:
 
 1. **LOAD DATA FILES FIRST** — Read all `data_dependencies` before proceeding
 2. **Calculate final score accurately** — Use all adjustments
-3. **Apply verdict rules consistently** — From decision-thresholds.yaml
+3. **Apply verdict rules consistently** — From data/decision-thresholds.yaml
 4. **Validate verdict** — Use appropriate checklist
 5. **Assess confidence honestly** — Based on evidence quality
 6. **Check escalation criteria** — Before finalizing
@@ -34,12 +34,12 @@ outputs:
 **Before verdict determination, load these files:**
 
 ```
-1. ../data/decision-thresholds.yaml
+1. data/decision-thresholds.yaml
    → Load final_verdict_rules
    → Load confidence_levels
    → Load escalation_criteria
 
-2. ../data/severity-scoring.yaml
+2. data/severity-scoring.yaml
    → Reference for score verification
 ```
 
@@ -90,7 +90,7 @@ FINAL EVIDENCE SCORE: S = _____
 
 ## 4.2 Determine Verdict
 
-**From `decision-thresholds.yaml` → `final_verdict_rules`:**
+**From `data/decision-thresholds.yaml` → `final_verdict_rules`:**
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -167,7 +167,7 @@ Exception: _____________________
 
 ## 4.4 Assess Confidence
 
-**From `decision-thresholds.yaml` → `confidence_levels`:**
+**From `data/decision-thresholds.yaml` → `confidence_levels`:**
 
 ```
 Check applicable conditions:
@@ -199,7 +199,7 @@ CONFIDENCE: _______________
 
 ## 4.5 Check Escalation Criteria
 
-**From `decision-thresholds.yaml` → `escalation_criteria`:**
+**From `data/decision-thresholds.yaml` → `escalation_criteria`:**
 
 ### Mandatory Escalation (ANY triggers escalation):
 
@@ -271,7 +271,7 @@ validation:
 
 ## 4.7 Proceed to Report
 
-**Next step:** Load `step-05-report.md`
+**Next step:** Load `steps/step-05-report.md`
 
 **Before loading, verify:**
 - [ ] Final score calculated and verified

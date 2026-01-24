@@ -1,647 +1,254 @@
-# Deep Verify V5
-
-## What is this?
-
-**Deep Verify** is a structured verification workflow. It helps you find real problems in agent-produced work (code, documents, plans) before they cause issues.
-
-**Why use it?**
-- Agents tend to confirm their own work is good (bias)
-- Agents skip hard verification to finish faster (shortcuts)
-- Deep Verify forces thorough, honest verification
-
-**How it works:**
-1. You provide TASK (what was requested) and CONTENT (what was produced)
-2. Agent identifies CONCERNS (areas that need verification)
-3. Agent selects METHODS (thinking patterns) to verify each concern
-4. Agent executes verification and reports FINDINGS (problems/gaps)
-5. You decide what to fix, investigate deeper, or accept
+# Deep Verify V2.0 — Modular Verification Workflow
 
 ---
 
-## Quick Start (Minimum Concepts)
+## Overview
 
-**To use Deep Verify, you need to know only 4 things:**
+Sequential verification workflow with early exit capability. Refactored into modular step files with separated data for maintainability and resumability.
 
-1. **TASK** = what you asked for
-2. **CONTENT** = what was produced
-3. **FINDING** = a problem (P) or gap (G) discovered
-4. **Severity** = 🔴 (must fix) / 🟠 (should fix) / 🟡 (can defer)
-
-**Everything else is internal workflow mechanics.** Just follow the prompts and choose options when asked (A/G, P/A/R, F/D/R/X, etc.).
-
-**First time?** Choose **Guided mode** [**G**] to see each step.
+**Workflow:** deep-verify
+**Version:** V2.0 (based on V12.2)
+**Architecture:** Step Files + Datafiles + Subtasking
 
 ---
 
-## Key Concepts
+## Core Principles
 
-| Term | What it means for you |
-|------|----------------------|
-| TASK | The original request you gave the agent |
-| CONTENT | What the agent produced (the thing being verified) |
-| CONCERN | An area that needs checking (e.g., "security", "completeness") |
-| METHOD | A specific thinking pattern from methods.csv used to analyze |
-| FINDING | A discovered issue - either Problem (P) or Gap (G) |
-| MAB | Anti-shortcut + Anti-bias supervision (see below) |
-| MSE | Evidence requirement: quote + location |
+1. **Early Exit** — Stop when evidence is sufficient, not when all methods are exhausted
+2. **Mandatory Quotes** — No quote, no finding. Every claim must cite artifact text.
+3. **Signal-Based Selection** — Choose methods based on what Phase 1 reveals
+4. **Pattern Matching** — Check against known impossibility patterns before deep analysis
+5. **Adversarial Validation** — Attack your own findings before finalizing
+6. **Bias Awareness** — Actively counteract confirmation bias
 
 ---
 
-## Methods Source
-
-**Location:** `src/core/methods/methods.csv`
-
-**Agent MUST:** Read this file and use method definitions from it. Do not guess or invent methods.
-
-**File structure (CSV):**
-```
-num, category, method_name, description, output_pattern
-```
-
-| Column | What it contains |
-|--------|------------------|
-| num | Method ID (e.g., 70) - reference as #70 |
-| category | Group: sanity, risk, challenge, coherence, exploration, etc. |
-| method_name | Short name |
-| description | **Instructions how to apply** - this is what agent must follow |
-| output_pattern | Expected format of method output |
-
-**How to use:** Find method by number → read `description` column → follow its instructions.
-
----
-
-## MAB - Why the agent supervises itself
-
-**Problem:** Agents naturally:
-- Take shortcuts (pick easy methods, skip hard verification)
-- Confirm their own work is good (bias toward "no problems found")
-
-**Solution:** MAB forces the agent to answer 4 questions on every action:
-
-| # | Question | What it prevents |
-|---|----------|------------------|
-| #51 | "3 ways I could cut corners here → proof I'm not" | Shortcuts |
-| #52 | "What would lazy agent do? How am I different?" | Lazy verification |
-| #53 | "What's the hardest part? Am I avoiding it?" | Skipping hard work |
-| #54 | "Who benefits - AGENT (red flag) or OUTCOME (ok)?" | Self-serving decisions |
-
-**How it works:**
-- When agent sees `[MAB: purpose]` → executes #51-#54 internally
-- Agent shows ONLY the step result (not the MAB analysis)
-- If any answer reveals problem → agent corrects before showing result
-
-**Rule:** If AGENT benefit without justification → revise action before proceeding.
-
-**Note:** MAB is self-supervision. It reduces but cannot eliminate agent bias. For high-stakes verification, consider using a different agent or human reviewer.
-
-**Method Numbers:** MAB uses #51-54 (anti-bias category in methods.csv). Sanity Suite uses #70-75, #150 (sanity category). All numbers reference the same methods.csv file - different ranges are different categories.
-
----
-
-## MSE - Evidence Requirements
-
-Every FINDING must include:
-- Quote: verbatim from source, long enough to locate uniquely (typically ≥30 chars, shorter OK if unique)
-- Location: file:line OR section:element
-- For gaps: "MISSING: [what] in [where]"
-
-**Why quote length matters:** Too short = ambiguous location. Too long = noise. Target: shortest quote that uniquely identifies the location. 30 chars is a guideline, not a rule.
-
----
-
-## Sanity Suite (7 Methods - MANDATORY)
-
-| # | Method | Check | Output |
-|---|--------|-------|--------|
-| #70 | Scope Integrity | TASK coverage | Each element: ADDRESSED/REDUCED/OMITTED |
-| #71 | Alignment Check | Goal realization | Each goal part: realized Y/N |
-| #72 | Closure Check | Incomplete markers | TODO/TBD/PLACEHOLDER with locations |
-| #73 | Coherence Check | Contradictions | Terms with conflicting definitions |
-| #74 | Grounding Check | Assumptions | EXPLICIT/HIDDEN, validated Y/N |
-| #75 | Falsifiability | Failure scenarios | 3 scenarios, 3 gaps |
-| #150 | Executability Check | Can it be used? | Each step: ACTIONABLE/BLOCKED/UNCLEAR |
-
-*#150 Executability: For each step/instruction, verify a practitioner could actually perform it without asking questions. List blockers (missing info, undefined terms, impossible actions).
-
----
-
-## Content-Type Methods
-
-| Type | Methods |
-|------|---------|
-| Code | #17 Red Team, #38 Chaos Monkey, #76 Camouflage, #83 Boundary |
-| Document | #62 Theseus, #79 DNA Inheritance, #82 Temporal |
-| Plan | #34 Pre-mortem, #101 Quantum, #102 Cantor |
-
----
-
-## Severity
-
-| Level | Symbol | Action |
-|-------|--------|--------|
-| CRITICAL | 🔴 | Must fix |
-| IMPORTANT | 🟠 | Should fix |
-| MINOR | 🟡 | Can defer |
-
----
-
-## Prerequisites
-
-Before starting Deep Verify:
-1. **TASK** - Original user request must be available (spec, message, ticket)
-2. **CONTENT** - Artifact to verify must be complete (not work-in-progress)
-3. **ENVIRONMENT** - Related files accessible if referenced
-4. **Agent capability** - Agent must execute MAB honestly (self-supervision limitation)
-
-**Fundamental Circularity:** This workflow verifies agent work but is itself executed by an agent. This circularity cannot be fully broken.
-
-**Active Mitigations (MANDATORY):**
-1. **Evidence Anchoring** - Every finding MUST include MSE (quote + location). User can verify quote exists.
-2. **Severity Justification** - 🔴 findings require user confirmation before proceeding to fix.
-3. **Null Finding Challenge** - If agent reports "no issues found", user SHOULD request agent run #51 Liar's Trap on itself.
-
-**Passive Mitigations (RECOMMENDED):**
-- User spot-checks 1-2 findings per verification (verify quote, check context)
-- For 🔴 critical content: use DIFFERENT agent or human reviewer
-- Compare findings against user's intuition - suspiciously clean results warrant scrutiny
-
-**Trust Calibration:** Track verification accuracy over time. If agent consistently misses issues user later finds, reduce trust in Auto mode.
-
----
-
-## Flow
+## MANDATORY: Data Loading Protocol
 
 ```
-Step 0: Inputs -> Step 1: Mode -> Step 2: Concerns
-                                      ↓
-                    [M] Manual ──────────────────┐
-                    [D] Discovery (2a+2b) ───────┤
-                                                 ↓
-                              Step 3: Methods -> Step 4: Verify -> Step 5: Results
-                                   ↑                                    ↓
-                                   ├─────────────── [M] Methods ────────┤
-                                   │                                    │
-              Step 2 ←───────────── [C] Concerns ──────────────────────┤
-                                                                        │
-                                                    [F]ix/[D]eeper ─────┤ Loop
-                                                    [R]eject / [X] Done ┘
-```
-
-**HALT Legend:**
-- **HALT** = Wait for user input (both modes)
-- **HALT (G only)** = Wait only in Guided mode; Auto mode continues
-
----
-
-## 📋 Step 0: Confirm Inputs
-
-**What happens now:** Agent shows what it will verify. You confirm it's correct.
-
-**Why this matters:** Wrong inputs = useless verification. Make sure TASK matches what you actually requested.
-
-```
-## Deep Verify V5
-
-TASK: [original request]
-CONTENT: [what was produced]
-TYPE: [Code / Document / Plan]
-ENVIRONMENT: [context]
-
-[**C**] Correct - start verification
-
-[**E**] Edit - I'll describe what to change
-[**X**] Exit - cancel verification
-```
-
-**HALT** - waiting for your choice
-
----
-
-## ⚙️ Step 1: Mode
-
-**What happens now:** You choose how much control you want during verification.
-
-**Options:**
-- **Auto:** Agent runs all steps and shows you final results. Faster, less control.
-- **Guided:** Agent pauses at each step for your approval. Slower, full control.
-
-**When to use each:**
-| Use Auto when... | Use Guided when... |
-|------------------|-------------------|
-| Low-stakes content | High-stakes / production |
-| Familiar content type | First time with this type |
-| Time-constrained | Need to understand process |
-| Trust agent's judgment | Want to shape verification |
-
-```
-[**A**] Auto - run all steps, show results at end
-[**G**] Guided - pause at each step for my approval
-```
-
-**HALT** - waiting for your choice
-
----
-
-## 🔍 Step 2: Generate Concerns
-
-**What happens now:** Define what areas of CONTENT need verification.
-
-**What are CONCERNs?** Areas like "security", "completeness", "performance", "logic errors", "gaps" that need to be verified against TASK requirements.
-
-**Agent must describe what is CONCERN for user**
-
-```
-
-How do you want to define concerns? 
-
-[**M**] Manual - I'll specify what to verify
-[**D**] Discovery - Agent finds concerns using methods
-```
-
-**HALT** - waiting for your choice
-
----
-
-### Option M: Manual Concerns
-
-You describe what you want to verify. Agent expands and structures it into CONCERNS list.
-
-**How to describe (any format works):**
-- Keywords: "spójność, czytelność, luki"
-- Question: "czy logika jest poprawna?"
-- Specific: "sprawdź obsługę błędów w funkcji X"
-- Mixed: "security + czy spełnia wymagania z TASK"
-
-**Agent process:**
-1. Parse user input for verification areas
-2. Apply methods to expand (use #70 Scope, #74 Grounding, #56 Sorites):
-   - What related areas might user have missed?
-   - What's implicit in user's request?
-   - What's the hardest part user might be avoiding?
-3. Structure into CONCERNS format
-
-```
-User: "logic errors and spec compliance"
-
-Agent expands:
-| ID | Concern | From | Description |
-|----|---------|------|-------------|
-| C1 | Logic errors | User | Flawed reasoning, incorrect conditions |
-| C2 | Spec compliance | User | CONTENT matches TASK requirements |
-| C3 | Edge cases | #70 | Boundary conditions implied by spec |
-| C4 | Assumptions | #74 | Hidden assumptions in logic |
-
-[**P**] Proceed with these concerns
-[**A**] Add concern - describe what area to verify
-[**R**] Remove concern - specify ID (e.g., R C2)
-```
-
-**HALT** - waiting for choice
-
----
-
-### Option D: Discovery
-
-Agent uses methods to find concerns systematically.
-
-### 2a: Select Discovery Methods
-
-**[MAB: Select methods that will find ALL concerns, not just obvious ones]**
-
-**Purpose:** These methods will be used to DISCOVER CONCERNS (areas that need verification) - not to verify yet.
-
-**MANDATORY:** Sanity Suite #70-#75, #150 (see Sanity Suite section)
-
-**ADDITIONAL:** Select 3-9 methods from `methods.csv` based on:
-1. **TYPE** - Code/Document/Plan (see Content-Type Methods section)
-2. **CONTENT specifics** - what does THIS content need?
-   - What could go wrong here specifically?
-   - What's unique/risky about this content?
-   - Where are the blind spots?
-
-```
-## Discovery Methods
-
-These methods will help identify CONCERNS (areas to verify):
-
-MANDATORY: #70-#75, #150 ✓
-ADDITIONAL:
-| # | Why this method for THIS content |
-|---|----------------------------------|
-| #[N] | [specific reason based on content] |
-
-[**P**] Proceed - use these methods for discovery
-[**A**] Add method - I'll specify method to ADD to list
-[**R**] Remove method - specify # (e.g., R #38)
-```
-
-**IMPORTANT:** [**A**] adds method to ADDITIONAL list (append). Does NOT replace existing methods.
-
-**HALT** (G only) - waiting for your choice
-
-### 2b: Execute Discovery
-
-**What happens now:** Agent runs all selected methods and extracts CONCERNS.
-
-**Next:** These concerns will be verified in Step 3 and 4.
-
-**[MAB: Extract ALL relevant concerns, not just safe/obvious ones]**
-
-```
-| ID | Concern | Source | Discovery Method | Description |
-|----|---------|--------|------------------|-------------|
-| C1 | [name] | TASK<>CONTENT | #[N] | [what to verify] |
-```
-
-**Mode G only - you can modify concerns:**
-```
-[**P**] Proceed - continue to select verification methods
-[**A**] Add concern - describe what area to verify
-[**R**] Remove concern - specify ID (e.g., R C2)
-```
-
-**HALT** (G only) - waiting for your choice
-
----
-
-## 🧰 Step 3: Select Methods for Concerns
-
-**What happens now:** For each CONCERN, agent selects verification methods that will find problems.
-
-**Why this matters:** Different methods find different problems. Weak methods = missed issues.
-
-### 3a: Method Selection for each CONCERN
-
-**What happens now:** Agent picks 2-5 methods per concern from `methods.csv`.
-
-**[MAB: Select methods that will find problems, not confirm success]**
-
-```
-| Concern | Methods | Rationale |
-|---------|---------|-----------|
-| C1 | #38, #76 | Stress test + coherence |
-| C2 | #34, #75 | Failure modes + falsification |
-```
-
-### 3b: Additional Methods (Optional)
-
-**What happens now:** Agent can add 0-3 extra methods for holistic analysis beyond specific concerns.
-
-**[MAB: Ensure no blind spots remain uncovered]**
-
-**Mode A:** Auto-select based on TYPE and proceed.
-**Mode G:**
-```
-[**A**] Auto-select additional methods
-[**M**] Manual - I'll specify which methods to add
-
-[**V**] Verify - proceed to execute verification
-```
-
-**HALT** (G only) - waiting for your choice
-
-```
-| Additional Method | Purpose |
-|-------------------|---------|
-| #[N] | [why needed beyond concerns] |
+┌─────────────────────────────────────────────────────────────────────────┐
+│  BEFORE STARTING ANY STEP, LOAD REQUIRED DATA FILES                     │
+│                                                                         │
+│  1. Read this workflow.md FIRST to understand structure                 │
+│  2. Each step file specifies its data_dependencies in frontmatter       │
+│  3. Load ALL listed dependencies BEFORE executing step logic            │
+│  4. Methods definitions are in data/methods.csv - LOAD WHEN NEEDED      │
+│                                                                         │
+│  Loading Order:                                                         │
+│  workflow.md → steps/step-XX.md → read frontmatter → load data/* files │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## ✅ Step 4: Verify
-
-**[MAB: Find real problems, not confirm "all OK"]**
-
-For each Concern + Method:
-
-### Process
-
-1. **Read** method from methods.csv → understand what it detects
-   - Find method by number in `description` column
-   - Note: what pattern/violation does this method look for?
-
-2. **Locate** where in CONTENT this concern could manifest
-   - List ALL relevant locations (not just first found)
-   - If concern spans entire content → note "global, sampling sections: X, Y, Z"
-   - If unclear → start with: headers, interfaces, boundaries, edge cases
-
-3. **Apply** method's logic: define what violation would look like
-   - Based on method description: what SPECIFIC pattern indicates problem?
-   - Example: #73 Coherence → "same term defined differently in two places"
-   - Write down: "Looking for: [concrete pattern]"
-
-4. **Search** for that violation
-   - Assume problem EXISTS until proven otherwise
-   - Check each location from step 2
-   - Stop when: (a) found with evidence, OR (b) all locations checked, no match
-   - If found → document as Finding
-   - If not found → list what was checked and why it passed
-
-5. **Document** with MSE evidence OR explain what was checked
-   - Finding → use Finding Format below
-   - No issue → state: "Checked [X, Y, Z], no [pattern] found because [reason]"
-
-### Output per verification
+## Directory Structure
 
 ```
-## [Concern] × #[Method]
-
-Target: [what this method looks for in context of this concern]
-Checked: [specific sections/elements examined]
-Result: [Finding ID] OR [No issue: reason]
+deep-verify/
+├── workflow.md                    ← YOU ARE HERE (orchestrator)
+├── steps/
+│   ├── step-00-setup.md          # Phase 0: Stakes + Bias Assessment
+│   ├── step-01-pattern-scan.md   # Phase 1: Tier 1 methods + Pattern Library
+│   ├── step-02-targeted.md       # Phase 2: Signal-based method selection
+│   ├── step-03-adversarial.md    # Phase 3: Devil's advocate + Steel-man
+│   ├── step-04-verdict.md        # Phase 4: Score calculation + Decision
+│   └── step-05-report.md         # Phase 5: Report generation
+├── data/
+│   ├── methods.csv               # Method definitions (19 methods)
+│   ├── pattern-library.yaml      # Impossibility patterns
+│   ├── severity-scoring.yaml     # Scoring rules
+│   ├── method-clusters.yaml      # Correlation rules
+│   ├── decision-thresholds.yaml  # Decision logic
+│   ├── report-template.md        # Report structure
+│   ├── examples.md               # Worked scoring examples
+│   ├── method-procedures.md      # Detailed method instructions
+│   └── calibration.yaml          # Accuracy tracking
+└── README.md                     # Documentation
 ```
-
-### Finding Format (MSE required)
-
-```
-### [N] 🔴|🟠|🟡 [P|G] Title
-
-Type: Problem (P) = something wrong | Gap (G) = something missing
-What: [description]
-Where: [location]
-Evidence: "[quote]" - [file:line]
-Impact: [consequence]
-Fix: [action]
-```
-
-This detailed format is used DURING Step 4 verification. Results table (Step 5) shows summary only.
-
-### Anti-patterns (redo if detected)
-
-- "Looks fine" without specifics
-- No evidence for OK conclusions
-- Skipping hard-to-verify areas
 
 ---
 
-## 📊 Step 5: Results
+## Workflow State (Frontmatter Schema)
 
-**What happens now:** Agent shows summary of all findings. You decide what to do next.
+Each step updates this state in the working document:
 
-**MANDATORY:** Use this exact table format:
+```yaml
+---
+workflow: deep-verify
+artifact: "[name of artifact being verified]"
+started: "[ISO timestamp]"
+stakes: LOW | MEDIUM | HIGH
+bias_mode: Standard | Blind | ForcedAlternative
+initial_assessment: ProbablySound | Uncertain | ProbablyFlawed | BLIND
 
+stepsCompleted: [0, 1, 2, ...]
+currentStep: 0-5
+currentScore: 0.0
+scoreHistory:
+  - step: 1
+    delta: "+3 (CRITICAL finding)"
+    total: 3
+
+findings:
+  - id: F1
+    severity: CRITICAL | IMPORTANT | MINOR
+    description: "..."
+    quote: "exact text"
+    location: "line/section"
+    pattern: "pattern name or null"
+    survived_phase3: true | false | null
+
+patternsMatched: []
+methodsExecuted:
+  - method_id: 71
+    name: "First Principles"
+    result: Clean | Finding
+
+earlyExit: false
+earlyExitReason: null
+verdict: null
+confidence: null
+---
 ```
-## Verification Results
-
-TASK: [summary]
-CONTENT: [summary]
-
-### Findings
-
-| ID | Concern | Sev | Finding |
-|----|---------|-----|---------|
-| 1 | C1: [name] | 🔴 | [What] → [Impact] → [Action] |
-| 2 | C2: [name] | 🟠 | [What] → [Impact] → [Action] |
-
-Status: 🔴 / 🟠 / 🟡 / ✅
-
-### Actions
-[**F**] Fix [ID]      - fix the finding
-[**D**] Deeper [ID]   - investigate finding as new concern
-[**R**] Reject [ID]   - mark finding as invalid
-
-### Navigation
-[**C**] Concerns      - go back to modify/add concerns
-[**M**] Methods       - re-run verification with different methods
-[**X**] Done          - finish verification
-```
-
-**Note:** Full evidence (MSE) is in Step 4 output. This table is summary for decision-making.
-
-**HALT**
 
 ---
 
-## Actions Detail
-
-**What happens after each action:** Agent updates results and shows them again. You can take another action until you choose [X] Done.
-
-### Fix
-
-**What happens:** Agent fixes the issue and verifies fix is correct.
-
-**[MAB: Fix must solve the problem, not just change something]**
-
-**Process:**
-1. **Analyze** finding → understand root cause
-2. **Plan** fix → what exactly needs to change
-3. **Select verification methods** (1-3 from methods.csv) to confirm fix works
-4. **Execute** fix → make changes
-5. **Verify** using selected methods → confirm problem is solved
-6. **Report** changes made
+## Execution Flow
 
 ```
-## Fix: [ID]
-
-Finding: [original description]
-Root cause: [why this problem exists]
-
-Fix plan:
-- [what will be changed/added/removed]
-
-Verification methods:
-| # | Method | What it will confirm |
-|---|--------|---------------------|
-| #[N] | [name] | [how it verifies fix] |
-
-Executing fix...
-
-Changes made:
-| Action | Location | Before | After |
-|--------|----------|--------|-------|
-| Modified | [where] | [old] | [new] |
-| Added | [where] | - | [what] |
-| Removed | [where] | [what] | - |
-
-Verification:
-| # | Method | Result |
-|---|--------|--------|
-| #[N] | [name] | ✓ Pass / ✗ Fail: [reason] |
-
-Status: FIXED / PARTIALLY FIXED / FAILED
+                    ┌───────────────────┐
+                    │  Load workflow.md │
+                    └─────────┬─────────┘
+                              │
+                    ┌─────────▼─────────────────┐
+                    │ steps/step-00-setup.md    │
+                    │ Load: data/decision-      │
+                    │       thresholds.yaml     │
+                    └─────────┬─────────────────┘
+                              │
+                    ┌─────────▼─────────────────┐
+                    │steps/step-01-pattern-scan │
+                    │ Load: data/methods.csv    │
+                    │       data/pattern-lib... │
+                    │       data/severity-...   │
+                    └─────────┬─────────────────┘
+                              │
+              ┌───────────────┼───────────────┐
+              │               │               │
+         S ≥ 6 +         BORDERLINE       DEFAULT
+         Pattern          4≤S<6
+              │               │               │
+              ▼               │               │
+         ┌────────┐           │               │
+         │REJECT  │           │               │
+         │(early) │           │               │
+         └────────┘           │               │
+                              │               │
+                    ┌─────────▼───────────────┘
+                    │ steps/step-02-targeted.md│
+                    │ Load: data/methods.csv   │
+                    │       data/method-clust..│
+                    └─────────┬────────────────┘
+                              │
+                    ┌─────────▼────────────────┐
+                    │steps/step-03-adversarial │ ← MANDATORY
+                    │ Load: data/methods.csv   │
+                    └─────────┬────────────────┘
+                              │
+              ┌───────────────┼───────────────┐
+              │               │               │
+           S ≥ 6         -3<S<6           S ≤ -3
+              │               │               │
+              ▼               ▼               ▼
+         ┌────────┐    ┌──────────┐    ┌────────┐
+         │ REJECT │    │UNCERTAIN │    │ ACCEPT │
+         └────────┘    └──────────┘    └────────┘
+                              │
+                    ┌─────────▼────────────────┐
+                    │ steps/step-04-verdict.md │
+                    │ Load: data/decision-...  │
+                    └─────────┬────────────────┘
+                              │
+                    ┌─────────▼────────────────┐
+                    │ steps/step-05-report.md  │
+                    │ Load: data/report-temp.. │
+                    └──────────────────────────┘
 ```
-
-→ Finding marked with status
-→ Results refreshed, **HALT** for next action
-
-### Deeper
-
-**What happens:** Finding becomes a CONCERN and goes through full verification cycle.
-
-**Process:**
-1. Finding [ID] → becomes CONCERN for deeper analysis
-2. → **Step 3:** Select methods for this concern (2-5 methods)
-3. → **Step 4:** Verify using selected methods
-4. → Sub-findings added to Results (as [ID].1, [ID].2, etc.)
-5. → Original finding marked as ANALYZED
-
-```
-## Deeper: [ID] → Concern
-
-Original finding: [description]
-
-Methods selected for deeper analysis:
-| # | Method | Why |
-|---|--------|-----|
-| #[N] | [name] | [rationale] |
-
-[Proceed with Step 4: Verify for each method]
-```
-
-→ Sub-findings added to Results
-→ Results refreshed, **HALT** for next action
-
-### Reject
-
-**What happens:** You mark a finding as invalid. It stays in the log but doesn't count as open.
-
-```
-[ID]: REJECTED - [your reason]
-```
-→ Finding marked REJECTED
-→ Results refreshed, **HALT** for next action
 
 ---
 
-## Navigation Detail
+## Quick Start
 
-### Concerns
+1. **Start new verification:**
+   ```
+   Load: steps/step-00-setup.md
+   ```
 
-**What happens:** Go back to Step 2 to modify concerns list.
+2. **Resume from interruption:**
+   ```
+   Check frontmatter.stepsCompleted
+   Load: steps/step-{currentStep}.md
+   ```
 
-**Use when:**
-- New area to verify discovered during verification
-- Want to remove concern that proved irrelevant
-- Need to split broad concern into specific ones
+3. **Early exit triggered:**
+   ```
+   If earlyExit: true
+   Load: steps/step-04-verdict.md directly
+   ```
 
-→ Returns to Step 2 with current concerns editable
-→ After changes: re-run Step 3 (Methods) and Step 4 (Verify) for modified concerns only
+---
 
-### Methods
+## Method Loading Protocol
 
-**What happens:** Re-run verification with different methods for same concerns.
-
-**Use when:**
-- Current methods didn't find expected issues
-- Want deeper analysis with specialized methods
-- Suspected blind spots in verification
-
-→ Returns to Step 3 (Select Methods)
-→ Keep existing findings, add new from re-verification
-
-### Done
-
-**What happens:** Verification complete. Final summary shown.
+**CRITICAL:** Methods definitions must be loaded from `data/methods.csv` whenever:
+- Executing any numbered method (#71, #100, etc.)
+- Selecting methods in Phase 2
+- Referencing method procedures
 
 ```
-## Verification Complete
-
-Findings: [N] total (Problems: [N], Gaps: [N])
-Fixed: [N] | Open: [N] | Rejected: [N]
-
-| Severity | Still Open |
-|----------|------------|
-| 🔴 | N |
-| 🟠 | N |
-| 🟡 | N |
+When step says "Execute method #71":
+1. Load data/methods.csv
+2. Find row where num=71
+3. Read: method_name, description, output_pattern
+4. Execute according to description
+5. Record result per output_pattern
 ```
+
+---
+
+## Data File Loading Rules
+
+| Data File | Load When | Contains |
+|-----------|-----------|----------|
+| `data/methods.csv` | Any method execution | Method definitions (19 methods) |
+| `data/method-procedures.md` | When CSV description insufficient | Detailed step-by-step procedures |
+| `data/pattern-library.yaml` | steps/step-01, steps/step-02 | Impossibility patterns |
+| `data/severity-scoring.yaml` | steps/step-01, 02, 03, 04 | Scoring rules |
+| `data/method-clusters.yaml` | steps/step-02 | Correlation rules |
+| `data/decision-thresholds.yaml` | steps/step-00, 01, 04 | Decision boundaries |
+| `data/report-template.md` | steps/step-05 | Report structure |
+| `data/examples.md` | Learning / debugging | Worked scoring examples |
+| `data/calibration.yaml` | Post-verification / audits | Accuracy tracking |
+
+---
+
+## Step File Reference
+
+| Step | File Path | Purpose |
+|------|-----------|---------|
+| 0 | `steps/step-00-setup.md` | Stakes assessment, bias check |
+| 1 | `steps/step-01-pattern-scan.md` | Tier 1 methods, pattern matching |
+| 2 | `steps/step-02-targeted.md` | Signal-based method selection |
+| 3 | `steps/step-03-adversarial.md` | Devil's advocate, steel-man |
+| 4 | `steps/step-04-verdict.md` | Final score, verdict decision |
+| 5 | `steps/step-05-report.md` | Report generation |
+
+---
+
+## Version History
+
+- **V2.0** — Modular refactor with step files and datafiles (based on V12.2)
+  - Added: examples.md, method-procedures.md, calibration.yaml
+  - Added: Methods #87 (Falsifiability Check), #162 (Theory-Dependence Verification)
+  - Fixed: Consistent versioning across all files
+- **V12.2** — Added bias mitigation, mandatory Phase 3, ACCEPT guidance

@@ -6,7 +6,7 @@ goal: "Generate comprehensive verification report"
 requires_completion: [0, 4]
 next_steps: null
 data_dependencies:
-  - "../data/report-template.md"
+  - "data/report-template.md"
 outputs:
   - verification_report
 ---
@@ -15,7 +15,7 @@ outputs:
 
 ## MANDATORY EXECUTION RULES
 
-1. **LOAD REPORT TEMPLATE FIRST** — Read `../data/report-template.md`
+1. **LOAD REPORT TEMPLATE FIRST** — Read `data/report-template.md`
 2. **Fill ALL sections** — No placeholders in final report
 3. **Use exact quotes** — Copy from findings array
 4. **Verify calculations** — Score must add up correctly
@@ -25,7 +25,7 @@ outputs:
 
 ## 5.0 Load Report Template
 
-**Load:** `../data/report-template.md`
+**Load:** `data/report-template.md`
 
 This template provides the structure for the final report. All `[PLACEHOLDER]` fields must be replaced with actual values from the verification process.
 
@@ -74,7 +74,7 @@ VERIFICATION REPORT
 
 ARTIFACT: [artifact from frontmatter]
 DATE: [current date ISO]
-WORKFLOW VERSION: Deep Verify V2.0
+WORKFLOW VERSION: Deep Verify 2.0
 
 ───────────────────────────────────────────────────────────────
 VERDICT
@@ -100,7 +100,7 @@ PATTERN MATCH: [patternsMatched.length > 0 ? "Yes — " + patterns : "No"]
      Quote: "[{quote}]"
      Location: [{location}]
      Pattern: [{pattern || "None"}]
-     Method: #{method_id} [{method_name from methods.csv}]
+     Method: #{method_id} [{method_name from data/methods.csv}]
      Survived Phase 3: [{survived_phase3 ? "Yes" : "No" : "N/A"}]
 ```
 
@@ -258,7 +258,7 @@ What would resolve this:
 □ Score calculation adds up correctly
 □ Methods list matches methodsExecuted
 □ Findings list matches findings array
-□ Verdict matches decision-thresholds.yaml rules
+□ Verdict matches data/decision-thresholds.yaml rules
 □ Confidence level matches conditions
 □ NOT CHECKED section is honest and complete
 □ Recommendations are actionable and specific
@@ -309,7 +309,7 @@ report_generated: true
 
 ## Workflow Complete
 
-The Deep Verify V2 workflow is now complete.
+The Deep Verify workflow is now complete.
 
 **Report has been generated with:**
 - Verdict: [from frontmatter]
@@ -317,9 +317,9 @@ The Deep Verify V2 workflow is now complete.
 - Evidence Score: S = [from frontmatter]
 
 **All data files used:**
-- methods.csv
-- pattern-library.yaml
-- severity-scoring.yaml
-- method-clusters.yaml
-- decision-thresholds.yaml
-- report-template.md
+- data/methods.csv
+- data/pattern-library.yaml
+- data/severity-scoring.yaml
+- data/method-clusters.yaml
+- data/decision-thresholds.yaml
+- data/report-template.md

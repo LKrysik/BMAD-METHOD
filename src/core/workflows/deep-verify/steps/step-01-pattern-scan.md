@@ -5,16 +5,16 @@ time_estimate: "5-15 minutes"
 goal: "Rapidly identify red flags using cheap, broad methods"
 requires_completion: [0]
 next_steps:
-  S_GTE_6_WITH_PATTERN: "step-04-verdict.md"
-  S_GTE_6_NO_PATTERN: "step-02-targeted.md"
-  BORDERLINE: "step-02-targeted.md"
-  S_LTE_NEG3_LOW_STAKES: "step-04-verdict.md"
-  DEFAULT: "step-02-targeted.md"
+  S_GTE_6_WITH_PATTERN: "steps/step-04-verdict.md"
+  S_GTE_6_NO_PATTERN: "steps/step-02-targeted.md"
+  BORDERLINE: "steps/step-02-targeted.md"
+  S_LTE_NEG3_LOW_STAKES: "steps/step-04-verdict.md"
+  DEFAULT: "steps/step-02-targeted.md"
 data_dependencies:
-  - "../data/methods.csv"
-  - "../data/pattern-library.yaml"
-  - "../data/severity-scoring.yaml"
-  - "../data/decision-thresholds.yaml"
+  - "data/methods.csv"
+  - "data/pattern-library.yaml"
+  - "data/severity-scoring.yaml"
+  - "data/decision-thresholds.yaml"
 outputs:
   - findings (list)
   - currentScore
@@ -39,19 +39,19 @@ outputs:
 **Before ANY analysis, load these files:**
 
 ```
-1. ../data/methods.csv
+1. data/methods.csv
    → Find rows: num=71, num=100, num=17
    → Read: method_name, description, output_pattern
 
-2. ../data/pattern-library.yaml
+2. data/pattern-library.yaml
    → Load all pattern categories
    → Have ready for finding comparison
 
-3. ../data/severity-scoring.yaml
+3. data/severity-scoring.yaml
    → Load base_scoring section
    → Load bonus_rules section
 
-4. ../data/decision-thresholds.yaml
+4. data/decision-thresholds.yaml
    → Load evidence_thresholds section
 ```
 
@@ -62,7 +62,7 @@ outputs:
 ## 1.1 Execute Tier 1 Methods
 
 Execute ALL three methods. For each method:
-1. Read definition from `methods.csv`
+1. Read definition from `data/methods.csv`
 2. Apply method to artifact
 3. Record findings with mandatory quotes
 4. Check Pattern Library for matches
@@ -70,7 +70,7 @@ Execute ALL three methods. For each method:
 
 ### Method #71: First Principles Analysis
 
-**From methods.csv:**
+**From data/methods.csv:**
 > Strip away assumptions to rebuild from fundamental truths. Identify the 3-5 core claims of the artifact. For each claim ask: What must be fundamentally true for this to work?
 
 **Execute now:**
@@ -103,7 +103,7 @@ Findings (if any): ________________________________
 
 ### Method #100: Vocabulary Consistency
 
-**From methods.csv:**
+**From data/methods.csv:**
 > Extract all key terms and identify synonyms (same concept different words) and homonyms (same word different concepts).
 
 **Execute now:**
@@ -130,7 +130,7 @@ Findings (if any): ________________________________
 
 ### Method #17: Abstraction Laddering
 
-**From methods.csv:**
+**From data/methods.csv:**
 > Move up (why does this matter?) and down (how specifically?) levels of abstraction. Check vertical coherence.
 
 **Execute now:**
@@ -164,12 +164,12 @@ For EACH finding from Tier 1 methods, record with this format:
 FINDING: [description]
 QUOTE: "[exact text from artifact]"
 LOCATION: [line number / section]
-PATTERN: [pattern_id from pattern-library.yaml, or "None"]
+PATTERN: [pattern_id from data/pattern-library.yaml, or "None"]
 SEVERITY: [CRITICAL / IMPORTANT / MINOR]
 METHOD: #[number] [name]
 ```
 
-**Severity assignment (from severity-scoring.yaml):**
+**Severity assignment (from data/severity-scoring.yaml):**
 - CRITICAL (+3): Finding alone would justify REJECT
 - IMPORTANT (+1): 2-3 together would justify REJECT
 - MINOR (+0.3): Only matters if other problems exist
@@ -182,7 +182,7 @@ METHOD: #[number] [name]
 
 ## 1.3 Check Pattern Library
 
-**For each finding, check against `pattern-library.yaml`:**
+**For each finding, check against `data/pattern-library.yaml`:**
 
 ```
 Finding: [F_id]
@@ -207,7 +207,7 @@ Record all matches in `patternsMatched` array.
 
 ## 1.4 Calculate Evidence Score
 
-**Apply scoring from `severity-scoring.yaml`:**
+**Apply scoring from `data/severity-scoring.yaml`:**
 
 ```
 Starting S = 0
@@ -236,38 +236,38 @@ Current S = _____
 
 ## 1.5 Early Exit Check
 
-**Load `decision-thresholds.yaml` → `evidence_thresholds` section**
+**Load `data/decision-thresholds.yaml` → `evidence_thresholds` section**
 
 Check conditions in this order:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │  CHECK 1: S ≥ 6 AND at least one Pattern Library match?            │
-│           → YES: STOP. Load step-04-verdict.md                      │
+│           → YES: STOP. Load steps/step-04-verdict.md               │
 │                  Set earlyExit: true                                │
 │                  Set earlyExitReason: "Phase 1 REJECT with pattern" │
 │                  Set verdict: REJECT                                │
 │           → NO: Continue to Check 2                                 │
 ├─────────────────────────────────────────────────────────────────────┤
 │  CHECK 2: S ≥ 6 BUT no Pattern Library match?                      │
-│           → YES: CAUTION. Load step-02-targeted.md                  │
+│           → YES: CAUTION. Load steps/step-02-targeted.md           │
 │                  Note: "High S without pattern - needs confirmation"│
 │           → NO: Continue to Check 3                                 │
 ├─────────────────────────────────────────────────────────────────────┤
 │  CHECK 3: 4 ≤ S < 6 (BORDERLINE)?                                  │
-│           → YES: Load step-02-targeted.md                           │
+│           → YES: Load steps/step-02-targeted.md                    │
 │                  Note: "BORDERLINE - mandatory Phase 2 AND 3"       │
 │           → NO: Continue to Check 4                                 │
 ├─────────────────────────────────────────────────────────────────────┤
 │  CHECK 4: S ≤ -3 AND stakes ≠ HIGH?                                │
-│           → YES: STOP. Load step-04-verdict.md                      │
+│           → YES: STOP. Load steps/step-04-verdict.md               │
 │                  Set earlyExit: true                                │
 │                  Set earlyExitReason: "Phase 1 ACCEPT - clean"      │
 │                  Set verdict: ACCEPT                                │
 │           → NO: Continue to Check 5                                 │
 ├─────────────────────────────────────────────────────────────────────┤
 │  CHECK 5: Default                                                   │
-│           → Load step-02-targeted.md                                │
+│           → Load steps/step-02-targeted.md                         │
 │           → Normal progression                                      │
 └─────────────────────────────────────────────────────────────────────┘
 ```
@@ -318,11 +318,11 @@ earlyExitReason: [reason or null]
 
 | Condition | Next Step | Note |
 |-----------|-----------|------|
-| S ≥ 6 + Pattern | `step-04-verdict.md` | Early REJECT |
-| S ≥ 6, no Pattern | `step-02-targeted.md` | Needs confirmation |
-| 4 ≤ S < 6 | `step-02-targeted.md` | BORDERLINE, mandatory 2+3 |
-| S ≤ -3, stakes ≠ HIGH | `step-04-verdict.md` | Early ACCEPT |
-| Otherwise | `step-02-targeted.md` | Normal progression |
+| S ≥ 6 + Pattern | `steps/step-04-verdict.md` | Early REJECT |
+| S ≥ 6, no Pattern | `steps/step-02-targeted.md` | Needs confirmation |
+| 4 ≤ S < 6 | `steps/step-02-targeted.md` | BORDERLINE, mandatory 2+3 |
+| S ≤ -3, stakes ≠ HIGH | `steps/step-04-verdict.md` | Early ACCEPT |
+| Otherwise | `steps/step-02-targeted.md` | Normal progression |
 
 **Before loading next step, verify:**
 - [ ] All Tier 1 methods executed

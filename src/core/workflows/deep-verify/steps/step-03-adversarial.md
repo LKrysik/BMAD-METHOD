@@ -5,10 +5,10 @@ time_estimate: "10-15 minutes"
 goal: "Attack your own findings to ensure they survive scrutiny"
 requires_completion: [0, 1, 2]
 next_steps:
-  DEFAULT: "step-04-verdict.md"
+  DEFAULT: "steps/step-04-verdict.md"
 data_dependencies:
-  - "../data/methods.csv"
-  - "../data/severity-scoring.yaml"
+  - "data/methods.csv"
+  - "data/severity-scoring.yaml"
 outputs:
   - findings (updated with survived_phase3)
   - currentScore (adjusted)
@@ -40,10 +40,10 @@ Empirical data shows adversarial review changes verdict direction in **57% of bo
 **Before ANY analysis, load these files:**
 
 ```
-1. ../data/methods.csv
+1. data/methods.csv
    → Have available for method #63 (Critical Challenge) if needed
 
-2. ../data/severity-scoring.yaml
+2. data/severity-scoring.yaml
    → Load phase3_adjustment_rules section
 ```
 
@@ -309,7 +309,7 @@ phase3_summary:
 
 ## 3.7 Proceed to Verdict
 
-**Next step:** Load `step-04-verdict.md`
+**Next step:** Load `steps/step-04-verdict.md`
 
 **Before loading, verify:**
 - [ ] All IMPORTANT+ findings reviewed adversarially
