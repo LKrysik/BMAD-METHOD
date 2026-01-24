@@ -257,4 +257,3 @@ confidence: null
 
 - Original workflow: `../deep-verify-old/workflow-v12.2.md`
 - Full methods catalog: `../../methods/methods.csv`
-- MACP protocol: `../../protocols/multi-agent-collaboration-protocol.md`
