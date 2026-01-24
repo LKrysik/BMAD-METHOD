@@ -1,0 +1,181 @@
+# Method Clusters — Correlation Rules for Method Selection
+# LOAD: step-02-targeted.md
+# PURPOSE: Avoid redundant method execution by grouping correlated methods
+
+---
+
+# LOADING INSTRUCTIONS:
+# 1. Load this file at the START of step-02 (Targeted Analysis)
+# 2. Before executing a method, check its cluster
+# 3. If another method from same cluster already executed:
+#    - If first found nothing → SKIP rest of cluster
+#    - If first found something → one more can confirm, then SKIP
+# 4. Never execute 3+ methods from same cluster
+
+---
+
+clusters:
+
+  theory:
+    name: "Theoretical Analysis"
+    methods: [153, 154, 163, 162]
+    method_names:
+      153: "Theoretical Impossibility Check"
+      154: "Definitional Contradiction Detector"
+      163: "Existence Proof Demand"
+      162: "Theory-Dependence Verification"
+    correlation: HIGH
+    rule: |
+      If first method finds nothing → skip rest of cluster.
+      If first method finds something → one more can confirm.
+      Never execute 3+ methods from this cluster.
+    rationale: "These methods all probe theoretical soundness from similar angles"
+
+  structure:
+    name: "Structural Analysis"
+    methods: [116, 86, 159]
+    method_names:
+      116: "Strange Loop Detection"
+      86: "Topological Hole Detection"
+      159: "Transitive Dependency Closure"
+    correlation: HIGH
+    rule: |
+      If first method finds nothing → skip rest of cluster.
+      If first method finds something → one more can confirm.
+      Never execute 3+ methods from this cluster.
+    rationale: "All examine structural/graph properties of the artifact"
+
+  grounding:
+    name: "Grounding Analysis"
+    methods: [85, 78, 130]
+    method_names:
+      85: "Grounding Check"
+      78: "Assumption Excavation"
+      130: "Assumption Torture"
+    correlation: HIGH
+    rule: |
+      If first method finds nothing → skip rest of cluster.
+      If first method finds something → one more can confirm.
+      Never execute 3+ methods from this cluster.
+    rationale: "All examine assumptions and evidence grounding"
+
+  challenge:
+    name: "Challenge Methods"
+    methods: [109, 63, 165]
+    method_names:
+      109: "Contraposition Inversion"
+      63: "Challenge from Critical Perspective"
+      165: "Constructive Counterexample"
+    correlation: MEDIUM
+    rule: |
+      Lower correlation — can use multiple.
+      These attack from genuinely different angles.
+      Still avoid all three unless findings warrant.
+    rationale: "Challenge methods use different attack vectors"
+
+---
+
+signal_to_cluster_mapping:
+  description: "Which cluster to prioritize based on Phase 1 signals"
+
+  absolute_claims:
+    signals:
+      - "guarantees"
+      - "always"
+      - "never"
+      - "100%"
+      - "perfect"
+      - "all"
+      - "no exceptions"
+    recommended_cluster: theory
+    recommended_methods: [153, 154, 163]
+    rationale: "Absolute claims often violate known theorems"
+
+  structural_complexity:
+    signals:
+      - "multiple subsystems"
+      - "complex interactions"
+      - "dependencies"
+      - "layers"
+      - "components"
+    recommended_cluster: structure
+    recommended_methods: [116, 86, 159]
+    rationale: "Complex structures hide circular dependencies and gaps"
+
+  ungrounded_claims:
+    signals:
+      - "assertions without justification"
+      - "claims without evidence"
+      - "unsupported statements"
+      - "no references"
+    recommended_cluster: grounding
+    recommended_methods: [85, 78, 130]
+    rationale: "Ungrounded claims need assumption excavation"
+
+  diffuse_belief:
+    signals:
+      - "general unease"
+      - "can't pinpoint problem"
+      - "something feels wrong"
+      - "intuition flags"
+    recommended_methods: [84, 109, 63]
+    note: "Mix of coherence (#84) and challenge cluster"
+    rationale: "When belief is diffuse, broad attacks may localize the issue"
+
+  clean_phase1:
+    signals:
+      - "all Tier 1 methods passed"
+      - "no findings yet"
+      - "looking for hidden issues"
+    recommended_methods: [78, 109, 86]
+    note: "Assumption excavation + contraposition + structural holes"
+    rationale: "If surface is clean, dig deeper for hidden problems"
+
+---
+
+selection_algorithm:
+  description: "How to select 2-4 methods for Phase 2"
+
+  steps:
+    - step: 1
+      action: "Identify primary signal from Phase 1"
+      source: "signal_to_cluster_mapping"
+
+    - step: 2
+      action: "Select first method from recommended cluster"
+      rule: "Start with method most likely to find issues based on signal"
+
+    - step: 3
+      action: "Execute first method"
+      outcome_a: "Finding → select one more from same cluster to confirm"
+      outcome_b: "Clean → select from different cluster or challenge methods"
+
+    - step: 4
+      action: "Repeat until 2-4 methods executed OR S threshold reached"
+
+  constraints:
+    - "Never 3+ methods from same cluster"
+    - "If method finds nothing, don't repeat cluster"
+    - "Challenge cluster has lower correlation, more flexibility"
+
+---
+
+tier1_methods:
+  description: "Tier 1 methods are ALWAYS executed in Phase 1 (not subject to cluster rules)"
+  methods: [71, 100, 17]
+  method_names:
+    71: "First Principles Analysis"
+    100: "Vocabulary Consistency"
+    17: "Abstraction Laddering"
+  execution: "MANDATORY - all three in Phase 1"
+  cluster_note: "Tier 1 methods are from different clusters, no correlation issue"
+
+---
+
+# USAGE SUMMARY:
+#
+# 1. Phase 1: Execute all tier1_methods (mandatory, no cluster rules)
+# 2. Phase 2: Check signal_to_cluster_mapping for recommended methods
+# 3. Before executing: check if cluster already had method executed
+# 4. Apply cluster rules: nothing found → skip cluster, something found → one more OK
+# 5. Select 2-4 total methods in Phase 2, respecting cluster constraints

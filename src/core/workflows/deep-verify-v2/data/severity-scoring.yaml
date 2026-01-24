@@ -1,0 +1,165 @@
+# Severity Scoring System — Evidence Score Calculation Rules
+# LOAD: step-01, step-02, step-03, step-04
+# PURPOSE: Consistent scoring across all phases
+
+---
+
+# LOADING INSTRUCTIONS:
+# 1. Load this file at the START of any step that calculates or updates S
+# 2. Apply base_scoring for each new finding
+# 3. Apply bonus_rules for confirmations and modifications
+# 4. Check thresholds after each score update
+
+---
+
+base_scoring:
+  CRITICAL:
+    points: 3
+    description: "Finding alone would justify REJECT"
+    examples:
+      - "Theorem violation (CAP, FLP, Green-Laffont, Halting, Rice, Arrow, No-Free-Lunch)"
+      - "Definitional contradiction (X requires A, Y requires ¬A, both claimed)"
+      - "Missing critical component (referenced but undefined, dependencies broken)"
+      - "Regulatory impossibility (incompatible certification + features)"
+      - "Mathematical impossibility (99.9% accuracy on N<100)"
+      - "Technology impossibility (achieved results with non-existent tech)"
+      - "Universal detection claims (100% recall for open-ended problems)"
+
+  IMPORTANT:
+    points: 1
+    description: "Finding contributes to REJECT; 2-3 together would justify REJECT"
+    examples:
+      - "Section inconsistency (A says X, B says Y, X and Y incompatible)"
+      - "Ungrounded claim (assertion without justification or evidence)"
+      - "Feedback loop without dampening (circular influence without termination)"
+      - "Circular dependency (A → B → C → A)"
+      - "Ambiguous terminology (same term, different meanings in different places)"
+      - "Missing error handling (no specification of failure behavior)"
+      - "Undefined core concept (key term central to value proposition never defined)"
+
+  MINOR:
+    points: 0.3
+    description: "Finding only matters if other problems exist"
+    examples:
+      - "Unclear wording (ambiguous but not contradictory)"
+      - "Missing non-blocking detail (nice to have, not essential)"
+      - "Style/formatting issues (inconsistent formatting, typos)"
+      - "Incomplete example (doesn't cover all cases but concept is clear)"
+
+  CLEAN_PASS:
+    points: -0.5
+    description: "Method found no issues"
+    note: "Applied per method that completes without findings"
+
+---
+
+bonus_rules:
+  same_finding_different_method:
+    points: 1
+    description: "New method confirms existing finding"
+    rule: "Only if methods are from DIFFERENT clusters (see method-clusters.yaml)"
+
+  same_finding_same_cluster:
+    points: 0
+    description: "Same-cluster method finds same issue"
+    rule: "Skip per correlation rule - adds no new information"
+
+  pattern_library_match:
+    points: 1
+    description: "Finding matches known impossibility pattern"
+    rule: "Bonus on top of severity points when pattern-library.yaml pattern matches"
+    effect: "Enables early exit if S ≥ 6"
+
+  finding_upgraded:
+    calculation: "add_difference"
+    description: "Finding severity increased during analysis"
+    example: "IMPORTANT → CRITICAL = +2 additional points"
+
+  finding_downgraded:
+    calculation: "subtract_difference"
+    description: "Finding severity decreased in Phase 3"
+    example: "IMPORTANT → MINOR = -0.7 (1 - 0.3)"
+
+  finding_removed:
+    calculation: "subtract_original"
+    description: "Finding invalidated in Phase 3 adversarial review"
+    example: "IMPORTANT finding removed = -1 point"
+
+---
+
+score_calculation:
+  initial: 0
+  formula: |
+    S = Σ(finding_severity_points)
+      + Σ(bonus_points)
+      - Σ(clean_pass_count × 0.5)
+      - Σ(phase3_adjustments)
+
+  update_protocol:
+    - "Calculate after EACH method execution"
+    - "Log delta and running total"
+    - "Check decision thresholds (see decision-thresholds.yaml)"
+    - "Record in frontmatter scoreHistory"
+
+---
+
+severity_anchoring_guide:
+
+  critical_checklist:
+    question: "Does this finding ALONE justify REJECT?"
+    checks:
+      - "Would any competent reviewer see this as fatal?"
+      - "Is it based on theorem/definition, not just 'seems wrong'?"
+      - "Is the quote clear and unambiguous?"
+      - "Does it match a known impossibility pattern?"
+
+  important_checklist:
+    question: "Would 2-3 of these together justify REJECT?"
+    checks:
+      - "Is it more than stylistic?"
+      - "Does it affect artifact functionality or truthfulness?"
+      - "Is it based on quoted evidence, not inference?"
+
+  minor_checklist:
+    question: "Does this only matter if other problems exist?"
+    checks:
+      - "Could this be a simple fix?"
+      - "Does it affect understanding more than correctness?"
+      - "Would it survive on its own (answer should be no)?"
+
+---
+
+phase3_adjustment_rules:
+  adversarial_prompts:
+    - name: "ALTERNATIVE_EXPLANATION"
+      question: "What if the author meant X instead of Y?"
+      weakens_if: "Plausible alternative reading exists"
+
+    - name: "HIDDEN_CONTEXT"
+      question: "What unstated assumption would make this work?"
+      weakens_if: "Reasonable implicit assumption found"
+
+    - name: "DOMAIN_EXCEPTION"
+      question: "Is there a known exception in this domain?"
+      weakens_if: "Domain practitioners wouldn't consider this a problem"
+
+    - name: "SURVIVORSHIP_BIAS"
+      question: "Am I focusing on this because I found it first?"
+      weakens_if: "Would conclude differently with different reading order"
+
+  adjustment_rule: |
+    If ≥2 prompts weaken finding:
+      - CRITICAL → downgrade to IMPORTANT (S adjustment: -2)
+      - IMPORTANT → downgrade to MINOR (S adjustment: -0.7)
+      - OR remove finding entirely (S adjustment: -original_points)
+
+---
+
+# USAGE SUMMARY:
+#
+# 1. New finding: S += base_scoring[severity].points
+# 2. Pattern match: S += bonus_rules.pattern_library_match.points
+# 3. Confirmation: S += bonus_rules.same_finding_different_method.points (if different cluster)
+# 4. Clean pass: S += base_scoring.CLEAN_PASS.points
+# 5. Phase 3 downgrade: S -= difference between original and new severity
+# 6. Phase 3 removal: S -= original severity points

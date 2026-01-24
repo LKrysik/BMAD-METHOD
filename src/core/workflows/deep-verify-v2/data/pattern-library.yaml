@@ -1,0 +1,385 @@
+# Pattern Library — Known Impossibility Patterns
+# LOAD: step-01-pattern-scan.md, step-02-targeted.md
+# PURPOSE: Quick detection of artifacts that violate known theorems or contain definitional contradictions
+
+---
+
+# LOADING INSTRUCTIONS:
+# 1. Load this file at the START of step-01 (Pattern Scan phase)
+# 2. After each finding in step-01, check if it matches any pattern below
+# 3. Pattern match = higher confidence in finding, enables early exit
+# 4. No pattern match but high S score = proceed to Phase 2 for confirmation
+
+---
+
+definitional_contradictions:
+
+  PFS_ESCROW:
+    id: DC-001
+    name: "PFS + Escrow Contradiction"
+    signals:
+      - "Perfect Forward Secrecy"
+      - "key recovery mechanism"
+      - "session key escrow"
+      - "lawful intercept"
+    why_impossible: |
+      PFS means past sessions are unrecoverable even if long-term keys are compromised.
+      Escrow/recovery means past sessions ARE recoverable.
+      These are mutually exclusive by definition.
+    detection_methods: [71, 154]
+    severity: CRITICAL
+    check: "Does artifact claim both forward secrecy AND key recovery?"
+
+  GRADUAL_TERMINATION:
+    id: DC-002
+    name: "Gradual Typing + Guaranteed Termination"
+    signals:
+      - "gradual typing"
+      - "dynamic types"
+      - "optional types"
+      - "guaranteed termination"
+      - "always terminates"
+    why_impossible: |
+      Gradual typing allows runtime type coercion which enables arbitrary computation.
+      Rice's theorem: non-trivial semantic properties are undecidable.
+      Cannot guarantee termination for arbitrary programs with dynamic typing.
+    theorem: "Rice's theorem"
+    detection_methods: [153, 154]
+    severity: CRITICAL
+    validated: T21
+    check: "Does artifact claim type flexibility AND termination guarantees?"
+
+  DETERMINISTIC_ADAPTIVE:
+    id: DC-003
+    name: "Deterministic + Adaptive Conflict"
+    signals:
+      - "deterministic"
+      - "reproducible"
+      - "same input same output"
+      - "learning"
+      - "adaptive"
+      - "self-improving"
+    why_impossible: |
+      Deterministic = same input → same output always.
+      Adaptive = output changes based on learning.
+      These directly contradict unless scope is clearly separated.
+    exception: "Valid if scope clearly separated (deterministic inference, adaptive training)"
+    detection_methods: [154, 84]
+    severity: CRITICAL
+    severity_if_scoped: IMPORTANT
+    validated: T22
+    check: "Does artifact claim both reproducibility AND learning without clear scope separation?"
+
+  CONSISTENCY_AVAILABILITY:
+    id: DC-004
+    name: "CAP Theorem Violation"
+    signals:
+      - "strong consistency"
+      - "linearizability"
+      - "high availability"
+      - "always available"
+      - "partition tolerance"
+      - "network partition"
+    why_impossible: |
+      CAP theorem: In presence of network partitions, must choose between
+      consistency (all nodes see same data) and availability (all requests get response).
+      Cannot have all three simultaneously.
+    theorem: "CAP theorem (Brewer/Gilbert-Lynch)"
+    detection_methods: [153]
+    severity: CRITICAL
+    check: "Does artifact claim strong consistency + high availability + partition tolerance?"
+
+---
+
+theorem_violations:
+
+  VCG_BALANCED:
+    id: TV-001
+    name: "VCG + Balanced Budget Impossibility"
+    signals:
+      - "VCG mechanism"
+      - "Vickrey"
+      - "strategy-proof"
+      - "incentive compatible"
+      - "balanced budget"
+      - "no external subsidy"
+      - "individual rationality"
+    why_impossible: |
+      Green-Laffont theorem: Cannot have VCG mechanism that is simultaneously
+      strategy-proof, individually rational, efficient, AND budget-balanced.
+      At least one must be sacrificed.
+    theorem: "Green-Laffont impossibility"
+    detection_methods: [153]
+    severity: CRITICAL
+    validated: T19
+    check: "Does artifact claim VCG + strategy-proofness + balanced budget + individual rationality?"
+
+  ASYNC_CONSENSUS:
+    id: TV-002
+    name: "FLP Impossibility Violation"
+    signals:
+      - "asynchronous network"
+      - "no timing assumptions"
+      - "consensus"
+      - "agreement"
+      - "fault tolerance"
+      - "f < N/2"
+      - "guaranteed termination"
+    why_impossible: |
+      FLP theorem: In asynchronous network, consensus is impossible with even one faulty process
+      if we require termination. Practical systems use timeouts (synchrony assumption) or
+      probabilistic termination.
+    theorem: "FLP impossibility"
+    note: "f < N/3 is proven bound for async BFT; f < N/2 requires synchrony"
+    detection_methods: [153, 71]
+    severity: CRITICAL
+    check: "Does artifact claim async + consensus + fault tolerance + guaranteed termination?"
+
+  UNIVERSAL_TERMINATION:
+    id: TV-003
+    name: "Universal Termination Detection"
+    signals:
+      - "detects all infinite loops"
+      - "guarantees termination"
+      - "halting detection"
+      - "proves termination for any program"
+    why_impossible: |
+      Halting problem: It is undecidable whether an arbitrary program terminates.
+      No algorithm can correctly determine termination for ALL programs.
+    theorem: "Halting problem (Turing)"
+    detection_methods: [153, 87]
+    severity: CRITICAL
+    validated: T18
+    check: "Does artifact claim to detect termination for arbitrary programs?"
+
+  UNIVERSAL_BUG_DETECTION:
+    id: TV-004
+    name: "Universal Bug/Risk Detection"
+    signals:
+      - "100% recall"
+      - "finds all bugs"
+      - "detects all risks"
+      - "complete coverage"
+      - "no false negatives"
+    why_impossible: |
+      Rice's theorem: Non-trivial semantic properties of programs are undecidable.
+      Open-ended problem spaces cannot have complete detection.
+      "All bugs" or "all risks" is an unbounded set.
+    theorem: "Halting problem variant / Rice's theorem"
+    detection_methods: [153, 71]
+    severity: CRITICAL
+    validated: T23
+    check: "Does artifact claim 100% detection for open-ended problem space?"
+
+  ARROW_VOTING:
+    id: TV-005
+    name: "Arrow's Impossibility Violation"
+    signals:
+      - "voting system"
+      - "social choice"
+      - "fair aggregation"
+      - "unrestricted domain"
+      - "non-dictatorship"
+      - "Pareto efficiency"
+      - "independence of irrelevant alternatives"
+    why_impossible: |
+      Arrow's theorem: No voting system can satisfy all of:
+      - Unrestricted domain
+      - Non-dictatorship
+      - Pareto efficiency
+      - Independence of irrelevant alternatives
+    theorem: "Arrow's impossibility theorem"
+    detection_methods: [153]
+    severity: CRITICAL
+    check: "Does artifact claim voting system satisfying all four Arrow criteria?"
+
+---
+
+statistical_impossibilities:
+
+  ACCURACY_WITHOUT_N:
+    id: SI-001
+    name: "High Accuracy Without Sample Size"
+    signals:
+      - "99% accuracy"
+      - "99.9% accuracy"
+      - "near-perfect accuracy"
+      - percentage claims without N
+    why_problematic: |
+      High accuracy claims require sufficient sample size to be meaningful.
+      N × prevalence × claimed_accuracy must yield statistically significant validation.
+      Example: 99.9% on 10K diseases with 50M records = ~5K/disease avg; rare diseases have <100.
+    detection_methods: [153]
+    severity: CRITICAL
+    validated: "T18, T22"
+    check: "Does artifact claim high accuracy without specifying sample size or prevalence?"
+
+  QUANTUM_HYPE:
+    id: SI-002
+    name: "Quantum Speedup Claims"
+    signals:
+      - "quantum speedup"
+      - "exponential acceleration"
+      - "quantum advantage"
+      - "quantum optimization"
+      - "achieved with quantum"
+    why_problematic: |
+      - Current NISQ devices have ~100-1000 noisy qubits
+      - Fault-tolerant QC requires millions of physical qubits
+      - No proven quantum speedup for general optimization (only specific problems like factoring)
+      - Claims of "achieved" results with quantum hardware are often misleading
+    detection_methods: [71, 153]
+    severity: CRITICAL
+    validated: T20
+    check: "Does artifact claim quantum speedup as achieved (not theoretical) with current technology?"
+
+  UNVERIFIABLE_OPTIMUM:
+    id: SI-003
+    name: "Unverifiable Global Optimum"
+    signals:
+      - "finds global optimum"
+      - "optimal solution"
+      - ">99% probability of optimal"
+      - "guaranteed best"
+      - NP-hard problem reference
+    why_problematic: |
+      For NP-hard problems, verifying global optimality requires exhaustive search.
+      Claims of finding "the" optimum without proof methodology are unfalsifiable.
+      Heuristics can find "good" solutions but cannot prove optimality.
+    detection_methods: [153, 85]
+    severity: CRITICAL
+    validated: "T18, T20"
+    check: "Does artifact claim global optimum for NP-hard problem without verification method?"
+
+  FICTIONAL_BENCHMARKS:
+    id: SI-004
+    name: "Fictional Benchmark Claims"
+    signals:
+      - "achieved X metric"
+      - performance numbers as facts
+      - past tense claims for future tech
+    why_problematic: |
+      Presenting projected/simulated results as "achieved" when technology doesn't exist.
+      No methodology for how benchmarks were obtained.
+      Technology prerequisites don't exist on claimed timeline.
+    detection_methods: [71, 85]
+    severity: CRITICAL
+    check: "Does artifact present performance as achieved when underlying technology doesn't exist?"
+
+---
+
+regulatory_contradictions:
+
+  FDA_LEARNING:
+    id: RC-001
+    name: "FDA Class III + Continuous Learning"
+    signals:
+      - "FDA Class III"
+      - "PMA"
+      - "high-risk device"
+      - "continuous learning"
+      - "adaptive algorithm"
+      - "self-updating"
+    why_impossible: |
+      FDA Class III devices require Premarket Approval (PMA) for each model change.
+      Continuous learning means constant model changes.
+      Each change would require new PMA submission.
+    exception: "Class II with PCCP (Predetermined Change Control Plan) allows pre-specified changes"
+    detection_methods: [153]
+    severity: CRITICAL
+    validated: T22
+    check: "Does artifact claim Class III approval AND continuous learning?"
+
+  HIPAA_ANALYTICS:
+    id: RC-002
+    name: "HIPAA Compliance + Rich Analytics"
+    signals:
+      - "HIPAA compliant"
+      - "patient data analytics"
+      - "health insights"
+      - "medical records analysis"
+    why_problematic: |
+      De-identification is required for analytics without patient consent.
+      Rich analytics may enable re-identification.
+      Must specify: Expert Determination or Safe Harbor method?
+    detection_methods: [85]
+    severity: IMPORTANT
+    severity_if_unspecified: CRITICAL
+    check: "Does artifact claim HIPAA compliance with analytics without de-identification method?"
+
+  LEGAL_ADVICE_AUTOMATION:
+    id: RC-003
+    name: "Automated Legal Advice"
+    signals:
+      - "legally defensible"
+      - "binding assessments"
+      - "legal advice"
+      - "work product doctrine"
+      - "attorney-client privilege"
+    why_problematic: |
+      Automated systems cannot practice law.
+      Providing legal advice without license = Unauthorized Practice of Law (UPL).
+      Work product doctrine requires attorney involvement.
+    exception: "Valid if explicitly positioned as assistant to licensed attorneys"
+    detection_methods: [71, 153]
+    severity: CRITICAL
+    validated: T23
+    check: "Does artifact claim legal authority without attorney involvement?"
+
+---
+
+ungrounded_core_concepts:
+
+  UNDEFINED_KEY_TERM:
+    id: UG-001
+    name: "Undefined Central Concept"
+    signals:
+      - key term used repeatedly without definition
+      - core value proposition lacks operational definition
+      - "material risk" / "significant" / "appropriate" without criteria
+    why_problematic: |
+      If the central concept is undefined, the primary value proposition cannot be verified.
+      Vague terms enable goal-post moving.
+      Operationalization is required for measurable claims.
+    detection_methods: [100, 85]
+    severity: IMPORTANT
+    severity_if_central: CRITICAL
+    validated: T23
+    check: "Is there a key term central to value proposition that lacks operational definition?"
+
+  CIRCULAR_DEFINITION:
+    id: UG-002
+    name: "Circular Definition"
+    signals:
+      - X defined in terms of Y
+      - Y defined in terms of X
+      - self-referential definition
+    why_problematic: |
+      Circular definitions provide no actual meaning.
+      Cannot extract operational criteria from circularity.
+    detection_methods: [100, 116]
+    severity: IMPORTANT
+    check: "Are key terms defined circularly?"
+
+  SCOPE_CREEP_DEFINITION:
+    id: UG-003
+    name: "Scope Creep Definition"
+    signals:
+      - same term used differently in different sections
+      - meaning shifts throughout document
+    why_problematic: |
+      If term means different things in different places, which meaning applies?
+      Enables equivocation fallacy.
+    detection_methods: [100, 84]
+    severity: IMPORTANT
+    check: "Does the same term have different meanings in different sections?"
+
+---
+
+# USAGE SUMMARY:
+#
+# 1. For each finding in Phase 1, check pattern_id against this library
+# 2. Pattern match → +1 bonus to evidence score, enables early exit
+# 3. No match but S ≥ 6 → proceed to Phase 2 for confirmation
+# 4. Use 'check' questions to verify pattern applicability
+# 5. Reference 'detection_methods' for which methods best find this pattern
