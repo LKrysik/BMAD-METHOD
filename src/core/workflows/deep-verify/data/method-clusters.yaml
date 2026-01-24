@@ -11,6 +11,7 @@
 #    - If first found nothing → SKIP rest of cluster
 #    - If first found something → one more can confirm, then SKIP
 # 4. Never execute 3+ methods from same cluster
+# 5. To execute a method, READ its procedure file from method_procedures path
 
 ---
 
@@ -19,11 +20,19 @@ clusters:
   theory:
     name: "Theoretical Analysis"
     methods: [153, 154, 163, 162]
-    method_names:
-      153: "Theoretical Impossibility Check"
-      154: "Definitional Contradiction Detector"
-      163: "Existence Proof Demand"
-      162: "Theory-Dependence Verification"
+    method_details:
+      - id: 153
+        name: "Theoretical Impossibility Check"
+        procedure: "data/method-procedures/153_Theoretical_Impossibility_Check.md"
+      - id: 154
+        name: "Definitional Contradiction Detector"
+        procedure: "data/method-procedures/154_Definitional_Contradiction_Detector.md"
+      - id: 163
+        name: "Existence Proof Demand"
+        procedure: "data/method-procedures/163_Existence_Proof_Demand.md"
+      - id: 162
+        name: "Theory-Dependence Verification"
+        procedure: "data/method-procedures/162_Theory_Dependence_Verification.md"
     correlation: HIGH
     rule: |
       If first method finds nothing → skip rest of cluster.
@@ -34,10 +43,16 @@ clusters:
   structure:
     name: "Structural Analysis"
     methods: [116, 86, 159]
-    method_names:
-      116: "Strange Loop Detection"
-      86: "Topological Hole Detection"
-      159: "Transitive Dependency Closure"
+    method_details:
+      - id: 116
+        name: "Strange Loop Detection"
+        procedure: "data/method-procedures/116_Strange_Loop_Detection.md"
+      - id: 86
+        name: "Topological Hole Detection"
+        procedure: "data/method-procedures/086_Topological_Hole_Detection.md"
+      - id: 159
+        name: "Transitive Dependency Closure"
+        procedure: "data/method-procedures/159_Transitive_Dependency_Closure.md"
     correlation: HIGH
     rule: |
       If first method finds nothing → skip rest of cluster.
@@ -48,10 +63,16 @@ clusters:
   grounding:
     name: "Grounding Analysis"
     methods: [85, 78, 130]
-    method_names:
-      85: "Grounding Check"
-      78: "Assumption Excavation"
-      130: "Assumption Torture"
+    method_details:
+      - id: 85
+        name: "Grounding Check"
+        procedure: "data/method-procedures/085_Grounding_Check.md"
+      - id: 78
+        name: "Assumption Excavation"
+        procedure: "data/method-procedures/078_Assumption_Excavation.md"
+      - id: 130
+        name: "Assumption Torture"
+        procedure: "data/method-procedures/130_Assumption_Torture.md"
     correlation: HIGH
     rule: |
       If first method finds nothing → skip rest of cluster.
@@ -62,16 +83,38 @@ clusters:
   challenge:
     name: "Challenge Methods"
     methods: [109, 63, 165]
-    method_names:
-      109: "Contraposition Inversion"
-      63: "Challenge from Critical Perspective"
-      165: "Constructive Counterexample"
+    method_details:
+      - id: 109
+        name: "Contraposition Inversion"
+        procedure: "data/method-procedures/109_Contraposition_Inversion.md"
+      - id: 63
+        name: "Challenge from Critical Perspective"
+        procedure: "data/method-procedures/063_Challenge_from_Critical_Perspective.md"
+      - id: 165
+        name: "Constructive Counterexample"
+        procedure: "data/method-procedures/165_Constructive_Counterexample.md"
     correlation: MEDIUM
     rule: |
       Lower correlation — can use multiple.
       These attack from genuinely different angles.
       Still avoid all three unless findings warrant.
     rationale: "Challenge methods use different attack vectors"
+
+  coherence:
+    name: "Coherence Analysis"
+    methods: [84, 87]
+    method_details:
+      - id: 84
+        name: "Coherence Check"
+        procedure: "data/method-procedures/084_Coherence_Check.md"
+      - id: 87
+        name: "Falsifiability Check"
+        procedure: "data/method-procedures/087_Falsifiability_Check.md"
+    correlation: MEDIUM
+    rule: |
+      Can use both if signals warrant.
+      Different aspects of coherence.
+    rationale: "Coherence and falsifiability are related but distinct"
 
 ---
 
@@ -88,7 +131,13 @@ signal_to_cluster_mapping:
       - "all"
       - "no exceptions"
     recommended_cluster: theory
-    recommended_methods: [153, 154, 163]
+    recommended_methods:
+      - id: 153
+        name: "Theoretical Impossibility Check"
+        procedure: "data/method-procedures/153_Theoretical_Impossibility_Check.md"
+      - id: 154
+        name: "Definitional Contradiction Detector"
+        procedure: "data/method-procedures/154_Definitional_Contradiction_Detector.md"
     rationale: "Absolute claims often violate known theorems"
 
   structural_complexity:
@@ -99,7 +148,13 @@ signal_to_cluster_mapping:
       - "layers"
       - "components"
     recommended_cluster: structure
-    recommended_methods: [116, 86, 159]
+    recommended_methods:
+      - id: 116
+        name: "Strange Loop Detection"
+        procedure: "data/method-procedures/116_Strange_Loop_Detection.md"
+      - id: 86
+        name: "Topological Hole Detection"
+        procedure: "data/method-procedures/086_Topological_Hole_Detection.md"
     rationale: "Complex structures hide circular dependencies and gaps"
 
   ungrounded_claims:
@@ -109,7 +164,13 @@ signal_to_cluster_mapping:
       - "unsupported statements"
       - "no references"
     recommended_cluster: grounding
-    recommended_methods: [85, 78, 130]
+    recommended_methods:
+      - id: 85
+        name: "Grounding Check"
+        procedure: "data/method-procedures/085_Grounding_Check.md"
+      - id: 78
+        name: "Assumption Excavation"
+        procedure: "data/method-procedures/078_Assumption_Excavation.md"
     rationale: "Ungrounded claims need assumption excavation"
 
   diffuse_belief:
@@ -118,8 +179,17 @@ signal_to_cluster_mapping:
       - "can't pinpoint problem"
       - "something feels wrong"
       - "intuition flags"
-    recommended_methods: [84, 109, 63]
-    note: "Mix of coherence (#84) and challenge cluster"
+    recommended_methods:
+      - id: 84
+        name: "Coherence Check"
+        procedure: "data/method-procedures/084_Coherence_Check.md"
+      - id: 109
+        name: "Contraposition Inversion"
+        procedure: "data/method-procedures/109_Contraposition_Inversion.md"
+      - id: 63
+        name: "Challenge from Critical Perspective"
+        procedure: "data/method-procedures/063_Challenge_from_Critical_Perspective.md"
+    note: "Mix of coherence and challenge cluster"
     rationale: "When belief is diffuse, broad attacks may localize the issue"
 
   clean_phase1:
@@ -127,7 +197,16 @@ signal_to_cluster_mapping:
       - "all Tier 1 methods passed"
       - "no findings yet"
       - "looking for hidden issues"
-    recommended_methods: [78, 109, 86]
+    recommended_methods:
+      - id: 78
+        name: "Assumption Excavation"
+        procedure: "data/method-procedures/078_Assumption_Excavation.md"
+      - id: 109
+        name: "Contraposition Inversion"
+        procedure: "data/method-procedures/109_Contraposition_Inversion.md"
+      - id: 86
+        name: "Topological Hole Detection"
+        procedure: "data/method-procedures/086_Topological_Hole_Detection.md"
     note: "Assumption excavation + contraposition + structural holes"
     rationale: "If surface is clean, dig deeper for hidden problems"
 
@@ -144,9 +223,11 @@ selection_algorithm:
     - step: 2
       action: "Select first method from recommended cluster"
       rule: "Start with method most likely to find issues based on signal"
+      instruction: "READ the procedure file listed in method_details"
 
     - step: 3
       action: "Execute first method"
+      instruction: "Follow the step-by-step procedure from the file"
       outcome_a: "Finding → select one more from same cluster to confirm"
       outcome_b: "Clean → select from different cluster or challenge methods"
 
@@ -162,20 +243,48 @@ selection_algorithm:
 
 tier1_methods:
   description: "Tier 1 methods are ALWAYS executed in Phase 1 (not subject to cluster rules)"
-  methods: [71, 100, 17]
-  method_names:
-    71: "First Principles Analysis"
-    100: "Vocabulary Consistency"
-    17: "Abstraction Laddering"
+  methods:
+    - id: 71
+      name: "First Principles Analysis"
+      procedure: "data/method-procedures/071_First_Principles_Analysis.md"
+    - id: 100
+      name: "Vocabulary Consistency"
+      procedure: "data/method-procedures/100_Vocabulary_Consistency.md"
+    - id: 17
+      name: "Abstraction Laddering"
+      procedure: "data/method-procedures/017_Abstraction_Laddering.md"
   execution: "MANDATORY - all three in Phase 1"
+  instruction: "For each method, READ the procedure file and follow step-by-step"
   cluster_note: "Tier 1 methods are from different clusters, no correlation issue"
 
 ---
 
-# USAGE SUMMARY:
+tier3_methods:
+  description: "Tier 3 methods for Phase 3 (Adversarial)"
+  methods:
+    - id: 63
+      name: "Challenge from Critical Perspective"
+      procedure: "data/method-procedures/063_Challenge_from_Critical_Perspective.md"
+  execution: "Used in Phase 3 adversarial review"
+  instruction: "READ procedure file for devil's advocate process"
+
+---
+
+# HOW TO USE THIS FILE:
 #
-# 1. Phase 1: Execute all tier1_methods (mandatory, no cluster rules)
+# 1. Phase 1: Execute all tier1_methods (mandatory)
+#    - For each method, READ its procedure file
+#    - Follow step-by-step instructions from the file
+#
 # 2. Phase 2: Check signal_to_cluster_mapping for recommended methods
-# 3. Before executing: check if cluster already had method executed
-# 4. Apply cluster rules: nothing found → skip cluster, something found → one more OK
-# 5. Select 2-4 total methods in Phase 2, respecting cluster constraints
+#    - Find matching signal from Phase 1 findings
+#    - Select method from recommended_methods
+#    - READ the procedure file at the path listed
+#    - Execute method following the procedure
+#
+# 3. Before executing any method:
+#    - Check if cluster already had method executed
+#    - Apply cluster rules
+#
+# 4. CRITICAL: Always READ the procedure file before executing a method
+#    The procedure file contains step-by-step instructions and output format

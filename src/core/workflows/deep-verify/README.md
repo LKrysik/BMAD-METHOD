@@ -45,7 +45,26 @@ deep-verify/
 │   └── step-05-report.md         # Phase 5: Report generation
 └── data/
     ├── methods.csv               # Method definitions (19 methods)
-    ├── method-procedures.md      # Detailed step-by-step procedures
+    ├── method-procedures/        # Individual method procedure files
+    │   ├── 017_Abstraction_Laddering.md
+    │   ├── 063_Challenge_from_Critical_Perspective.md
+    │   ├── 071_First_Principles_Analysis.md
+    │   ├── 078_Assumption_Excavation.md
+    │   ├── 084_Coherence_Check.md
+    │   ├── 085_Grounding_Check.md
+    │   ├── 086_Topological_Hole_Detection.md
+    │   ├── 087_Falsifiability_Check.md
+    │   ├── 100_Vocabulary_Consistency.md
+    │   ├── 109_Contraposition_Inversion.md
+    │   ├── 116_Strange_Loop_Detection.md
+    │   ├── 130_Assumption_Torture.md
+    │   ├── 153_Theoretical_Impossibility_Check.md
+    │   ├── 154_Definitional_Contradiction_Detector.md
+    │   ├── 159_Transitive_Dependency_Closure.md
+    │   ├── 162_Theory_Dependence_Verification.md
+    │   ├── 163_Existence_Proof_Demand.md
+    │   └── 165_Constructive_Counterexample.md
+    ├── method-procedures.md      # Combined procedures (deprecated, use individual files)
     ├── pattern-library.yaml      # Known impossibility patterns
     ├── severity-scoring.yaml     # Scoring rules and thresholds
     ├── method-clusters.yaml      # Correlation rules for method selection
@@ -74,7 +93,7 @@ data_dependencies:
 | Data File | Load When | Purpose |
 |-----------|-----------|---------|
 | `data/methods.csv` | Any method execution | Method definitions (19 methods) |
-| `data/method-procedures.md` | When CSV insufficient | Detailed step-by-step procedures |
+| `data/method-procedures/{NUM}_{Name}.md` | Executing specific method | Step-by-step procedure for that method |
 | `data/pattern-library.yaml` | steps/step-01, steps/step-02 | Impossibility patterns |
 | `data/severity-scoring.yaml` | steps/step-01, 02, 03, 04 | Scoring rules |
 | `data/method-clusters.yaml` | steps/step-02 | Correlation rules |

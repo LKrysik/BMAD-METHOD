@@ -104,17 +104,31 @@ Primary signal from 2.1: _____________________
 
 ### Step 2: Select first method from recommended cluster
 
-**Load method definition from `data/methods.csv`:**
+**Load method procedure from `data/method-procedures/`:**
 
 ```
 First method selected: #_____ _____________________
 Cluster: _____________________
 Reason: Based on _____ signal
 
-Method definition:
-Description: [from data/methods.csv]
-Output pattern: [from data/methods.csv]
+Procedure file: data/method-procedures/[NUM]_[Name].md
 ```
+
+Available method procedure files:
+- `078_Assumption_Excavation.md`
+- `084_Coherence_Check.md`
+- `085_Grounding_Check.md`
+- `086_Topological_Hole_Detection.md`
+- `087_Falsifiability_Check.md`
+- `109_Contraposition_Inversion.md`
+- `116_Strange_Loop_Detection.md`
+- `130_Assumption_Torture.md`
+- `153_Theoretical_Impossibility_Check.md`
+- `154_Definitional_Contradiction_Detector.md`
+- `159_Transitive_Dependency_Closure.md`
+- `162_Theory_Dependence_Verification.md`
+- `163_Existence_Proof_Demand.md`
+- `165_Constructive_Counterexample.md`
 
 ### Step 3: Plan remaining methods
 
@@ -144,12 +158,15 @@ Planned methods (2-4 total):
 
 ## 2.3 Execute Selected Methods
 
-**For each selected method, complete this template:**
+**For each selected method:**
+1. **READ the procedure file** from `data/method-procedures/`
+2. Follow the step-by-step instructions from the file
+3. Complete the template below with results
 
 ### Method #___: _____________________
 
-**From data/methods.csv:**
-> [Paste full description from data/methods.csv]
+**Load procedure:** `data/method-procedures/[NUM]_[Name].md`
+→ **READ this file now and follow its step-by-step instructions**
 
 **WHY SELECTED:** [1 sentence — what signal triggered this choice]
 

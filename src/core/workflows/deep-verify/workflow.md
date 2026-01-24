@@ -1,43 +1,157 @@
-# Deep Verify V2.0 — Modular Verification Workflow
+# Deep Verify V2.0 — Verification Workflow
 
----
-
-## Overview
-
-Sequential verification workflow with early exit capability. Refactored into modular step files with separated data for maintainability and resumability.
-
-**Workflow:** deep-verify
-**Version:** V2.0 (based on V12.2)
-**Architecture:** Step Files + Datafiles + Subtasking
-
----
-
-## Core Principles
-
-1. **Early Exit** — Stop when evidence is sufficient, not when all methods are exhausted
-2. **Mandatory Quotes** — No quote, no finding. Every claim must cite artifact text.
-3. **Signal-Based Selection** — Choose methods based on what Phase 1 reveals
-4. **Pattern Matching** — Check against known impossibility patterns before deep analysis
-5. **Adversarial Validation** — Attack your own findings before finalizing
-6. **Bias Awareness** — Actively counteract confirmation bias
-
----
-
-## MANDATORY: Data Loading Protocol
+## YOUR GOAL: Produce a VERIFICATION REPORT
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│  BEFORE STARTING ANY STEP, LOAD REQUIRED DATA FILES                     │
-│                                                                         │
-│  1. Read this workflow.md FIRST to understand structure                 │
-│  2. Each step file specifies its data_dependencies in frontmatter       │
-│  3. Load ALL listed dependencies BEFORE executing step logic            │
-│  4. Methods definitions are in data/methods.csv - LOAD WHEN NEEDED      │
-│                                                                         │
-│  Loading Order:                                                         │
-│  workflow.md → steps/step-XX.md → read frontmatter → load data/* files │
-└─────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  OUTPUT REQUIRED: A structured VERIFICATION REPORT with verdict            │
+│                                                                             │
+│  DO NOT: Describe what you're doing, list files you're loading, or         │
+│          narrate the process. JUST EXECUTE AND PRODUCE THE REPORT.         │
+│                                                                             │
+│  Report format: Read data/report-template.md when generating report        │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## Quick Execution Path
+
+**For most verifications, execute this sequence:**
+
+```
+1. SETUP (2 min)
+   - Assess stakes: LOW/MEDIUM/HIGH
+   - Note biases, select mode (Standard/Blind)
+
+2. PHASE 1: PATTERN SCAN (5-15 min)
+   - Execute: #71 First Principles, #100 Vocabulary, #17 Abstraction
+   - Check findings against data/pattern-library.yaml
+   - Calculate S score
+   - Early exit if S ≥ 6 with pattern match → REJECT
+   - Early exit if S ≤ -3 and stakes ≠ HIGH → ACCEPT
+
+3. PHASE 2: TARGETED (15-30 min) — if not early exit
+   - Select 2-4 methods based on Phase 1 signals
+   - Update S after each method
+
+4. PHASE 3: ADVERSARIAL (10-15 min) — MANDATORY
+   - Devil's advocate on IMPORTANT+ findings
+   - Steel-man opposite verdict
+   - Adjust S based on findings that weaken
+
+5. VERDICT
+   - S ≥ 6 → REJECT
+   - S ≤ -3 → ACCEPT
+   - else → UNCERTAIN
+
+6. OUTPUT THE REPORT
+   - Read: data/report-template.md
+   - Fill all sections with actual data
+   - Output the complete report
+```
+
+---
+
+## Scoring Reference
+
+| Finding | Points |
+|---------|--------|
+| CRITICAL | +3 |
+| IMPORTANT | +1 |
+| MINOR | +0.3 |
+| Clean method pass | -0.5 |
+| Pattern match bonus | +1 |
+
+---
+
+## When to Load Additional Files
+
+| Situation | Load |
+|-----------|------|
+| Need method procedure | `data/method-procedures/{NUM}_{Name}.md` |
+| Checking for patterns | `data/pattern-library.yaml` |
+| Unsure about scoring | `data/severity-scoring.yaml` |
+| Selecting Phase 2 methods | `data/method-clusters.yaml` |
+| Generating final report | `data/report-template.md` |
+
+**Method procedures are in separate files. Load the specific one you need:**
+
+```
+data/method-procedures/
+├── 017_Abstraction_Laddering.md
+├── 063_Challenge_from_Critical_Perspective.md
+├── 071_First_Principles_Analysis.md
+├── 078_Assumption_Excavation.md
+├── 084_Coherence_Check.md
+├── 085_Grounding_Check.md
+├── 086_Topological_Hole_Detection.md
+├── 087_Falsifiability_Check.md
+├── 100_Vocabulary_Consistency.md
+├── 109_Contraposition_Inversion.md
+├── 116_Strange_Loop_Detection.md
+├── 130_Assumption_Torture.md
+├── 153_Theoretical_Impossibility_Check.md
+├── 154_Definitional_Contradiction_Detector.md
+├── 159_Transitive_Dependency_Closure.md
+├── 162_Theory_Dependence_Verification.md
+├── 163_Existence_Proof_Demand.md
+└── 165_Constructive_Counterexample.md
+```
+
+---
+
+## Method Quick Reference
+
+### Tier 1 (Phase 1 — ALL mandatory)
+
+| # | Method | Procedure File |
+|---|--------|----------------|
+| 71 | First Principles | `data/method-procedures/071_First_Principles_Analysis.md` |
+| 100 | Vocabulary | `data/method-procedures/100_Vocabulary_Consistency.md` |
+| 17 | Abstraction Laddering | `data/method-procedures/017_Abstraction_Laddering.md` |
+
+### Tier 2 (Phase 2 — Select 2-4 based on signals)
+
+| Signal | Recommended Methods | Procedure Files |
+|--------|---------------------|-----------------|
+| Absolute claims | #153, #154 | `153_Theoretical_Impossibility_Check.md`, `154_Definitional_Contradiction_Detector.md` |
+| Structural complexity | #116, #86 | `116_Strange_Loop_Detection.md`, `086_Topological_Hole_Detection.md` |
+| Ungrounded claims | #85, #78 | `085_Grounding_Check.md`, `078_Assumption_Excavation.md` |
+| Diffuse belief / Clean Phase 1 | #84, #109 | `084_Coherence_Check.md`, `109_Contraposition_Inversion.md` |
+
+### Tier 3 (Phase 3 — Adversarial)
+
+| # | Method | Procedure File |
+|---|--------|----------------|
+| 63 | Critical Challenge | `data/method-procedures/063_Challenge_from_Critical_Perspective.md` |
+
+---
+
+## Pattern Library Quick Reference
+
+**Check these when finding matches signals:**
+
+| Pattern | Signals | Severity |
+|---------|---------|----------|
+| PFS + Escrow | "forward secrecy" + "key recovery" | CRITICAL |
+| Gradual + Termination | "dynamic types" + "guarantees termination" | CRITICAL |
+| CAP violation | "consistency" + "availability" + "partition" | CRITICAL |
+| FLP violation | "async" + "consensus" + "fault tolerance" | CRITICAL |
+| Universal detection | "100% recall", "finds all bugs" | CRITICAL |
+| Undefined core term | Key concept never defined | IMPORTANT/CRITICAL |
+
+Full library: `data/pattern-library.yaml`
+
+---
+
+## Report Generation
+
+When ready to output the report:
+
+1. **Read:** `data/report-template.md`
+2. **Fill ALL placeholders** with actual data from your analysis
+3. **Output the complete report** — this is your deliverable
 
 ---
 
@@ -45,210 +159,53 @@ Sequential verification workflow with early exit capability. Refactored into mod
 
 ```
 deep-verify/
-├── workflow.md                    ← YOU ARE HERE (orchestrator)
-├── steps/
-│   ├── step-00-setup.md          # Phase 0: Stakes + Bias Assessment
-│   ├── step-01-pattern-scan.md   # Phase 1: Tier 1 methods + Pattern Library
-│   ├── step-02-targeted.md       # Phase 2: Signal-based method selection
-│   ├── step-03-adversarial.md    # Phase 3: Devil's advocate + Steel-man
-│   ├── step-04-verdict.md        # Phase 4: Score calculation + Decision
-│   └── step-05-report.md         # Phase 5: Report generation
+├── workflow.md                 ← YOU ARE HERE
 ├── data/
-│   ├── methods.csv               # Method definitions (19 methods)
-│   ├── pattern-library.yaml      # Impossibility patterns
-│   ├── severity-scoring.yaml     # Scoring rules
-│   ├── method-clusters.yaml      # Correlation rules
-│   ├── decision-thresholds.yaml  # Decision logic
-│   ├── report-template.md        # Report structure
-│   ├── examples.md               # Worked scoring examples
-│   ├── method-procedures.md      # Detailed method instructions
-│   └── calibration.yaml          # Accuracy tracking
-└── README.md                     # Documentation
+│   ├── methods.csv                  # Method definitions
+│   ├── method-procedures/           # Individual method procedures
+│   │   ├── 071_First_Principles_Analysis.md
+│   │   ├── 100_Vocabulary_Consistency.md
+│   │   └── ... (19 files total)
+│   ├── pattern-library.yaml         # Impossibility patterns
+│   ├── severity-scoring.yaml        # Scoring rules
+│   ├── method-clusters.yaml         # Method selection
+│   ├── decision-thresholds.yaml
+│   ├── report-template.md           # Report format
+│   ├── examples.md                  # Worked examples
+│   └── calibration.yaml             # Accuracy tracking
+└── steps/                           # Detailed step files
 ```
 
 ---
 
-## Workflow State (Frontmatter Schema)
+## Detailed Steps (Optional — for complex cases or resumption)
 
-Each step updates this state in the working document:
+If you need detailed step-by-step guidance, load the appropriate step file:
 
-```yaml
----
-workflow: deep-verify
-artifact: "[name of artifact being verified]"
-started: "[ISO timestamp]"
-stakes: LOW | MEDIUM | HIGH
-bias_mode: Standard | Blind | ForcedAlternative
-initial_assessment: ProbablySound | Uncertain | ProbablyFlawed | BLIND
+| Phase | File | When to use |
+|-------|------|-------------|
+| 0 | `steps/step-00-setup.md` | Complex stakes assessment |
+| 1 | `steps/step-01-pattern-scan.md` | Need detailed Tier 1 guidance |
+| 2 | `steps/step-02-targeted.md` | Complex method selection |
+| 3 | `steps/step-03-adversarial.md` | Detailed adversarial process |
+| 4 | `steps/step-04-verdict.md` | Complex verdict validation |
+| 5 | `steps/step-05-report.md` | Detailed report generation |
 
-stepsCompleted: [0, 1, 2, ...]
-currentStep: 0-5
-currentScore: 0.0
-scoreHistory:
-  - step: 1
-    delta: "+3 (CRITICAL finding)"
-    total: 3
-
-findings:
-  - id: F1
-    severity: CRITICAL | IMPORTANT | MINOR
-    description: "..."
-    quote: "exact text"
-    location: "line/section"
-    pattern: "pattern name or null"
-    survived_phase3: true | false | null
-
-patternsMatched: []
-methodsExecuted:
-  - method_id: 71
-    name: "First Principles"
-    result: Clean | Finding
-
-earlyExit: false
-earlyExitReason: null
-verdict: null
-confidence: null
----
-```
+**For most verifications:** Use this workflow.md directly. Step files are for edge cases, learning, or resuming interrupted verifications.
 
 ---
 
-## Execution Flow
+## Critical Rules
 
-```
-                    ┌───────────────────┐
-                    │  Load workflow.md │
-                    └─────────┬─────────┘
-                              │
-                    ┌─────────▼─────────────────┐
-                    │ steps/step-00-setup.md    │
-                    │ Load: data/decision-      │
-                    │       thresholds.yaml     │
-                    └─────────┬─────────────────┘
-                              │
-                    ┌─────────▼─────────────────┐
-                    │steps/step-01-pattern-scan │
-                    │ Load: data/methods.csv    │
-                    │       data/pattern-lib... │
-                    │       data/severity-...   │
-                    └─────────┬─────────────────┘
-                              │
-              ┌───────────────┼───────────────┐
-              │               │               │
-         S ≥ 6 +         BORDERLINE       DEFAULT
-         Pattern          4≤S<6
-              │               │               │
-              ▼               │               │
-         ┌────────┐           │               │
-         │REJECT  │           │               │
-         │(early) │           │               │
-         └────────┘           │               │
-                              │               │
-                    ┌─────────▼───────────────┘
-                    │ steps/step-02-targeted.md│
-                    │ Load: data/methods.csv   │
-                    │       data/method-clust..│
-                    └─────────┬────────────────┘
-                              │
-                    ┌─────────▼────────────────┐
-                    │steps/step-03-adversarial │ ← MANDATORY
-                    │ Load: data/methods.csv   │
-                    └─────────┬────────────────┘
-                              │
-              ┌───────────────┼───────────────┐
-              │               │               │
-           S ≥ 6         -3<S<6           S ≤ -3
-              │               │               │
-              ▼               ▼               ▼
-         ┌────────┐    ┌──────────┐    ┌────────┐
-         │ REJECT │    │UNCERTAIN │    │ ACCEPT │
-         └────────┘    └──────────┘    └────────┘
-                              │
-                    ┌─────────▼────────────────┐
-                    │ steps/step-04-verdict.md │
-                    │ Load: data/decision-...  │
-                    └─────────┬────────────────┘
-                              │
-                    ┌─────────▼────────────────┐
-                    │ steps/step-05-report.md  │
-                    │ Load: data/report-temp.. │
-                    └──────────────────────────┘
-```
-
----
-
-## Quick Start
-
-1. **Start new verification:**
-   ```
-   Load: steps/step-00-setup.md
-   ```
-
-2. **Resume from interruption:**
-   ```
-   Check frontmatter.stepsCompleted
-   Load: steps/step-{currentStep}.md
-   ```
-
-3. **Early exit triggered:**
-   ```
-   If earlyExit: true
-   Load: steps/step-04-verdict.md directly
-   ```
-
----
-
-## Method Loading Protocol
-
-**CRITICAL:** Methods definitions must be loaded from `data/methods.csv` whenever:
-- Executing any numbered method (#71, #100, etc.)
-- Selecting methods in Phase 2
-- Referencing method procedures
-
-```
-When step says "Execute method #71":
-1. Load data/methods.csv
-2. Find row where num=71
-3. Read: method_name, description, output_pattern
-4. Execute according to description
-5. Record result per output_pattern
-```
-
----
-
-## Data File Loading Rules
-
-| Data File | Load When | Contains |
-|-----------|-----------|----------|
-| `data/methods.csv` | Any method execution | Method definitions (19 methods) |
-| `data/method-procedures.md` | When CSV description insufficient | Detailed step-by-step procedures |
-| `data/pattern-library.yaml` | steps/step-01, steps/step-02 | Impossibility patterns |
-| `data/severity-scoring.yaml` | steps/step-01, 02, 03, 04 | Scoring rules |
-| `data/method-clusters.yaml` | steps/step-02 | Correlation rules |
-| `data/decision-thresholds.yaml` | steps/step-00, 01, 04 | Decision boundaries |
-| `data/report-template.md` | steps/step-05 | Report structure |
-| `data/examples.md` | Learning / debugging | Worked scoring examples |
-| `data/calibration.yaml` | Post-verification / audits | Accuracy tracking |
-
----
-
-## Step File Reference
-
-| Step | File Path | Purpose |
-|------|-----------|---------|
-| 0 | `steps/step-00-setup.md` | Stakes assessment, bias check |
-| 1 | `steps/step-01-pattern-scan.md` | Tier 1 methods, pattern matching |
-| 2 | `steps/step-02-targeted.md` | Signal-based method selection |
-| 3 | `steps/step-03-adversarial.md` | Devil's advocate, steel-man |
-| 4 | `steps/step-04-verdict.md` | Final score, verdict decision |
-| 5 | `steps/step-05-report.md` | Report generation |
+1. **NO QUOTE = NO FINDING** — Every finding must cite exact artifact text
+2. **MANDATORY PHASE 3** — Always do adversarial review (except early exit with pattern)
+3. **OUTPUT = REPORT** — Your deliverable is a structured verification report
+4. **DON'T NARRATE** — Execute the process, don't describe it
+5. **LOAD FILES WHEN NEEDED** — Read method procedures, templates, and data files as you need them
 
 ---
 
 ## Version History
 
-- **V2.0** — Modular refactor with step files and datafiles (based on V12.2)
-  - Added: examples.md, method-procedures.md, calibration.yaml
-  - Added: Methods #87 (Falsifiability Check), #162 (Theory-Dependence Verification)
-  - Fixed: Consistent versioning across all files
-- **V12.2** — Added bias mitigation, mandatory Phase 3, ACCEPT guidance
+- **V2.0** — Modular with separate method procedure files, references by path
+- **V12.2** — Original version with bias mitigation, mandatory Phase 3
