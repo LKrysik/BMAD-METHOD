@@ -1,6 +1,6 @@
 # Deep Verify V2.0
 
-**A modular, data-driven verification workflow for LLMs that systematically audits artifacts through 6 phases: bias-aware setup, pattern scan, targeted analysis, mandatory adversarial self-critique, verdict, and report. Uses 19 tiered methods, 24 impossibility patterns, and cumulative evidence scoring to produce quote-grounded REJECT/ACCEPT/UNCERTAIN verdicts.**
+**A modular, data-driven verification workflow for LLMs that systematically audits artifacts through 6 phases (+ 1 optional): bias-aware setup, pattern scan, targeted analysis, mandatory adversarial self-critique, verdict, report, and optional pattern candidate evaluation. Uses 19 tiered methods, 24 impossibility patterns, cumulative evidence scoring, and a Pattern Update Protocol (PUP) to produce quote-grounded REJECT/ACCEPT/UNCERTAIN verdicts and continuously improve detection capabilities.**
 
 ---
 
@@ -21,7 +21,7 @@ Deep Verify does not verify code execution or runtime behavior. It verifies the 
 
 ## How It Works
 
-### The 6-Phase Pipeline
+### The Pipeline (6 Phases + 1 Optional)
 
 ```
 Phase 0: SETUP          Assess stakes, document biases, select mode
@@ -38,6 +38,10 @@ Phase 3: ADVERSARIAL     Attack own findings, steel-man opposite verdict (MANDAT
 Phase 4: VERDICT         Calculate final score, determine verdict + confidence
     |
 Phase 5: REPORT          Generate structured verification report
+    |
+   [If CRITICAL finding survived Phase 3 without Pattern Library match]
+    |
+Phase 6: PATTERN CANDIDATE EVALUATION (OPTIONAL, user-triggered)
 ```
 
 ### Evidence Score (S)
@@ -232,7 +236,29 @@ Then:
 
 **Goal:** Generate comprehensive, structured verification report.
 
-The report includes: Verdict, Executive Summary, Key Findings (with quotes), Score Calculation breakdown, Methods Executed per phase, Adversarial Review Details, NOT CHECKED section, and Recommendations.
+The report includes: Verdict, Executive Summary, Key Findings (with quotes), Score Calculation breakdown, Methods Executed per phase, Adversarial Review Details, NOT CHECKED section, Recommendations, and (if applicable) a Pattern Candidate Note.
+
+If a CRITICAL finding survived Phase 3 without a Pattern Library match, the report includes a **passive note** informing the user that Phase 6 is available — but does not interactively ask. The user decides on their own.
+
+### Phase 6: Pattern Candidate Evaluation (`steps/step-06-pattern-candidate.md`) — OPTIONAL
+
+**Goal:** Evaluate whether deep-verify findings warrant new Pattern Library entries.
+
+This phase activates **only** when:
+- User explicitly requests pattern evaluation after receiving the report
+- A CRITICAL finding survived Phase 3 with no Pattern Library match and is grounded in a theorem, definition, or regulation
+
+**Key distinction:** The Pattern Library contains **impossibilities**, not **incompleteness**. "Missing details about X" does NOT qualify. "X contradicts Y by theorem/definition" DOES qualify.
+
+The evaluation process:
+1. **Existing Pattern Coverage Check** — verify the finding isn't a detection failure of an existing pattern
+2. **Significance Pre-Check** — 5 mandatory questions (all must be YES): recurring? verdict-changing? grounded? not already covered? precise signals?
+3. **Draft Pattern Proposal** — fill structured YAML template with signals, explanation, check question, and mandatory `falsified_if` field
+4. **Self-Challenge (Triangular Validation)** — attempt to construct counterexamples that break the proposed pattern
+5. **Signal Specificity Check** — verify signals don't match valid artifacts (test against 3 valid artifact types)
+6. **Recommendation** — VALIDATED / PROVISIONAL / DEFERRED / REJECTED
+
+**Human gate:** The agent NEVER modifies `pattern-library.yaml` directly. Phase 6 produces a Pattern Candidate Report (recommendation only). A human must review and approve before adding to the library.
 
 ---
 
@@ -248,7 +274,8 @@ deep-verify/
 |   |-- step-02-targeted.md            # Phase 2: Signal-based method selection
 |   |-- step-03-adversarial.md         # Phase 3: Devil's advocate + Steel-man
 |   |-- step-04-verdict.md             # Phase 4: Score calculation + Decision
-|   +-- step-05-report.md             # Phase 5: Report generation
+|   |-- step-05-report.md              # Phase 5: Report generation
+|   +-- step-06-pattern-candidate.md   # Phase 6: Pattern candidate evaluation (optional)
 +-- data/
     |-- methods.csv                     # Method catalog (19 methods with tiers)
     |-- method-procedures/              # Individual method procedure files (18)
@@ -275,6 +302,7 @@ deep-verify/
     |-- method-clusters.yaml            # Cluster correlation rules + selection algorithm
     |-- decision-thresholds.yaml        # Verdict thresholds, confidence, escalation
     |-- report-template.md              # Standardized report output format
+    |-- pattern-update-protocol.yaml   # Pattern Update Protocol (PUP)
     |-- examples.md                     # 4 worked scoring examples
     +-- calibration.yaml                # Accuracy tracking and recalibration
 ```
@@ -289,14 +317,16 @@ deep-verify/
 | **`steps/step-02-targeted.md`** | Signal analysis from Phase 1. Method selection using cluster mapping algorithm. Execution of 2-4 Tier 2 methods with procedure file loading. Method agreement assessment. | When no early exit |
 | **`steps/step-03-adversarial.md`** | 4 adversarial prompts per IMPORTANT+ finding. Steel-man construction (3 arguments for opposite verdict). False Positive Checklist (5 items). Score adjustments for downgrades/removals. | Mandatory after Phase 2 |
 | **`steps/step-04-verdict.md`** | Final score verification. Verdict determination per thresholds. Validation checklists per verdict type. Confidence level assignment. Escalation criteria check. | After adversarial or early exit |
-| **`steps/step-05-report.md`** | Report template population. Section-by-section data gathering from frontmatter. Report validation checklist. Finalization and post-report actions. | After verdict |
+| **`steps/step-05-report.md`** | Report template population. Section-by-section data gathering from frontmatter. Report validation checklist. Finalization and post-report actions. Pattern Candidate Note (passive) for CRITICAL findings without pattern match. | After verdict |
+| **`steps/step-06-pattern-candidate.md`** | Optional Pattern Candidate Evaluation. Existing pattern coverage check, significance pre-check (impossibility vs incompleteness gate), proposal drafting, triangular validation (counterexample + signal precision), and recommendation (VALIDATED/PROVISIONAL/DEFERRED/REJECTED). Produces Pattern Candidate Report for human review. | User-triggered after report |
 | **`data/methods.csv`** | Tabular catalog of all 19 methods: ID, category, name, description, output pattern, when to load, tier assignment. The single source of truth for method metadata. | Phase 1 and 2 |
 | **`data/method-procedures/*.md`** | Individual procedure files for each method. Each contains: tier designation, purpose, step-by-step instructions, output format template, and finding/severity guidance. Loaded on-demand when a method is selected for execution. | When executing specific method |
 | **`data/pattern-library.yaml`** | 24 known impossibility patterns organized into 5 categories. Each pattern has: ID, name, signal keywords, explanation of why it's impossible, referenced theorems, detection methods, severity, and a check question. | Phase 1 and 2 |
 | **`data/severity-scoring.yaml`** | Complete scoring system: base scores per severity level, bonus rules (pattern match, cross-cluster confirmation), score calculation formula, severity anchoring checklists, and Phase 3 adjustment rules (4 adversarial prompts with downgrade/removal logic). | All scoring phases |
 | **`data/method-clusters.yaml`** | 5 method clusters with correlation levels (HIGH/MEDIUM). Signal-to-cluster mapping for Phase 2 method selection. Selection algorithm (4 steps). Tier 1 and Tier 3 method listings. Loading instructions and cluster constraint rules. | Phase 2 |
 | **`data/decision-thresholds.yaml`** | Evidence thresholds for early exit (REJECT_EARLY, ACCEPT_EARLY, BORDERLINE, CONTINUE). Final verdict rules with validation checklists. Confidence levels (HIGH/MEDIUM/LOW) with conditions. Stakes assessment criteria. Escalation criteria (mandatory and recommended) with output template. | Phase 0, 1, 4 |
-| **`data/report-template.md`** | Standardized report structure with placeholders. Sections: Verdict, Executive Summary, Key Findings, Score Calculation, Methods Executed, Adversarial Review Details, NOT CHECKED, Recommendations, Metadata. Generation checklist. | Phase 5 |
+| **`data/report-template.md`** | Standardized report structure with placeholders. Sections: Verdict, Executive Summary, Key Findings, Score Calculation, Methods Executed, Adversarial Review Details, NOT CHECKED, Recommendations, Pattern Candidate Note, Metadata. Generation checklist. | Phase 5 |
+| **`data/pattern-update-protocol.yaml`** | Pattern Update Protocol (PUP). Defines the 6-step process for adding/updating patterns: Propose → Verify (type-specific gates) → Challenge (triangular validation) → Test → Review → Maintain. Includes qualification classes (THEOREM/DEFINITION fast track, REGULATION/STATISTICAL full track, OBSERVATION rejected), significance checklist, proposal template, integration triggers, and human gate requirement. | Phase 6 |
 | **`data/examples.md`** | 4 complete worked examples showing end-to-end score calculation: (1) Early REJECT with pattern match, (2) Full process to UNCERTAIN, (3) Full process to ACCEPT, (4) Borderline case with Phase 2+3. Includes score trajectories reference table. | Learning and debugging |
 | **`data/calibration.yaml`** | Post-verification accuracy tracking framework. Calibration log template. Expected accuracy targets by confidence level. Primary metrics (TPR, TNR, FPR, FNR). Recalibration triggers. Ground truth sources. | Post-verification audits |
 
@@ -335,6 +365,62 @@ Every finding requires an exact quote from the artifact. This prevents hallucina
 
 ---
 
+## Pattern Update Protocol (PUP)
+
+The Pattern Library is not static. When Deep Verify discovers CRITICAL findings that survive adversarial review and don't match any existing pattern, they may represent new impossibility patterns worth codifying. The **Pattern Update Protocol** (`data/pattern-update-protocol.yaml`) governs this process.
+
+### When PUP Activates
+
+| Trigger | Strength | Condition |
+|---------|----------|-----------|
+| **Post-Report Note** | STRONG | CRITICAL finding + survived Phase 3 + no Pattern Library match |
+| **Calibration Review** | MEDIUM | Ground truth reveals false negative, OR same finding type appears 3+ times across DIFFERENT domains |
+| **User Request** | USER_DIRECTED | User explicitly requests pattern evaluation after any deep-verify |
+
+The report includes a **passive note** (not an interactive question) when a pattern candidate is detected. The user decides independently whether to trigger Phase 6.
+
+### Qualification Classes
+
+Not every finding qualifies for the Pattern Library. Only **impossibilities** qualify — not **incompleteness**.
+
+| Class | Track | Initial Status | Example |
+|-------|-------|---------------|---------|
+| **THEOREM-based** | Fast Track | VALIDATED | CAP violation, FLP violation |
+| **DEFINITION-based** | Fast Track | VALIDATED | PFS + Escrow, Stateless + Sessions |
+| **REGULATION-based** | Full Track | PROVISIONAL | FDA Class III + Continuous Learning |
+| **STATISTICAL-based** | Full Track | PROVISIONAL | Accuracy without N |
+| **OBSERVATION-based** | Does NOT qualify | — | "Section 3 is unclear" |
+
+### The 6-Step PUP Process
+
+```
+1. PROPOSE      Fill proposal template (signals, why_impossible, check, falsified_if)
+       |
+2. VERIFY       Pass type-specific gate (theorem source? definition expansion? legal citation?)
+       |
+3. CHALLENGE    Triangular Validation — ALL THREE must pass:
+       |           • Theorem/definition check
+       |           • Counterexample challenge (adversarial mode)
+       |           • Signal precision test (0 false matches on valid artifacts)
+       |
+4. TEST         Run signals against known-good and known-bad artifacts (skip for Fast Track)
+       |
+5. REVIEW       Independent review of complete proposal
+       |
+6. MAINTAIN     Track accuracy, re-verify regulatory patterns every 12 months
+```
+
+### Human Gate
+
+The AI agent **never** modifies `pattern-library.yaml` directly. Phase 6 produces a **Pattern Candidate Report** (recommendation only). A human must review and approve before any pattern enters the library. This is non-negotiable.
+
+### Pattern Statuses
+
+- **VALIDATED** — Fully verified, counts toward scoring. Theorem and definition patterns start here.
+- **PROVISIONAL** — Under observation, counts toward scoring but flagged. Promoted to VALIDATED after 5+ true matches. Regulation and statistical patterns start here.
+
+---
+
 ## Data Flow
 
 ```
@@ -349,16 +435,30 @@ step-00 --> step-01 -----> step-02 -----> step-03 --> step-04 --> step-05
 decision-  pattern- severity- method-     severity-  decision-  report-
 thresholds library  scoring   clusters    scoring    thresholds template
   .yaml     .yaml   .yaml     .yaml       .yaml      .yaml      .md
+                                                                    |
+                                                          [passive note if
+                                                           pattern candidate]
+                                                                    |
+                                                                    v
+                                                               step-06
+                                                              (OPTIONAL)
+                                                                 |   |
+                                                                 v   v
+                                                          pattern-  pattern-
+                                                          update-   library
+                                                          protocol  .yaml
+                                                           .yaml
 ```
 
 ### Cross-Reference Map
 
 - **`severity-scoring.yaml`** is the most referenced file (used by 4 of 6 steps)
 - **`decision-thresholds.yaml`** is used by 3 steps (setup, pattern scan, verdict)
-- **`pattern-library.yaml`** is used by 2 steps (pattern scan, targeted)
+- **`pattern-library.yaml`** is used by 3 steps (pattern scan, targeted, pattern candidate evaluation)
+- **`pattern-update-protocol.yaml`** is used by Phase 6 (pattern candidate evaluation) and calibration reviews
 - **`method-clusters.yaml`** is used only by Phase 2 (targeted analysis)
 - **`report-template.md`** is used only by Phase 5 (report generation)
-- **`calibration.yaml`** and **`examples.md`** are operational/educational — not consumed by the pipeline
+- **`calibration.yaml`** and **`examples.md`** are operational/educational — not consumed by the main pipeline (calibration references PUP for pattern library miss triggers)
 
 ---
 
@@ -406,6 +506,13 @@ earlyExit: false
 earlyExitReason: null
 verdict: REJECT | ACCEPT | UNCERTAIN | ESCALATE | null
 confidence: HIGH | MEDIUM | LOW | null
+
+# Phase 6 (optional, added after pattern candidate evaluation)
+pattern_candidates:
+  - finding_id: F1
+    proposed_pattern: "[name]"
+    recommendation: VALIDATED | PROVISIONAL | DEFERRED | REJECTED
+    added_to_library: false  # Updated after human review
 ---
 ```
 
@@ -449,5 +556,6 @@ The `data/examples.md` file contains 4 complete worked examples:
 
 | Version | Changes |
 |---------|---------|
+| **V2.0 + PUP** | Added Pattern Update Protocol: `data/pattern-update-protocol.yaml` (6-step process with qualification classes, triangular validation, human gate) and `steps/step-06-pattern-candidate.md` (optional Phase 6). Updated report template with Pattern Candidate Note section. Updated calibration.yaml to reference PUP. Added library_metadata to pattern-library.yaml. |
 | **V2.0** | Modular refactor: 6 step files, 8 data files, 18 method procedure files. Separated concerns for maintainability. Added method-clusters.yaml for selection optimization. |
 | **V12.2** | Added bias mitigation (3 modes), mandatory Phase 3, ACCEPT guidance, calibration framework. Original single-file workflow. |
