@@ -78,6 +78,7 @@
 | Unsure about scoring | `data/severity-scoring.yaml` |
 | Selecting Phase 2 methods | `data/method-clusters.yaml` |
 | Generating final report | `data/report-template.md` |
+| Evaluating pattern candidates (Phase 6) | `data/pattern-update-protocol.yaml` |
 
 **Method procedures are in separate files. Load the specific one you need:**
 
@@ -169,15 +170,16 @@ deep-verify/
 │   ├── method-procedures/           # Individual method procedures
 │   │   ├── 071_First_Principles_Analysis.md
 │   │   ├── 100_Vocabulary_Consistency.md
-│   │   └── ... (19 files total)
+│   │   └── ... (18 files total)
 │   ├── pattern-library.yaml         # Impossibility patterns
+│   ├── pattern-update-protocol.yaml # Process for adding new patterns
 │   ├── severity-scoring.yaml        # Scoring rules
 │   ├── method-clusters.yaml         # Method selection
 │   ├── decision-thresholds.yaml
 │   ├── report-template.md           # Report format
 │   ├── examples.md                  # Worked examples
 │   └── calibration.yaml             # Accuracy tracking
-└── steps/                           # Detailed step files
+└── steps/                           # Detailed step files (0-5 + optional 6)
 ```
 
 ---
@@ -194,6 +196,9 @@ If you need detailed step-by-step guidance, load the appropriate step file:
 | 3 | `steps/step-03-adversarial.md` | Detailed adversarial process |
 | 4 | `steps/step-04-verdict.md` | Complex verdict validation |
 | 5 | `steps/step-05-report.md` | Detailed report generation |
+| 6 | `steps/step-06-pattern-candidate.md` | **Optional** — Evaluate if findings should become new patterns |
+
+**Phase 6** is optional. After the report, if a CRITICAL finding survived Phase 3 without a Pattern Library match, offer to run Phase 6. The user can also request it explicitly.
 
 **For most verifications:** Use this workflow.md directly. Step files are for edge cases, learning, or resuming interrupted verifications.
 

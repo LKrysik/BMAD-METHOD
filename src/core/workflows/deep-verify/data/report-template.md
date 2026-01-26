@@ -204,6 +204,17 @@ IF ESCALATE:
     [Information or decision needed]
 
 ───────────────────────────────────────────────────────────────
+PATTERN CANDIDATE NOTE
+───────────────────────────────────────────────────────────────
+
+[Include ONLY if: CRITICAL finding survived Phase 3 WITHOUT Pattern Library match]
+[Omit entire section if no candidates exist]
+
+Finding [F_id] ([description]) has no Pattern Library match.
+Reason this may be a new pattern: [one sentence explanation].
+To evaluate: request Phase 6 (Pattern Candidate Evaluation).
+
+───────────────────────────────────────────────────────────────
 METADATA
 ───────────────────────────────────────────────────────────────
 

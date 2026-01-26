@@ -4,6 +4,15 @@
 
 ---
 
+library_metadata:
+  version: "2.0.0"
+  last_updated: "2025-01-26"
+  patterns_count: 24
+  last_added: null
+  update_protocol: "data/pattern-update-protocol.yaml"
+
+---
+
 # LOADING INSTRUCTIONS:
 # 1. Load this file at the START of step-01 (Pattern Scan phase)
 # 2. After each finding in step-01, check if it matches any pattern below
@@ -393,10 +402,32 @@ ungrounded_core_concepts:
 
 ---
 
+# ═══════════════════════════════════════════════════════════════
+# PATTERN MAINTENANCE
+# ═══════════════════════════════════════════════════════════════
+#
+# Adding new patterns:
+#   Follow data/pattern-update-protocol.yaml (Pattern Update Protocol)
+#   New patterns require: significance check, type-specific gate,
+#   counterexample attempt, signal testing, and independent review.
+#   See steps/step-06-pattern-candidate.md for deep-verify integration.
+#
+# Pattern status:
+#   VALIDATED — Fully verified, counts toward scoring
+#   PROVISIONAL — Under observation, counts toward scoring but flagged
+#
+# Tracking:
+#   Pattern accuracy is tracked via calibration.yaml
+#   Patterns with accuracy < 70% after 5+ matches trigger re-evaluation
+#   Regulatory patterns require re-verification every 12 months
+
+---
+
 # USAGE SUMMARY:
 #
 # 1. For each finding in Phase 1, check pattern_id against this library
-# 2. Pattern match → +1 bonus to evidence score, enables early exit
-# 3. No match but S ≥ 6 → proceed to Phase 2 for confirmation
+# 2. Pattern match -> +1 bonus to evidence score, enables early exit
+# 3. No match but S >= 6 -> proceed to Phase 2 for confirmation
 # 4. Use 'check' questions to verify pattern applicability
 # 5. Reference 'detection_methods' for which methods best find this pattern
+# 6. After report: if CRITICAL finding has no match, consider Phase 6 (pattern candidate evaluation)

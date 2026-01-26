@@ -1,0 +1,376 @@
+# Pattern Update Protocol (PUP) — Process for Adding/Updating Patterns
+# LOAD: After deep-verify completion when pattern candidate detected, or during calibration review
+# PURPOSE: Ensure only valid, significant patterns enter pattern-library.yaml
+
+---
+
+# LOADING INSTRUCTIONS:
+# 1. Load this file when step-06-pattern-candidate.md triggers, OR during calibration review
+# 2. Follow the 6-step protocol sequentially
+# 3. Use the Pattern Proposal Template at the bottom to structure proposals
+# 4. Patterns that fail any mandatory gate are REJECTED — do not add to library
+
+---
+
+overview: |
+  The Pattern Update Protocol ensures pattern-library.yaml remains a curated set of
+  high-value, verified impossibility patterns. Not every finding from deep-verify
+  belongs here — only patterns grounded in theorems, definitions, regulations, or
+  well-evidenced statistical limits that will meaningfully impact future verifications.
+
+significance_threshold: |
+  A pattern is significant enough for the library ONLY if ALL of these are true:
+    1. It is RECURRING — likely to appear in future artifacts (not one-off)
+    2. It is DETECTABLE — has clear signal keywords that don't over-match
+    3. It is GROUNDED — based on theorem, definition, regulation, or statistical proof
+    4. It is IMPACTFUL — would change verdict direction (not just add a MINOR finding)
+    5. It is NOT ALREADY COVERED — existing patterns don't already catch this
+
+  CRITICAL DISTINCTION:
+    Pattern Library contains IMPOSSIBILITIES, not INCOMPLETENESS.
+    "Missing details" is incompleteness → does NOT qualify.
+    "X contradicts Y by definition/theorem" is impossibility → QUALIFIES.
+
+    Three classes of findings:
+      THEOREM-BASED → qualifies immediately (Fast Track)
+      DEFINITION-BASED → qualifies after counterexample attempt (Fast Track)
+      OBSERVATION-BASED → does NOT qualify for pattern library
+
+qualification_classes:
+  theorem_based:
+    description: "Finding rooted in a named mathematical/logical theorem"
+    examples: ["CAP violation", "FLP violation", "Halting problem"]
+    track: FAST
+    initial_status: VALIDATED
+  definition_based:
+    description: "Finding where term definitions are mutually exclusive"
+    examples: ["PFS + Escrow", "Stateless + Server Sessions"]
+    track: FAST
+    initial_status: VALIDATED
+  regulation_based:
+    description: "Finding where legal requirements conflict"
+    examples: ["FDA Class III + Continuous Learning"]
+    track: FULL
+    initial_status: PROVISIONAL
+  statistical_based:
+    description: "Finding where statistical limits are violated"
+    examples: ["Accuracy without N", "Unverifiable optimum"]
+    track: FULL
+    initial_status: PROVISIONAL
+  observation_based:
+    description: "Finding based on missing info, vagueness, or poor structure"
+    examples: ["Section 3 is unclear", "No error handling documented"]
+    track: DOES_NOT_QUALIFY
+    reason: "Incompleteness is not impossibility"
+
+---
+
+# ═══════════════════════════════════════════════════════════════
+# THE 6-STEP PROTOCOL
+# ═══════════════════════════════════════════════════════════════
+
+integration_triggers:
+  description: "When and how the Pattern Update Protocol activates"
+
+  trigger_1_post_report:
+    name: "Post-Report Pattern Candidate Note"
+    strength: STRONG
+    condition: "CRITICAL finding + survived Phase 3 + no Pattern Library match"
+    action: |
+      Add a quiet note to the report (NOT an interactive question):
+      ────────────────────────────────────
+      PATTERN CANDIDATE NOTE
+      ────────────────────────────────────
+      Finding [F_id] ([description]) has no Pattern Library match.
+      Reason this may be a new pattern: [one sentence explanation].
+      To evaluate: request Phase 6 (Pattern Candidate Evaluation).
+    important: "This is a PASSIVE NOTE, not an interactive prompt. User decides."
+
+  trigger_2_calibration_review:
+    name: "Calibration Review Discovery"
+    strength: MEDIUM
+    condition: "Ground truth reveals false negative OR same finding type appears 3+ times across DIFFERENT domains"
+    action: "Run full PUP during calibration review process"
+    note: |
+      Cross-verification signals require findings from DIFFERENT domains or artifact types.
+      3 crypto specs with same finding = 1 domain-specific observation, not 3 independent ones.
+      3 findings across crypto + API + ML = genuine cross-domain signal.
+
+  trigger_3_user_request:
+    name: "Explicit User Request"
+    strength: USER_DIRECTED
+    condition: "User explicitly requests pattern evaluation after any deep-verify"
+    action: "Load steps/step-06-pattern-candidate.md"
+
+  human_gate:
+    description: |
+      CRITICAL: The AI agent NEVER modifies pattern-library.yaml directly.
+      Phase 6 produces a Pattern Candidate Report (RECOMMENDATION ONLY).
+      A human must review and approve before adding to the library.
+      Agent recommends. Human decides. This is non-negotiable.
+
+---
+
+step_1_propose:
+  name: "PROPOSE"
+  description: "Fill Pattern Proposal Template with all required fields"
+  actions:
+    - "Identify the impossibility or contradiction"
+    - "Classify type: THEOREM / DEFINITION / REGULATION / STATISTICAL / HEURISTIC"
+    - "Write signals, why_impossible, check question"
+    - "Fill falsified_if field (MANDATORY — what would disprove this?)"
+  output: "Completed proposal template"
+
+step_2_verify:
+  name: "VERIFY (type-specific gate)"
+  description: "Pass the gate matching your pattern type"
+
+  gates:
+    THEOREM:
+      requirements:
+        - "Theorem name provided"
+        - "Source/proof verifiable (paper, textbook, RFC)"
+        - "Theorem preconditions match pattern context"
+        - "Pattern correctly applies theorem (not misuse)"
+      fast_track: true
+      note: "Mathematical theorems don't need empirical testing (skip step 4)"
+
+    DEFINITION:
+      requirements:
+        - "Both sides expanded: MEANS / IMPLIES / EXCLUDES"
+        - "EXCLUDES of side A intersects MEANS of side B (or vice versa)"
+        - "Definitions sourced from authoritative reference"
+      fast_track: true
+      note: "Definitional contradictions are logical, not empirical"
+
+    REGULATION:
+      requirements:
+        - "Legal act cited with section/paragraph"
+        - "Jurisdiction specified"
+        - "Effective date confirmed"
+        - "No pending amendments that would change conclusion"
+      fast_track: false
+      note: "Regulations change — must include last_verified and next_review"
+
+    STATISTICAL:
+      requirements:
+        - "Mathematical formula provided"
+        - "Threshold/bound justified"
+        - "Boundary conditions examined"
+        - "Not merely 'difficult' but provably limited"
+      fast_track: false
+
+    HEURISTIC:
+      requirements:
+        - "3+ independent confirmed cases documented"
+        - "Causal mechanism described (not just correlation)"
+        - "Explained why 'impossible' not merely 'hard'"
+        - "Distinguished from existing patterns"
+      fast_track: false
+      note: "Highest bar — heuristics have highest false positive risk"
+
+step_3_challenge:
+  name: "CHALLENGE (MANDATORY — Triangular Validation)"
+  description: "Three independent tests that ALL must pass"
+  mandatory: true
+  skip_condition: null
+
+  triangular_validation:
+    description: |
+      Every pattern candidate must pass ALL THREE independent tests.
+      If any fails, pattern needs revision or rejection.
+      If results are inconsistent (passes one, fails another), deeper analysis required.
+
+    test_1_theorem_definition_check:
+      question: "Can you name the theorem or expand MEANS/IMPLIES/EXCLUDES?"
+      pass: "Theorem named with source, OR definitional expansion shows EXCLUDES overlap"
+      fail: "No theorem, no definitional conflict — pattern is opinion, not impossibility"
+
+    test_2_counterexample_challenge:
+      question: "Can you construct a system where both sides coexist validly?"
+      rules:
+        - "Must be attempted by DIFFERENT evaluator than proposer"
+        - "If same AI agent: must explicitly switch to adversarial mode"
+        - "Spend genuine effort — not a token gesture"
+      outcomes:
+        impossible: "Document why → strong pattern"
+        found_with_exception: "Add exception field → pattern valid with scope"
+        found_invalidating: "Breaks pattern entirely → REJECT"
+
+    test_3_signal_precision:
+      question: "Do the signal keywords match ONLY problematic artifacts?"
+      procedure:
+        - "Mentally apply signals to 3 known-valid artifacts from similar domain"
+        - "If signals match ANY valid artifact → too broad → refine or reject"
+      pass: "0 false matches on valid artifacts"
+      fail: "Signals match valid artifacts → over-broad → refine before proceeding"
+
+  existing_pattern_check:
+    description: |
+      BEFORE proposing a new pattern, verify that existing patterns don't already
+      cover this case. A finding may look novel but actually be a detection failure
+      of an existing pattern with different signal keywords.
+    procedure:
+      - "Review all patterns in same category"
+      - "Check if existing pattern's 'check' question covers this finding"
+      - "If yes: suggest signal expansion for existing pattern instead of new entry"
+
+step_4_test:
+  name: "TEST (skip for fast_track types)"
+  description: "Verify signal keywords don't over-match on valid artifacts"
+  procedure:
+    - "Run pattern signals against 3 known-good artifacts from similar domain"
+    - "If pattern matches ANY known-good → signals too broad → refine or reject"
+    - "Run pattern against 2 known-bad artifacts (if available)"
+    - "If pattern misses known-bad → signals too narrow → refine"
+  pass_criteria:
+    false_matches_on_good: 0
+    true_matches_on_bad: ">=1 (if test artifacts available)"
+  skip_for: ["THEOREM", "DEFINITION"]
+
+step_5_review:
+  name: "REVIEW + ACCEPT/REJECT"
+  description: "Independent review of complete proposal"
+  rules:
+    - "Reviewer should not know proposer identity (blind review)"
+    - "Reviewer checks all gates independently"
+    - "Reviewer verifies counterexample attempt was genuine"
+  outcomes:
+    validated: "Pattern enters library with status VALIDATED"
+    provisional: "Pattern enters with status PROVISIONAL — promoted after 5+ true matches"
+    rejected: "Pattern does not enter library — rejection reason documented"
+
+step_6_maintain:
+  name: "MAINTAIN (periodic)"
+  description: "Ongoing accuracy tracking and review"
+  schedule:
+    regulatory_patterns: "Re-verify every 12 months"
+    all_patterns: "Review usage_stats at calibration review"
+  triggers:
+    re_evaluate: "accuracy < 70% AND times_matched > 5"
+    flag_obsolete: "No matches in 24 months"
+    update_required: "Regulatory change in jurisdiction"
+
+---
+
+# ═══════════════════════════════════════════════════════════════
+# PATTERN PROPOSAL TEMPLATE
+# ═══════════════════════════════════════════════════════════════
+
+proposal_template:
+  # --- Proposal metadata ---
+  proposed_date: "[ISO date]"
+  source: "[deep-verify finding / calibration review / domain expansion / external]"
+  source_artifact: "[artifact name where pattern was first detected, if applicable]"
+  source_finding_id: "[F_id from deep-verify report, if applicable]"
+  status: "PROPOSED"  # PROPOSED → UNDER_REVIEW → VALIDATED / PROVISIONAL / REJECTED
+
+  # --- Pattern definition ---
+  pattern:
+    id: "[to be assigned — format: CATEGORY-NNN]"
+    category: "[definitional_contradictions | theorem_violations | statistical_impossibilities | regulatory_contradictions | ungrounded_core_concepts]"
+    name: "[descriptive name]"
+    type: "[THEOREM | DEFINITION | REGULATION | STATISTICAL | HEURISTIC]"
+
+    signals:
+      - "[keyword/phrase 1]"
+      - "[keyword/phrase 2]"
+      - "[keyword/phrase 3]"
+
+    why_impossible: |
+      [Plain-language explanation of why these requirements are mutually exclusive
+       or why this claim violates known limits]
+
+    theorem: "[theorem name, if applicable]"
+    theorem_source: "[paper/textbook/RFC]"
+    theorem_preconditions: |
+      [Explicit statement of theorem's preconditions and why they match this pattern]
+
+    exception: "[conditions where pattern does NOT apply, if any — null if absolute]"
+
+    severity: "[CRITICAL | IMPORTANT]"
+    detection_methods: ["[NNN_Method_Name.md]"]
+    check: "[yes/no question to verify pattern match against artifact]"
+
+    falsified_if: |
+      [What specific condition would invalidate this pattern?
+       Every pattern MUST have this field.
+       Unfalsifiable patterns are rejected.]
+
+  # --- Verification record ---
+  verification:
+    gate_type: "[THEOREM | DEFINITION | REGULATION | STATISTICAL | HEURISTIC]"
+    gate_passed: false  # Set to true after step 2
+    gate_evidence: "[specific evidence that gate requirements are met]"
+
+    counterexample_attempted: false  # MANDATORY — set to true after step 3
+    counterexample_by: "[different evaluator or adversarial mode]"
+    counterexample_result: "[IMPOSSIBLE | FOUND_WITH_EXCEPTION | FOUND_INVALIDATING]"
+    counterexample_details: "[description of attempt and result]"
+
+    tested_on_known_good: # Step 4 (skip for fast_track)
+      artifacts_tested: 0
+      false_matches: 0
+      details: "[which artifacts, results]"
+    tested_on_known_bad:
+      artifacts_tested: 0
+      true_matches: 0
+      details: "[which artifacts, results]"
+
+    reviewer: "[name or 'AI-blind-review']"
+    review_date: "[ISO date]"
+    review_decision: "[VALIDATED | PROVISIONAL | REJECTED]"
+    review_notes: "[reviewer comments]"
+
+  # --- Tracking (initialized empty, updated over time) ---
+  tracking:
+    usage_stats:
+      times_matched: 0
+      true_matches: 0
+      false_matches: 0
+      last_matched: null
+      accuracy: null
+    maintenance:
+      last_verified: "[ISO date of acceptance]"
+      next_review: "[calculated: +12m for regulatory, +24m for others]"
+
+---
+
+# ═══════════════════════════════════════════════════════════════
+# SIGNIFICANCE EVALUATION CHECKLIST
+# ═══════════════════════════════════════════════════════════════
+# Use this BEFORE starting the full protocol to filter out low-value patterns
+
+significance_checklist:
+  description: "Quick pre-check — all must be YES to proceed with full protocol"
+  questions:
+    - question: "Is this pattern likely to appear in future artifacts (not one-off)?"
+      required: true
+      rationale: "One-time findings don't justify library maintenance overhead"
+
+    - question: "Would detecting this pattern early change a verdict direction?"
+      required: true
+      rationale: "Patterns that only add MINOR findings don't warrant library entry"
+
+    - question: "Is this grounded in a theorem, definition, regulation, or statistical proof?"
+      required: true
+      rationale: "Opinions and heuristics without hard backing have high false positive rates"
+
+    - question: "Do existing patterns NOT already cover this case?"
+      required: true
+      rationale: "Redundant patterns add complexity without value"
+
+    - question: "Can you write signal keywords that won't match valid artifacts?"
+      required: true
+      rationale: "Over-broad signals cause more harm than the pattern prevents"
+
+---
+
+# USAGE SUMMARY:
+#
+# 1. Pattern candidate detected → Run significance_checklist
+# 2. All YES → Fill proposal_template
+# 3. Follow steps 1-5 sequentially
+# 4. Accepted pattern → Add to pattern-library.yaml
+# 5. Track usage_stats over time via calibration process
+# 6. Maintain per schedule in step 6

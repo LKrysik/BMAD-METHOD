@@ -118,7 +118,7 @@ recalibration_triggers:
 
     - trigger: "Pattern Library miss"
       description: "New impossibility pattern found not in library"
-      action: "Add pattern to pattern-library.yaml"
+      action: "Run Pattern Update Protocol (data/pattern-update-protocol.yaml) via steps/step-06-pattern-candidate.md"
 
   periodic_review:
     frequency: "Quarterly or after 20+ verifications"

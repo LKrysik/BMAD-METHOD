@@ -294,6 +294,31 @@ report_generated: true
 | UNCERTAIN | Gather additional information, re-verify |
 | ESCALATE | Hand off to human reviewer with report |
 
+### Pattern Candidate Check
+
+**After delivering the report, check if a pattern candidate note should be included:**
+
+```
+Any CRITICAL finding that survived Phase 3 WITHOUT a Pattern Library match?
+
+[ ] Yes -> Add a QUIET NOTE to the end of the report (passive, not interactive):
+
+    ────────────────────────────────────
+    PATTERN CANDIDATE NOTE
+    ────────────────────────────────────
+    Finding [F_id] ([description]) has no Pattern Library match.
+    Reason this may be a new pattern: [one sentence explanation].
+    To evaluate: request Phase 6 (Pattern Candidate Evaluation).
+
+    IMPORTANT: This is a passive note, NOT an interactive question.
+    Do NOT ask the user if they want to run Phase 6.
+    The user reads the note and decides on their own.
+
+    If user later requests Phase 6 -> Load steps/step-06-pattern-candidate.md
+
+[ ] No  -> Workflow complete, no note needed
+```
+
 ---
 
 ## Output Checklist
