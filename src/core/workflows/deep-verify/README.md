@@ -1,216 +1,370 @@
-# Deep Verify V2.0 — Modular Verification Workflow
+# Deep Verify V2.0
 
-## Overview
+**A modular, data-driven verification workflow for LLMs that systematically audits artifacts through 6 phases: bias-aware setup, pattern scan, targeted analysis, mandatory adversarial self-critique, verdict, and report. Uses 19 tiered methods, 24 impossibility patterns, and cumulative evidence scoring to produce quote-grounded REJECT/ACCEPT/UNCERTAIN verdicts.**
 
-Deep Verify V2.0 is a modular refactor of V12.2, restructured using BMAD architectural patterns:
+---
 
-- **Step Files** — Modular, resumable workflow phases
-- **Datafiles** — Separated data for maintainability
-- **Subtasking Ready** — Structure supports MACP delegation
+## What is Deep Verify?
 
-## Quick Start
+Deep Verify is a structured verification framework designed for AI agents (LLMs) to rigorously evaluate documents, specifications, proposals, and other text artifacts. Instead of producing subjective opinions, it enforces a disciplined, multi-phase process that:
 
-### New Verification
+- **Quantifies credibility** through a cumulative Evidence Score (S)
+- **Detects known impossibilities** via a library of 24 patterns grounded in mathematical theorems (CAP, FLP, Halting Problem, Arrow's, Rice's, etc.)
+- **Prevents confirmation bias** through mandatory adversarial self-critique
+- **Requires material evidence** — every finding must cite exact quotes from the artifact ("NO QUOTE = NO FINDING")
+- **Supports early termination** when evidence is overwhelming, saving effort
+- **Produces structured reports** with full traceability from findings to verdict
 
-1. Load the main workflow file:
-   ```
-   Read: workflow.md
-   ```
+Deep Verify does not verify code execution or runtime behavior. It verifies the **logical soundness, internal consistency, and theoretical validity** of written artifacts.
 
-2. Start with setup:
-   ```
-   Load: steps/step-00-setup.md
-   ```
+---
 
-3. Follow step-by-step, loading data files as specified in each step's frontmatter.
+## How It Works
 
-### Resume Interrupted Verification
+### The 6-Phase Pipeline
 
-1. Check frontmatter for `stepsCompleted` and `currentStep`
-2. Load the appropriate step file
-3. Continue from where you left off
+```
+Phase 0: SETUP          Assess stakes, document biases, select mode
+    |
+Phase 1: PATTERN SCAN   Run 3 mandatory methods, check against Pattern Library
+    |
+    |--- Early exit possible (S >= 6 with pattern match -> REJECT)
+    |--- Early exit possible (S <= -3, low stakes -> ACCEPT)
+    |
+Phase 2: TARGETED        Select 2-4 methods based on Phase 1 signals
+    |
+Phase 3: ADVERSARIAL     Attack own findings, steel-man opposite verdict (MANDATORY)
+    |
+Phase 4: VERDICT         Calculate final score, determine verdict + confidence
+    |
+Phase 5: REPORT          Generate structured verification report
+```
 
-## Directory Structure
+### Evidence Score (S)
+
+Every finding contributes to a cumulative score. Every clean method pass reduces it. The final score determines the verdict:
+
+| Score Range | Verdict | Meaning |
+|-------------|---------|---------|
+| S >= 6 | **REJECT** | Artifact has critical flaws |
+| S <= -3 | **ACCEPT** | Artifact is sound |
+| -3 < S < 6 | **UNCERTAIN** | Insufficient evidence either way |
+
+### Scoring Rules
+
+| Event | Points |
+|-------|--------|
+| CRITICAL finding | +3 |
+| IMPORTANT finding | +1 |
+| MINOR finding | +0.3 |
+| Clean method pass | -0.5 |
+| Pattern Library match bonus | +1 |
+| Cross-cluster confirmation bonus | +1 |
+
+Phase 3 can **downgrade** (CRITICAL -> IMPORTANT = -2, IMPORTANT -> MINOR = -0.7) or **remove** findings entirely, adjusting the score accordingly.
+
+---
+
+## The 19 Verification Methods
+
+Methods are organized into 3 tiers that map to workflow phases:
+
+### Tier 1 — Mandatory (Phase 1: Pattern Scan)
+
+All three are always executed. They provide broad, cheap coverage:
+
+| # | Method | What It Does |
+|---|--------|-------------|
+| 71 | **First Principles Analysis** | Strips assumptions to identify core claims, checks if fundamentals are stated, justified, and mutually consistent |
+| 100 | **Vocabulary Consistency** | Extracts all key terms, finds synonyms (same concept, different words) and homonyms (same word, different meanings) |
+| 17 | **Abstraction Laddering** | Checks vertical coherence between goals, design, and implementation levels; finds gaps and orphan details |
+
+### Tier 2 — Signal-Based (Phase 2: Targeted Analysis)
+
+Selected based on Phase 1 signals. 2-4 methods executed per verification:
+
+| # | Method | Cluster | Triggered By |
+|---|--------|---------|-------------|
+| 153 | **Theoretical Impossibility Check** | Theory | Absolute claims ("guarantees", "always", "100%") |
+| 154 | **Definitional Contradiction Detector** | Theory | Absolute claims |
+| 163 | **Existence Proof Demand** | Theory | Absolute claims |
+| 162 | **Theory-Dependence Verification** | Theory | Absolute claims |
+| 116 | **Strange Loop Detection** | Structure | Structural complexity, dependencies |
+| 86 | **Topological Hole Detection** | Structure | Structural complexity |
+| 159 | **Transitive Dependency Closure** | Structure | Structural complexity |
+| 85 | **Grounding Check** | Grounding | Ungrounded claims, missing evidence |
+| 78 | **Assumption Excavation** | Grounding | Ungrounded claims, clean Phase 1 |
+| 130 | **Assumption Torture** | Grounding | Ungrounded claims |
+| 84 | **Coherence Check** | Coherence | Diffuse belief, general unease |
+| 87 | **Falsifiability Check** | Coherence | Theorem violations |
+| 109 | **Contraposition Inversion** | Challenge | Diffuse belief, clean Phase 1 |
+| 165 | **Constructive Counterexample** | Challenge | Absolute claims |
+
+### Tier 3 — Adversarial (Phase 3)
+
+| # | Method | What It Does |
+|---|--------|-------------|
+| 63 | **Challenge from Critical Perspective** | Devil's advocate attacking all findings; steel-manning the opposite verdict |
+
+### Method Clusters (Correlation Rules)
+
+Methods within the same cluster probe similar angles. To prevent redundancy:
+
+- **HIGH correlation clusters** (Theory, Structure, Grounding): If the first method finds nothing, skip the rest of the cluster. If it finds something, one more can confirm. Never 3+ from the same cluster.
+- **MEDIUM correlation clusters** (Challenge, Coherence): More flexibility, but still avoid using all methods from one cluster.
+
+---
+
+## Pattern Library — 24 Known Impossibility Patterns
+
+The Pattern Library enables rapid detection of artifacts that violate known theorems or contain definitional contradictions. A pattern match adds +1 bonus to the score and enables early exit.
+
+### Definitional Contradictions (DC-001 to DC-004)
+
+| ID | Pattern | Why Impossible |
+|----|---------|---------------|
+| DC-001 | PFS + Key Escrow | Forward secrecy means past sessions are unrecoverable; escrow means they ARE recoverable |
+| DC-002 | Gradual Typing + Guaranteed Termination | Rice's theorem: non-trivial semantic properties are undecidable with dynamic typing |
+| DC-003 | Deterministic + Adaptive | Same input/same output contradicts learning/self-improvement (unless scoped) |
+| DC-004 | CAP Theorem Violation | Cannot have strong consistency + high availability + partition tolerance simultaneously |
+
+### Theorem Violations (TV-001 to TV-005)
+
+| ID | Pattern | Theorem |
+|----|---------|---------|
+| TV-001 | VCG + Balanced Budget | Green-Laffont impossibility |
+| TV-002 | Async Consensus + Fault Tolerance + Termination | FLP impossibility |
+| TV-003 | Universal Termination Detection | Halting problem (Turing) |
+| TV-004 | Universal Bug/Risk Detection (100% recall) | Rice's theorem |
+| TV-005 | Perfect Voting System | Arrow's impossibility theorem |
+
+### Statistical Impossibilities (SI-001 to SI-004)
+
+| ID | Pattern | Issue |
+|----|---------|-------|
+| SI-001 | High Accuracy Without Sample Size | 99.9% claims need N x prevalence validation |
+| SI-002 | Quantum Speedup Claims | No proven quantum speedup for general optimization; NISQ limitations |
+| SI-003 | Unverifiable Global Optimum | NP-hard problems cannot prove optimality without exhaustive search |
+| SI-004 | Fictional Benchmarks | Presenting projected results as "achieved" with non-existent technology |
+
+### Regulatory Contradictions (RC-001 to RC-003)
+
+| ID | Pattern | Conflict |
+|----|---------|----------|
+| RC-001 | FDA Class III + Continuous Learning | PMA required for each model change vs. constant changes |
+| RC-002 | HIPAA Compliance + Rich Analytics | De-identification required vs. analytics enabling re-identification |
+| RC-003 | Automated Legal Advice | Unauthorized Practice of Law without attorney involvement |
+
+### Ungrounded Core Concepts (UG-001 to UG-003)
+
+| ID | Pattern | Problem |
+|----|---------|---------|
+| UG-001 | Undefined Central Concept | Key term central to value proposition lacks operational definition |
+| UG-002 | Circular Definition | X defined via Y, Y defined via X — no actual meaning |
+| UG-003 | Scope Creep Definition | Same term means different things in different sections |
+
+---
+
+## Phase-by-Phase Detail
+
+### Phase 0: Setup (`steps/step-00-setup.md`)
+
+**Goal:** Assess stakes, document biases, prepare for honest verification.
+
+- **Stakes Assessment:** LOW (minor rework, <$10K) / MEDIUM ($10K-$100K) / HIGH (>$100K, safety, reputation). HIGH stakes disable early ACCEPT and recommend Blind Mode.
+- **Bias Mode Selection:**
+  - *Standard* — Record initial impression and expected outcome
+  - *Blind* — Skip initial assessment entirely to prevent anchoring (recommended for HIGH stakes)
+  - *Forced Alternative* — Must articulate what would change your mind in both directions
+- **Bias Check:** 5 questions forcing honest self-examination of expectations and pressures
+- **Red Flag:** If you expect REJECT and assessed "probably flawed", Blind Mode becomes mandatory
+
+### Phase 1: Pattern Scan (`steps/step-01-pattern-scan.md`)
+
+**Goal:** Rapidly identify red flags using broad, cheap methods.
+
+- Execute all 3 Tier 1 methods (#71, #100, #17)
+- For each finding: record quote, location, severity, check against Pattern Library
+- Calculate Evidence Score S
+- **Early Exit Check:**
+  - S >= 6 AND pattern match -> **REJECT** (skip to Phase 4)
+  - S <= -3 AND stakes != HIGH -> **ACCEPT** (skip to Phase 4)
+  - Otherwise -> continue to Phase 2
+
+### Phase 2: Targeted Analysis (`steps/step-02-targeted.md`)
+
+**Goal:** Confirm or refute hypotheses using signal-driven method selection.
+
+- Analyze Phase 1 signals (absolute claims? structural complexity? ungrounded claims? diffuse belief? clean scan?)
+- Consult `method-clusters.yaml` signal-to-cluster mapping
+- Select 2-4 methods respecting cluster correlation rules
+- Execute each method using its procedure file from `data/method-procedures/`
+- Update score after each method
+- Check method agreement across directions
+
+### Phase 3: Adversarial Validation (`steps/step-03-adversarial.md`)
+
+**Goal:** Attack your own findings to ensure they survive scrutiny. **THIS PHASE IS MANDATORY.**
+
+For each IMPORTANT+ finding, answer 4 adversarial prompts:
+1. **Alternative Explanation** — "What if the author meant X instead of Y?"
+2. **Hidden Context** — "What unstated assumption would make this work?"
+3. **Domain Exception** — "Is there a known exception in this domain?"
+4. **Survivorship Bias** — "Am I focusing on this because I found it first?"
+
+If 2+ prompts weaken a finding, it gets downgraded or removed.
+
+Then:
+- **Steel-Man:** Construct the strongest possible case for the opposite verdict (3 arguments)
+- **False Positive Checklist** (before REJECT): 5 fairness checks; 2+ unchecked = return to adversarial review
+
+### Phase 4: Verdict (`steps/step-04-verdict.md`)
+
+**Goal:** Calculate final score, determine verdict, assess confidence.
+
+- Verify score calculation across all phases
+- Apply verdict rules: S >= 6 -> REJECT, S <= -3 -> ACCEPT, else -> UNCERTAIN
+- Validate verdict with appropriate checklist (REJECT requires surviving CRITICAL finding; ACCEPT requires failed steel-man)
+- Assign confidence: HIGH (|S| > 10, methods agree) / MEDIUM (6 <= |S| <= 10) / LOW (near threshold, disagreement)
+- Check escalation criteria (mandatory for UNCERTAIN + HIGH stakes, or strong method disagreement)
+
+### Phase 5: Report (`steps/step-05-report.md`)
+
+**Goal:** Generate comprehensive, structured verification report.
+
+The report includes: Verdict, Executive Summary, Key Findings (with quotes), Score Calculation breakdown, Methods Executed per phase, Adversarial Review Details, NOT CHECKED section, and Recommendations.
+
+---
+
+## Directory Structure and File Reference
 
 ```
 deep-verify/
-├── workflow.md                    # Orchestrator, entry point
-├── README.md                      # This file
-├── steps/
-│   ├── step-00-setup.md          # Phase 0: Stakes + Bias Assessment
-│   ├── step-01-pattern-scan.md   # Phase 1: Tier 1 methods + Pattern Library
-│   ├── step-02-targeted.md       # Phase 2: Signal-based method selection
-│   ├── step-03-adversarial.md    # Phase 3: Devil's advocate + Steel-man
-│   ├── step-04-verdict.md        # Phase 4: Score calculation + Decision
-│   └── step-05-report.md         # Phase 5: Report generation
-└── data/
-    ├── methods.csv               # Method definitions (19 methods)
-    ├── method-procedures/        # Individual method procedure files
-    │   ├── 017_Abstraction_Laddering.md
-    │   ├── 063_Challenge_from_Critical_Perspective.md
-    │   ├── 071_First_Principles_Analysis.md
-    │   ├── 078_Assumption_Excavation.md
-    │   ├── 084_Coherence_Check.md
-    │   ├── 085_Grounding_Check.md
-    │   ├── 086_Topological_Hole_Detection.md
-    │   ├── 087_Falsifiability_Check.md
-    │   ├── 100_Vocabulary_Consistency.md
-    │   ├── 109_Contraposition_Inversion.md
-    │   ├── 116_Strange_Loop_Detection.md
-    │   ├── 130_Assumption_Torture.md
-    │   ├── 153_Theoretical_Impossibility_Check.md
-    │   ├── 154_Definitional_Contradiction_Detector.md
-    │   ├── 159_Transitive_Dependency_Closure.md
-    │   ├── 162_Theory_Dependence_Verification.md
-    │   ├── 163_Existence_Proof_Demand.md
-    │   └── 165_Constructive_Counterexample.md
-    ├── method-procedures.md      # Combined procedures (deprecated, use individual files)
-    ├── pattern-library.yaml      # Known impossibility patterns
-    ├── severity-scoring.yaml     # Scoring rules and thresholds
-    ├── method-clusters.yaml      # Correlation rules for method selection
-    ├── decision-thresholds.yaml  # Verdict decision logic
-    ├── report-template.md        # Report output structure
-    ├── examples.md               # Worked scoring examples
-    └── calibration.yaml          # Accuracy tracking and recalibration
+|-- workflow.md                         # Entry point and quick reference
+|-- README.md                           # This file
+|-- steps/
+|   |-- step-00-setup.md               # Phase 0: Stakes + Bias Assessment
+|   |-- step-01-pattern-scan.md        # Phase 1: Tier 1 methods + Pattern Library
+|   |-- step-02-targeted.md            # Phase 2: Signal-based method selection
+|   |-- step-03-adversarial.md         # Phase 3: Devil's advocate + Steel-man
+|   |-- step-04-verdict.md             # Phase 4: Score calculation + Decision
+|   +-- step-05-report.md             # Phase 5: Report generation
++-- data/
+    |-- methods.csv                     # Method catalog (19 methods with tiers)
+    |-- method-procedures/              # Individual method procedure files (18)
+    |   |-- 017_Abstraction_Laddering.md
+    |   |-- 063_Challenge_from_Critical_Perspective.md
+    |   |-- 071_First_Principles_Analysis.md
+    |   |-- 078_Assumption_Excavation.md
+    |   |-- 084_Coherence_Check.md
+    |   |-- 085_Grounding_Check.md
+    |   |-- 086_Topological_Hole_Detection.md
+    |   |-- 087_Falsifiability_Check.md
+    |   |-- 100_Vocabulary_Consistency.md
+    |   |-- 109_Contraposition_Inversion.md
+    |   |-- 116_Strange_Loop_Detection.md
+    |   |-- 130_Assumption_Torture.md
+    |   |-- 153_Theoretical_Impossibility_Check.md
+    |   |-- 154_Definitional_Contradiction_Detector.md
+    |   |-- 159_Transitive_Dependency_Closure.md
+    |   |-- 162_Theory_Dependence_Verification.md
+    |   |-- 163_Existence_Proof_Demand.md
+    |   +-- 165_Constructive_Counterexample.md
+    |-- pattern-library.yaml            # 24 known impossibility patterns
+    |-- severity-scoring.yaml           # Scoring rules and adjustment logic
+    |-- method-clusters.yaml            # Cluster correlation rules + selection algorithm
+    |-- decision-thresholds.yaml        # Verdict thresholds, confidence, escalation
+    |-- report-template.md              # Standardized report output format
+    |-- examples.md                     # 4 worked scoring examples
+    +-- calibration.yaml                # Accuracy tracking and recalibration
 ```
 
-## Data Loading Protocol
+### File Purposes
 
-### Critical Rule
+| File | Role | When Loaded |
+|------|------|-------------|
+| **`workflow.md`** | Entry point and orchestrator. Contains the quick execution path, scoring reference, method quick reference, and pattern library summary. An LLM agent reads this first to understand the full process. | Always first |
+| **`steps/step-00-setup.md`** | Stakes assessment (LOW/MEDIUM/HIGH), bias mode selection (Standard/Blind/Forced Alternative), bias check questionnaire, and frontmatter initialization. Contains HALT points requiring user input. | Start of verification |
+| **`steps/step-01-pattern-scan.md`** | Execution of all 3 Tier 1 methods with structured templates. Finding recording with mandatory quotes. Pattern Library matching. Score calculation. Early exit decision tree. | After setup |
+| **`steps/step-02-targeted.md`** | Signal analysis from Phase 1. Method selection using cluster mapping algorithm. Execution of 2-4 Tier 2 methods with procedure file loading. Method agreement assessment. | When no early exit |
+| **`steps/step-03-adversarial.md`** | 4 adversarial prompts per IMPORTANT+ finding. Steel-man construction (3 arguments for opposite verdict). False Positive Checklist (5 items). Score adjustments for downgrades/removals. | Mandatory after Phase 2 |
+| **`steps/step-04-verdict.md`** | Final score verification. Verdict determination per thresholds. Validation checklists per verdict type. Confidence level assignment. Escalation criteria check. | After adversarial or early exit |
+| **`steps/step-05-report.md`** | Report template population. Section-by-section data gathering from frontmatter. Report validation checklist. Finalization and post-report actions. | After verdict |
+| **`data/methods.csv`** | Tabular catalog of all 19 methods: ID, category, name, description, output pattern, when to load, tier assignment. The single source of truth for method metadata. | Phase 1 and 2 |
+| **`data/method-procedures/*.md`** | Individual procedure files for each method. Each contains: tier designation, purpose, step-by-step instructions, output format template, and finding/severity guidance. Loaded on-demand when a method is selected for execution. | When executing specific method |
+| **`data/pattern-library.yaml`** | 24 known impossibility patterns organized into 5 categories. Each pattern has: ID, name, signal keywords, explanation of why it's impossible, referenced theorems, detection methods, severity, and a check question. | Phase 1 and 2 |
+| **`data/severity-scoring.yaml`** | Complete scoring system: base scores per severity level, bonus rules (pattern match, cross-cluster confirmation), score calculation formula, severity anchoring checklists, and Phase 3 adjustment rules (4 adversarial prompts with downgrade/removal logic). | All scoring phases |
+| **`data/method-clusters.yaml`** | 5 method clusters with correlation levels (HIGH/MEDIUM). Signal-to-cluster mapping for Phase 2 method selection. Selection algorithm (4 steps). Tier 1 and Tier 3 method listings. Loading instructions and cluster constraint rules. | Phase 2 |
+| **`data/decision-thresholds.yaml`** | Evidence thresholds for early exit (REJECT_EARLY, ACCEPT_EARLY, BORDERLINE, CONTINUE). Final verdict rules with validation checklists. Confidence levels (HIGH/MEDIUM/LOW) with conditions. Stakes assessment criteria. Escalation criteria (mandatory and recommended) with output template. | Phase 0, 1, 4 |
+| **`data/report-template.md`** | Standardized report structure with placeholders. Sections: Verdict, Executive Summary, Key Findings, Score Calculation, Methods Executed, Adversarial Review Details, NOT CHECKED, Recommendations, Metadata. Generation checklist. | Phase 5 |
+| **`data/examples.md`** | 4 complete worked examples showing end-to-end score calculation: (1) Early REJECT with pattern match, (2) Full process to UNCERTAIN, (3) Full process to ACCEPT, (4) Borderline case with Phase 2+3. Includes score trajectories reference table. | Learning and debugging |
+| **`data/calibration.yaml`** | Post-verification accuracy tracking framework. Calibration log template. Expected accuracy targets by confidence level. Primary metrics (TPR, TNR, FPR, FNR). Recalibration triggers. Ground truth sources. | Post-verification audits |
 
-**ALWAYS load required data files BEFORE executing step logic.**
+---
 
-Each step file specifies its dependencies in frontmatter:
+## Key Design Principles
 
-```yaml
-data_dependencies:
-  - "data/methods.csv"
-  - "data/pattern-library.yaml"
+### 1. Anti-Bias by Design
+
+The workflow enforces bias mitigation at multiple levels:
+- Phase 0 makes you declare your expectations and biases before starting
+- Blind Mode prevents anchoring on initial impressions
+- Phase 3 forces you to attack your own conclusions
+- Steel-manning demands constructing the strongest case against your verdict
+- False Positive Checklist prevents unfair REJECT verdicts
+
+### 2. Efficiency Through Clustering
+
+Methods that probe similar angles are grouped into clusters with correlation rules. This prevents wasting effort on redundant analysis — if one structural method finds nothing, the other structural methods are skipped.
+
+### 3. Pattern-Based Early Exit
+
+When a finding matches a known impossibility pattern (e.g., claiming PFS + key escrow), the system can terminate early with high confidence. This is grounded in mathematical theorems, not heuristics.
+
+### 4. Modular Resumability
+
+Every step maintains state in YAML frontmatter (`stepsCompleted`, `currentStep`, `currentScore`, `findings`, etc.). If a verification is interrupted, it can resume from any phase with full context preserved.
+
+### 5. Mandatory Adversarial Phase
+
+Phase 3 is never skipped (except for early exit with pattern match). This is the system's built-in epistemic humility — it doesn't trust its own conclusions without subjecting them to structured criticism.
+
+### 6. Quote-Grounded Findings
+
+Every finding requires an exact quote from the artifact. This prevents hallucinated or vague criticisms and ensures traceability from verdict to evidence.
+
+---
+
+## Data Flow
+
+```
+                         methods.csv
+                             |
+                    method-procedures/*.md
+                             |
+                             v
+step-00 --> step-01 -----> step-02 -----> step-03 --> step-04 --> step-05
+  |           |   |          |               |           |           |
+  v           v   v          v               v           v           v
+decision-  pattern- severity- method-     severity-  decision-  report-
+thresholds library  scoring   clusters    scoring    thresholds template
+  .yaml     .yaml   .yaml     .yaml       .yaml      .yaml      .md
 ```
 
-### When to Load What
+### Cross-Reference Map
 
-| Data File | Load When | Purpose |
-|-----------|-----------|---------|
-| `data/methods.csv` | Any method execution | Method definitions (19 methods) |
-| `data/method-procedures/{NUM}_{Name}.md` | Executing specific method | Step-by-step procedure for that method |
-| `data/pattern-library.yaml` | steps/step-01, steps/step-02 | Impossibility patterns |
-| `data/severity-scoring.yaml` | steps/step-01, 02, 03, 04 | Scoring rules |
-| `data/method-clusters.yaml` | steps/step-02 | Correlation rules |
-| `data/decision-thresholds.yaml` | steps/step-00, 01, 04 | Decision logic |
-| `data/report-template.md` | steps/step-05 | Report structure |
-| `data/examples.md` | Learning / debugging | Worked scoring examples |
-| `data/calibration.yaml` | Post-verification / audits | Accuracy tracking |
+- **`severity-scoring.yaml`** is the most referenced file (used by 4 of 6 steps)
+- **`decision-thresholds.yaml`** is used by 3 steps (setup, pattern scan, verdict)
+- **`pattern-library.yaml`** is used by 2 steps (pattern scan, targeted)
+- **`method-clusters.yaml`** is used only by Phase 2 (targeted analysis)
+- **`report-template.md`** is used only by Phase 5 (report generation)
+- **`calibration.yaml`** and **`examples.md`** are operational/educational — not consumed by the pipeline
 
-### Loading Order
+---
 
-```
-workflow.md → steps/step-XX.md → read frontmatter → load data/* → execute
-```
+## Frontmatter State Schema
 
-## Workflow Flow
-
-```
-┌─────────────┐
-│  Step 00    │ Setup: Stakes, Bias Assessment
-│   Setup     │
-└──────┬──────┘
-       │
-┌──────▼──────┐
-│  Step 01    │ Tier 1 Methods, Pattern Library
-│Pattern Scan │
-└──────┬──────┘
-       │
-       ├── S ≥ 6 + Pattern ──────────────────────┐
-       │                                         │
-┌──────▼──────┐                                  │
-│  Step 02    │ Signal-based Method Selection    │
-│  Targeted   │                                  │
-└──────┬──────┘                                  │
-       │                                         │
-┌──────▼──────┐                                  │
-│  Step 03    │ ← MANDATORY                      │
-│ Adversarial │                                  │
-└──────┬──────┘                                  │
-       │                                         │
-┌──────▼──────┐◄─────────────────────────────────┘
-│  Step 04    │ Final Score, Verdict
-│   Verdict   │
-└──────┬──────┘
-       │
-┌──────▼──────┐
-│  Step 05    │ Generate Report
-│   Report    │
-└─────────────┘
-```
-
-## Key Methods Included
-
-The `data/methods.csv` includes 19 essential methods across tiers:
-
-### Tier 1 (Mandatory - Phase 1)
-- #71 First Principles Analysis
-- #100 Vocabulary Consistency
-- #17 Abstraction Laddering
-
-### Tier 2 (Signal-based - Phase 2)
-- #78 Assumption Excavation
-- #84 Coherence Check
-- #85 Grounding Check
-- #86 Topological Hole Detection
-- #87 Falsifiability Check
-- #109 Contraposition Inversion
-- #116 Strange Loop Detection
-- #130 Assumption Torture
-- #153 Theoretical Impossibility Check
-- #154 Definitional Contradiction Detector
-- #159 Transitive Dependency Closure
-- #162 Theory-Dependence Verification
-- #163 Existence Proof Demand
-- #165 Constructive Counterexample
-
-### Tier 3 (Adversarial - Phase 3)
-- #63 Challenge from Critical Perspective
-
-## Evidence Score System
-
-### Base Scoring
-| Severity | Points |
-|----------|--------|
-| CRITICAL | +3 |
-| IMPORTANT | +1 |
-| MINOR | +0.3 |
-| Clean Pass | -0.5 |
-
-### Decision Thresholds
-| Score | Verdict |
-|-------|---------|
-| S ≥ 6 | REJECT |
-| S ≤ -3 | ACCEPT |
-| -3 < S < 6 | UNCERTAIN |
-
-## Pattern Library
-
-Known impossibility patterns organized by category:
-
-- **Definitional Contradictions** (DC-001 to DC-004)
-  - PFS + Escrow, Gradual + Termination, Deterministic + Adaptive, CAP
-
-- **Theorem Violations** (TV-001 to TV-005)
-  - VCG + Balanced Budget, FLP, Universal Termination, Universal Detection, Arrow
-
-- **Statistical Impossibilities** (SI-001 to SI-004)
-  - Accuracy without N, Quantum Hype, Unverifiable Optimum, Fictional Benchmarks
-
-- **Regulatory Contradictions** (RC-001 to RC-003)
-  - FDA + Learning, HIPAA + Analytics, Legal Advice Automation
-
-- **Ungrounded Core Concepts** (UG-001 to UG-003)
-  - Undefined Key Term, Circular Definition, Scope Creep Definition
-
-## Frontmatter Schema
-
-Each verification session maintains state in frontmatter:
+Each verification session tracks its full state:
 
 ```yaml
 ---
@@ -220,40 +374,80 @@ started: "[ISO timestamp]"
 stakes: LOW | MEDIUM | HIGH
 bias_mode: Standard | Blind | ForcedAlternative
 initial_assessment: ProbablySound | Uncertain | ProbablyFlawed | BLIND
+expected_outcome: "[from bias check]"
+change_mind_criteria: "[from bias check]"
 
 stepsCompleted: [0, 1, 2, ...]
 currentStep: 0-5
 currentScore: 0.0
-scoreHistory: [...]
+scoreHistory:
+  - step: 1
+    methods: [71, 100, 17]
+    delta: "[details]"
+    total: 0.0
 
-findings: [...]
-patternsMatched: [...]
-methodsExecuted: [...]
+findings:
+  - id: F1
+    severity: CRITICAL | IMPORTANT | MINOR
+    description: "[description]"
+    quote: "[exact text from artifact]"
+    location: "[line/section]"
+    pattern: "[pattern_id or null]"
+    method: 71
+    survived_phase3: true | false | null
+
+patternsMatched: []
+methodsExecuted:
+  - method_id: 71
+    name: "First Principles Analysis"
+    result: Clean | Finding
 
 earlyExit: false
 earlyExitReason: null
-verdict: null
-confidence: null
+verdict: REJECT | ACCEPT | UNCERTAIN | ESCALATE | null
+confidence: HIGH | MEDIUM | LOW | null
 ---
 ```
 
-## Differences from V12.2
+---
 
-| Aspect | V12.2 | Deep Verify V2.0 |
-|--------|-------|------------------|
-| Structure | Single 1432-line file | 6 step files + 8 data files |
-| Resumability | Manual tracking | Frontmatter state |
-| Data | Embedded in workflow | Separated YAML/CSV |
-| Methods | Inline descriptions | External data/methods.csv |
-| Patterns | Inline tables | External data/pattern-library.yaml |
-| Maintainability | Edit entire file | Edit specific component |
+## Quick Start
+
+### New Verification
+
+```
+1. Load: workflow.md
+2. Follow the Quick Execution Path
+3. Load step files and data files as needed
+4. Output the final verification report
+```
+
+### Resume Interrupted Verification
+
+```
+1. Check frontmatter for stepsCompleted and currentStep
+2. Load the appropriate step file: steps/step-{currentStep}.md
+3. Continue from where you left off
+```
+
+---
+
+## Worked Example Summary
+
+The `data/examples.md` file contains 4 complete worked examples:
+
+| Example | Artifact | Path | Final S | Verdict |
+|---------|----------|------|---------|---------|
+| 1 | Crypto protocol (PFS + escrow) | Phase 1 -> Phase 2 -> Early Exit | 7.5 | REJECT (HIGH confidence) |
+| 2 | AI recommendation system | Full process (Phase 1-4) | 0.1 | UNCERTAIN (LOW confidence) |
+| 3 | REST API specification | Full process (Phase 1-4) | -2.2 | ACCEPT with caveat (MEDIUM confidence) |
+| 4 | ML pipeline specification | Full process with borderline | 1.6 | UNCERTAIN, ACCEPT recommended |
+
+---
 
 ## Version History
 
-- **Deep Verify V2.0** — Modular refactor with step files and datafiles (based on V12.2)
-- **V12.2** — Added bias mitigation, mandatory Phase 3, ACCEPT guidance
-
-## Related Files
-
-- Original workflow: `../deep-verify-old/workflow-v12.2.md`
-- Full methods catalog: `../../methods/methods.csv`
+| Version | Changes |
+|---------|---------|
+| **V2.0** | Modular refactor: 6 step files, 8 data files, 18 method procedure files. Separated concerns for maintainability. Added method-clusters.yaml for selection optimization. |
+| **V12.2** | Added bias mitigation (3 modes), mandatory Phase 3, ACCEPT guidance, calibration framework. Original single-file workflow. |
