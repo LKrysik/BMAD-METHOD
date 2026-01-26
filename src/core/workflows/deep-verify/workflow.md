@@ -6,8 +6,12 @@
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │  OUTPUT REQUIRED: A structured VERIFICATION REPORT with verdict            │
 │                                                                             │
-│  DO NOT: Describe what you're doing, list files you're loading, or         │
-│          narrate the process. JUST EXECUTE AND PRODUCE THE REPORT.         │
+│  DO NOT: Narrate your reasoning process or describe steps you're about     │
+│          to take. JUST EXECUTE AND PRODUCE THE REPORT.                     │
+│                                                                             │
+│  DO: Briefly announce each data/ file when you load it, e.g.:             │
+│      "📂 Loading data/pattern-library.yaml"                                │
+│      This keeps the user informed of progress without narrating.           │
 │                                                                             │
 │  Report format: Read data/report-template.md when generating report        │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -200,7 +204,7 @@ If you need detailed step-by-step guidance, load the appropriate step file:
 1. **NO QUOTE = NO FINDING** — Every finding must cite exact artifact text
 2. **MANDATORY PHASE 3** — Always do adversarial review (except early exit with pattern)
 3. **OUTPUT = REPORT** — Your deliverable is a structured verification report
-4. **DON'T NARRATE** — Execute the process, don't describe it
+4. **DON'T NARRATE** — Don't describe your reasoning steps; DO announce each `data/` file load briefly
 5. **LOAD FILES WHEN NEEDED** — Read method procedures, templates, and data files as you need them
 
 ---
